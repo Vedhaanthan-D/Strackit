@@ -1,6 +1,6 @@
 import React from 'react';
-import './Static2Section.css';
-import leftImage from '../assets/leftimage.webp';
+import '../styles/Static2Section.css';
+import leftImage from '../../assets/leftimage.webp';
 
 const Static2Section = () => {
   return (

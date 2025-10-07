@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import banner from 'shops-query/src/modules/banner/index.js';
-import banner1 from '../assets/Banner 1.webp';
-import banner2 from '../assets/Banner 2.webp';
-import './slidingbanner.css';
+import banner1 from '../../assets/Banner 1.webp';
+import banner2 from '../../assets/Banner 2.webp';
+import '../styles/slidingbanner.css';
 
 // Loading Skeleton Component
 const BannerSkeleton = () => (

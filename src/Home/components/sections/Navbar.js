@@ -8,8 +8,8 @@ import {
   FiX,
   FiChevronDown 
 } from 'react-icons/fi';
-import logoImage from '../assets/aone-logo.webp';
-import './header.css';
+import logoImage from '../../assets/aone-logo.webp';
+import '../styles/header.css';
 
 const Navbar = ({
   navigationLinks = [

@@ -1,5 +1,5 @@
 import React from 'react';
-import './StaticTextSection.css';
+import '../styles/StaticTextSection.css';
 
 const StaticTextSection = () => {
   return (

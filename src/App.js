@@ -1,13 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
-import Navbar from './Home/components/Navbar';
-import BannerSlider from './Home/components/BannerSlider';
-import MasterCategory from './Home/components/MasterCategory';
-import NewArrivals from './Home/components/NewArrivals';
-import StaticTextSection from './Home/components/StaticTextSection';
-import Static2Section from './Home/components/Static2Section';
-import Footer from './Home/components/Footer';
+import { 
+  Navbar,
+  BannerSlider,
+  MasterCategory,
+  NewArrivals,
+  StaticTextSection,
+  Static2Section,
+  Footer
+} from './Home/components';
 import './App.css';
 
 function App() {

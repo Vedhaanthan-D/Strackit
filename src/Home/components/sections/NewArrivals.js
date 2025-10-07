@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
-import './NewArrivals.css';
+import '../styles/NewArrivals.css';
 
 // Loading Skeleton Component
 const ProductSkeleton = () => (

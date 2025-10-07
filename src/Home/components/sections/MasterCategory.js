@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { fetchMasterCategories } from 'shops-query/src/modules/masterCategories/index.js';
-import './MasterCategory.css';
+import '../styles/MasterCategory.css';
 
 // Loading Skeleton for categories
 const CategorySkeleton = () => (
