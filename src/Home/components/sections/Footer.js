@@ -21,7 +21,6 @@ const Footer = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle newsletter subscription
-    console.log('Subscribing email:', email);
     // Reset form
     setEmail('');
   };

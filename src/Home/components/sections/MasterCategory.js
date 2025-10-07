@@ -58,11 +58,8 @@ const MasterCategory = () => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        console.log('🏷️ Starting master categories fetch process...');
-        console.log('🏪 Fetching categories for shop ID:', shopId);
         
         const categoryData = await fetchMasterCategories(shopId);
-        console.log('✅ Master categories fetched:', categoryData);
         
         if (categoryData && categoryData.length > 0) {
           // Filter active categories and sort by position
@@ -70,23 +67,19 @@ const MasterCategory = () => {
             .filter(cat => cat.status === 'active' || cat.status === 1)
             .sort((a, b) => (a.position || 0) - (b.position || 0));
           
-          console.log('🎯 Active categories:', activeCategories);
           setMasterCategories(activeCategories);
           setError(null);
         } else {
-          console.warn('⚠️ No categories found');
           // setMasterCategories(fallbackCategories);
           setMasterCategories([]);
         }
       } catch (err) {
-        console.error('💥 Error fetching master categories:', err);
         setError(err);
         // Use fallback categories on error
         // setMasterCategories(fallbackCategories);
         setMasterCategories([]);
       } finally {
         setLoading(false);
-        console.log('🏁 Master categories fetch process completed');
       }
     };
 
@@ -110,7 +103,6 @@ const MasterCategory = () => {
 
   // Handle category click
   const handleCategoryClick = (category) => {
-    console.log('Category clicked:', category);
     // Navigate to category page
     // You can implement routing here, e.g.:
     // window.location.href = `/category/${category.id}`;
@@ -119,7 +111,6 @@ const MasterCategory = () => {
 
   // Handle image error
   const handleImageError = (e, categoryName) => {
-    console.warn(`Failed to load image for category: ${categoryName}`);
     // Set a placeholder or default image
     e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDMwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMjAwQzE2NS4xNTUgMjAwIDE3Ny41IDE4Ny42NTUgMTc3LjUgMTcyLjVDMTc3LjUgMTU3LjM0NSAxNjUuMTU1IDE0NSAxNTAgMTQ1QzEzNC44NDUgMTQ1IDEyMi41IDE1Ny4zNDUgMTIyLjUgMTcyLjVDMTIyLjUgMTg3LjY1NSAxMzQuODQ1IDIwMCAxNTAgMjAwWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNMTg1IDIyNUgxMTVDMTA3LjI2OCAyMjUgMTAxIDIzMS4yNjggMTAxIDIzOVYyNTVDMTAxIDI2Mi43MzIgMTA3LjI2OCAyNjkgMTE1IDI2OUgxODVDMTkyLjczMiAyNjkgMTk5IDI2Mi43MzIgMTk5IDI1NVYyMzlDMTk5IDIzMS4yNjggMTkyLjczMiAyMjUgMTg1IDIyNVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+Cg==';
   };

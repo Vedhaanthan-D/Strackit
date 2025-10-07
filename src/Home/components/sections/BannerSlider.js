@@ -75,20 +75,12 @@ const BannerSlider = () => {
     const fetchBanners = async () => {
       try {
         setLoading(true);
-        console.log('🚀 Starting banner fetch process...');
-        console.log('📋 API Requirements Check:');
-        console.log('   - Shop ID: 512 (required for shop context)');
-        console.log('   - User ID: 198 (may be required for personalization)');
-        console.log('   - API might need authentication headers or tokens');
-        console.log('   - GraphQL schema might require specific field names');
         
         // Inline test function for development
         const testFilters = async () => {
-          console.log('🧪 Testing different banner filter formats...');
           
           // First, test basic connectivity
           try {
-            console.log('🌐 Testing API connectivity...');
             const response = await fetch('https://api.shop.strackit.com/graphql', {
               method: 'POST',
               headers: {
@@ -101,9 +93,8 @@ const BannerSlider = () => {
               })
             });
             const result = await response.json();
-            console.log('✅ API connectivity test:', response.status, result);
           } catch (connectError) {
-            console.warn('❌ API connectivity failed:', connectError);
+            // API connectivity failed
           }
           
           const testCases = [
@@ -121,84 +112,65 @@ const BannerSlider = () => {
           
           for (const testCase of testCases) {
             try {
-              console.log(`🧪 Testing: ${testCase.name}`, testCase.filter);
               const result = await banner.fetchBanner(testCase.filter);
-              console.log(`✅ ${testCase.name} succeeded:`, result?.length || 0, 'banners found');
               if (result && result.length > 0) {
-                console.log('Sample banner:', {
-                  id: result[0].id,
-                  title: result[0].title,
-                  image: result[0].image?.substring(0, 50) + '...'
-                });
+                // Banner found
               }
             } catch (error) {
-              console.warn(`❌ ${testCase.name} failed:`, error.message);
+              // Test case failed
             }
           }
         };
         
         // Run tests in development mode
         if (process.env.NODE_ENV === 'development') {
-          console.log('🔧 API Configuration Check:');
-          console.log('- Shop ID: 512');
-          console.log('- User ID: 198'); 
-          console.log('- API Endpoint: https://api.shop.strackit.com/graphql');
-          console.log('- Testing different authentication approaches...');
           await testFilters();
         }
         
         // First try to fetch banners for specific shop (ID: 12)
         let bannerData = null;
         try {
-          console.log('🏪 Attempting to fetch banners for shop ID 512...');
           const shopFilter = {
             shopId: 512 // Use shop ID 512
           };
           bannerData = await banner.fetchBanner(shopFilter);
-          console.log('✅ Shop banners fetched (Shop ID 512):', bannerData);
         } catch (shopError) {
-          console.warn('❌ Failed to fetch shop banners:', shopError);
+          // Failed to fetch shop banners
         }
         
         // If shop-specific banners not found, try with shop and user context
         if (!bannerData || bannerData.length === 0) {
           try {
-            console.log('🎯 Attempting to fetch banners with shop ID 512 and user ID 198...');
             const contextFilter = { 
               shopId: 512,
               userId: 198
             };
             bannerData = await banner.fetchBanner(contextFilter);
-            console.log('✅ Context banners fetched:', bannerData);
           } catch (contextError) {
-            console.warn('❌ Failed to fetch context banners:', contextError);
+            // Failed to fetch context banners
           }
         }
         
         // Try specific banner ID 198 with shop context
         if (!bannerData || bannerData.length === 0) {
           try {
-            console.log('🎯 Attempting to fetch specific banner ID 198 with shop context...');
             const specificFilter = { 
               shopId: 512,
               id: 198
             };
             bannerData = await banner.fetchBanner(specificFilter);
-            console.log('✅ Specific banner with context fetched:', bannerData);
           } catch (specificError) {
-            console.warn('❌ Failed to fetch specific banner with context:', specificError);
+            // Failed to fetch specific banner with context
             
             // Try alternative formats
             try {
-              console.log('🔄 Trying alternative context format...');
               const altFilter = { 
                 shop: { id: 512 },
                 banner: { id: 198 }
               };
               bannerData = await banner.fetchBanner(altFilter);
-              console.log('✅ Alternative context format worked:', bannerData);
             } catch (altError) {
-              console.warn('❌ Alternative context format failed:', altError);
+              // Alternative context format failed
             }
           }
         }
@@ -206,66 +178,55 @@ const BannerSlider = () => {
         // Fallback to basic ID search
         if (!bannerData || bannerData.length === 0) {
           try {
-            console.log('🎯 Attempting to fetch specific banner with ID 198...');
             const specificFilter = { 
               id: 198 // Try direct ID instead of { eq: 198 }
             };
             bannerData = await banner.fetchBanner(specificFilter);
-            console.log('✅ Specific banner data fetched (ID 198):', bannerData);
           } catch (specificError) {
-            console.warn('❌ Failed to fetch specific banner ID 198:', specificError);
+            // Failed to fetch specific banner ID 198
             
             // Try alternative ID filter format
             try {
-              console.log('🔄 Trying alternative ID filter format...');
               const altFilter = { 
                 id: { eq: 198 }
               };
               bannerData = await banner.fetchBanner(altFilter);
-              console.log('✅ Alternative ID filter worked:', bannerData);
             } catch (altError) {
-              console.warn('❌ Alternative ID filter also failed:', altError);
+              // Alternative ID filter also failed
             }
           }
         }
         
         // If specific banner not found, try fetching all banners
         if (!bannerData || bannerData.length === 0) {
-          console.log('🌐 Trying to fetch all banners without any filter...');
           try {
             // Try with empty filter
             bannerData = await banner.fetchBanner({});
-            console.log('📊 All banners fetched:', bannerData);
             
             // Filter for ID 198 client-side if we got multiple banners
             if (bannerData && bannerData.length > 0) {
               const banner198 = bannerData.find(bannerItem => bannerItem.id === 198 || bannerItem.id === '198');
               if (banner198) {
-                console.log('🎯 Found banner 198 in results:', banner198);
                 bannerData = [banner198]; // Use only the specific banner
               } else {
-                console.log('📋 Available banner IDs:', bannerData.map(b => b.id));
                 // Keep first few banners if 198 not found
                 bannerData = bannerData.slice(0, 2);
               }
             }
           } catch (allError) {
-            console.warn('❌ Failed to fetch all banners:', allError);
+            // Failed to fetch all banners
             
             // Try with null filter as last resort
             try {
-              console.log('🔄 Trying with null filter...');
               bannerData = await banner.fetchBanner(null);
-              console.log('✅ Null filter worked:', bannerData);
             } catch (nullError) {
-              console.warn('❌ Null filter also failed:', nullError);
+              // Null filter also failed
             }
           }
         }
         
         if (bannerData && bannerData.length > 0) {
           // Use dynamic banners from API
-          console.log('✨ Using dynamic banners from API:', bannerData);
           const sortedBanners = [...bannerData].sort((a, b) => (a.priority || 0) - (b.priority || 0));
           
           // Process banners with S3 image prefix and maintain fallback structure
@@ -292,11 +253,8 @@ const BannerSlider = () => {
           setBannerContent(dynamicContent);
           setError(null);
           
-          console.log('🎨 Dynamic content created with S3 prefix:', dynamicContent);
-          console.log('🏷️ Banner URLs with S3 prefix:', processedBanners.map(b => ({ id: b.id, title: b.title, image: b.image })));
         } else {
           // Use fallback banners if API returns empty
-          console.warn('⚠️ No banners found from API');
           // setBanners(fallbackBanners);
           // setBannerContent(fallbackContent);
           setBanners([]);
@@ -304,7 +262,6 @@ const BannerSlider = () => {
         }
       } catch (err) {
         // Use fallback banners if API fails
-        console.error('💥 API error occurred:', err);
         setError(err);
         // setBanners(fallbackBanners);
         // setBannerContent(fallbackContent);
@@ -312,7 +269,6 @@ const BannerSlider = () => {
         setBannerContent([]);
       } finally {
         setLoading(false);
-        console.log('🏁 Banner fetch process completed');
       }
     };
 
@@ -363,7 +319,6 @@ const BannerSlider = () => {
           style={{ cursor: bannerContent[currentIndex]?.link ? 'pointer' : 'default' }}
           onError={(e) => {
             // Fallback to local image if API image fails to load
-            console.warn('Failed to load banner image, using fallback');
             if (currentIndex === 0) {
               e.target.src = banner1;
             } else {
