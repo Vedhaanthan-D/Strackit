@@ -1,0 +1,633 @@
+/* Navbar.module.css - Standard Scroll Behavior */
+/*
+ * Navbar CSS Rules Applied:
+ * - position: static on header to allow natural scrolling with page
+ * - NO overflow: auto/scroll on navbar (.header, .container)
+ * - position: relative on parent containers for dropdown positioning context only
+ * - position: absolute on dropdown menus with high z-index (9999)
+ * - overflow: visible throughout to prevent unwanted scrollbars 
+ * - NO fixed heights or max-heights that would restrict dropdowns
+ */
+.header {
+  background-color: #fff;
+  color: #000;
+  border-bottom: 1px solid #e5e5e5;
+  position: static; /* Changed from sticky to static to allow scrolling with page */
+  z-index: 1000;
+  font-family: 'Jost', sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: visible; /* NO auto/scroll - prevents unwanted scrollbars */
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  position: relative; /* Keep this for dropdown positioning but not navbar fixing */
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 50px; /* Increased horizontal padding for better edge spacing */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: 95px;
+  gap: 30px; /* Increased gap between grid sections */
+  overflow: visible; /* NO height/max-height restrictions - prevents scrollbars */
+}
+
+/* Mobile Menu Button */
+.mobileMenuButton {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #000;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1001;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.mobileMenuButton:hover {
+  background-color: #f8f8f8;
+}
+
+/* Navigation */
+.navigation {
+  position: relative; /* Positioning context */
+  grid-column: 1;
+  justify-self: start;
+  overflow: visible; /* NO scroll properties */
+  max-width: 100%;
+}
+
+.navList {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 20px; /* Added left padding for better edge separation */
+  gap: 35px; /* Increased spacing between nav items */
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow: visible; /* NO scroll properties - prevent navbar scrollbars */
+}
+
+.navItem {
+  margin: 0;
+}
+
+.navLink {
+  text-decoration: none;
+  color: #000;
+  font-family: 'Jost', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 23px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 10px 0;
+  transition: color 0.3s ease, opacity 0.3s ease;
+  display: block;
+  white-space: nowrap;
+  overflow: visible; /* NO clipping - prevent scrollbars */
+}
+
+.navLink:hover {
+  color: #666;
+  opacity: 0.8;
+}
+
+/* Logo */
+.logoContainer {
+  grid-column: 2;
+  justify-self: center;
+  z-index: 10;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logoImage {
+  height: 50px;
+  width: 150px;
+  object-fit: contain;
+}
+
+.logoText {
+  font-family: 'Jost', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: 2px;
+}
+
+/* Right Actions */
+.rightActions {
+  position: relative; /* Positioning context */
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Decreased gap between dropdowns and icons */
+  overflow: visible; /* NO scroll properties */
+  max-width: 100%;
+  padding-right: 20px; /* Increased right padding for better edge spacing */
+}
+
+/* Dropdowns */
+.dropdown {
+  position: relative; /* Parent positioning context for absolute dropdown */
+  overflow: visible; /* Prevent any clipping */
+}
+
+.dropdownButton {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 25px;
+  padding: 8px 16px;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 85px;
+  height: 36px;
+  justify-content: center;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.dropdownButton:hover {
+  background-color: #f8f8f8;
+  border-color: #d0d0d0;
+}
+
+.dropdownButton:focus {
+  outline: none;
+  background-color: #f8f8f8;
+  border-color: #d0d0d0;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.dropdownIcon {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.dropdown:hover .dropdownIcon {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px); /* Place dropdown just below its trigger */
+  left: 0;
+  z-index: 9999; /* High z-index to appear above all content */
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+  border-radius: 6px;
+  min-width: 120px;
+  border: 1px solid #e5e5e5;
+  overflow: visible;
+  /* NO max-height, height, or overflow restrictions */
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: auto;
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  color: #000;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dropdownItem:hover {
+  background-color: #f8f8f8;
+}
+
+.dropdownItem.active {
+  background-color: #f0f0f0;
+  font-weight: 600;
+}
+
+.dropdownItem:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.dropdownItem:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+/* Action Icons */
+.actionIcons {
+  display: flex;
+  align-items: center;
+  gap: 25px; /* Increased spacing between individual icons */
+  margin-left: 8px; /* Decreased margin to reduce space after currency dropdown */
+}
+
+/* Icon Wrapper for tooltip positioning */
+.iconWrapper {
+  position: relative;
+  display: inline-block;
+  overflow: visible;
+  padding-right: 12px; /* Add padding to prevent badge cutoff */
+}
+
+/* Ensure balanced layout on desktop */
+@media (min-width: 769px) {
+  .container {
+    padding: 0 60px; /* Increased padding for better desktop spacing */
+    gap: 40px; /* Increased gap for desktop */
+  }
+  
+  .navigation {
+    display: flex;
+    justify-content: flex-start;
+    max-width: calc(50vw - 120px); /* Adjusted for increased padding */
+  }
+  
+  .rightActions {
+    display: flex;
+    justify-content: flex-end;
+    max-width: calc(50vw - 120px); /* Adjusted for increased padding */
+    gap: 15px; /* Decreased gap for desktop */
+    padding-right: 30px; /* Increased right padding for desktop */
+  }
+  
+  .navList {
+    gap: 45px; /* Increased nav item spacing for desktop */
+    padding-left: 30px; /* Increased left padding for desktop */
+  }
+  
+  .actionIcons {
+    gap: 20px; /* Increased icon spacing for desktop */
+    margin-left: 12px; /* Decreased margin for desktop */
+  }
+}
+
+/* For very wide screens */
+@media (min-width: 1200px) {
+  .container {
+    padding: 0 120px; /* Increased padding for large screens */
+  }
+  
+  .navigation {
+    max-width: calc(40vw - 100px);
+  }
+  
+  .rightActions {
+    max-width: calc(40vw - 100px);
+    gap: 18px; /* Decreased spacing for large screens */
+    padding-right: 40px;
+  }
+  
+  .navList {
+    gap: 50px; /* Maximum spacing for nav items on large screens */
+    padding-left: 40px;
+  }
+  
+  .actionIcons {
+    gap: 30px; /* Maximum icon spacing for large screens */
+    margin-left: 15px; /* Decreased margin for large screens */
+  }
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #000;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.iconButton:hover {
+  background-color: #f8f8f8;
+  transform: scale(1.1);
+}
+
+/* Cart Badge */
+.cartBadge {
+  position: absolute;
+  top: -6px; /* Moved slightly lower */
+  right: -6px; /* Moved slightly more to the right */
+  background-color: #b17653;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 12px;
+  min-width: 20px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-family: 'Jost', sans-serif;
+  z-index: 10;
+}
+
+/* Tooltip Styles */
+.tooltip {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #000;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Jost', sans-serif;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  transform: translateX(-50%) translateY(5px);
+  z-index: 1000;
+}
+
+.tooltip::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #000;
+}
+
+.iconWrapper:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltipText {
+  display: block;
+}
+
+.tooltipArrow {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #000;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .mobileMenuButton {
+    display: block;
+  }
+
+  .navigation {
+    position: absolute; /* Changed from fixed to absolute for mobile menu */
+    top: 80px;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+    z-index: 999;
+    grid-column: unset;
+    justify-self: unset;
+  }
+
+  .navigation.mobileMenuOpen {
+    transform: translateY(0);
+  }
+
+  .navList {
+    flex-direction: column;
+    padding: 20px 0;
+    gap: 0;
+  }
+
+  .navItem {
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .navItem:last-child {
+    border-bottom: none;
+  }
+
+  .navLink {
+    padding: 15px 20px;
+    font-size: 16px;
+    width: 100%;
+  }
+
+  .logoContainer {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    grid-column: unset;
+    justify-self: unset;
+  }
+
+  .logoImage {
+    height: 30px;
+    width: 85px;
+  }
+
+  .logoText {
+    font-size: 24px;
+  }
+
+  .rightActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    grid-column: unset;
+    justify-self: unset;
+  }
+
+  .dropdown {
+    display: none;
+  }
+
+  .actionIcons {
+    gap: 12px;
+  }
+
+  .iconButton {
+    font-size: 18px;
+    padding: 6px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .cartBadge {
+    top: -6px;
+    right: -2px;
+    font-size: 10px;
+    padding: 2px 5px;
+    min-width: 16px;
+    height: 14px;
+  }
+
+  .tooltip {
+    display: none;
+  }
+}
+
+/* Mobile Overlay */
+.mobileOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 998;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobileOverlay {
+    display: block;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+    height: 75px;
+    width: 100%;
+  }
+
+  .navigation {
+    top: 75px;
+  }
+
+  .logoImage {
+    height: 25px;
+    width: 70px;
+  }
+
+  .logoText {
+    font-size: 20px;
+  }
+
+  .actionIcons {
+    gap: 8px;
+  }
+
+  .iconButton {
+    font-size: 16px;
+    padding: 5px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .cartBadge {
+    top: -5px;
+    right: -2px;
+    font-size: 9px;
+    padding: 1px 4px;
+    min-width: 14px;
+    height: 12px;
+  }
+
+  .rightActions {
+    gap: 8px;
+  }
+}
+
+/* Smooth transitions */
+* {
+  box-sizing: border-box;
+}
+
+.navigation,
+.dropdownMenu,
+.iconButton,
+.navLink,
+.dropdownButton {
+  transition: all 0.3s ease;
+}
+
+/* Focus styles for accessibility */
+.iconButton:focus,
+.navLink:focus,
+.dropdownButton:focus,
+.mobileMenuButton:focus {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+/* Hide dropdowns on mobile for better UX */
+@media (max-width: 768px) {
+  .dropdown {
+    display: none; /* Hide entire dropdown containers on mobile */
+  }
+  
+  /* Ensure no dropdowns interfere with mobile layout */
+  .dropdownMenu {
+    display: none !important;
+  }
+}
+
+/* Ensure dropdowns work properly on desktop */
+@media (min-width: 769px) {
+  .dropdown {
+    display: block;
+  }
+  
+  .dropdownMenu {
+    /* Additional desktop-specific styling if needed */
+    max-width: 150px;
+  }
+}

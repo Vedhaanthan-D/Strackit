@@ -1,0 +1,351 @@
+/* New .new-arrivals-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d2d2d;
+  margin: 0 0 20px 0;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 1px;
+}
+
+.new-arrivals-subtitle {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #666;
+  margin: 0 auto;
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.6;
+  max-width: 600px;
+}Component Styles */
+.new-arrivals-container {
+  width: 100%;
+  padding: 40px 20px 60px;
+  background-color: #f9f9f9;
+}
+
+.new-arrivals-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 40px;
+  padding: 0 15px;
+}
+
+.new-arrivals-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d2d2d;
+  margin: 0 0 20px 0;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 1px;
+}
+
+.products-slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.products-row {
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 60px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  flex-grow: 1;
+}
+
+.products-row::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  min-width: 280px;
+  flex-shrink: 0;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-image-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 120%; /* 6:5 aspect ratio */
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.product-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center; /* Center the image content */
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.03);
+}
+
+/* Sold Out Badge */
+.sold-out-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sold-out-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sold-out-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  line-height: 1.2;
+  text-transform: uppercase;
+  font-family: 'Poppins', sans-serif;
+}
+
+.product-info {
+  padding: 15px 10px;
+  text-align: center;
+}
+
+.product-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 5px 0;
+  font-family: 'Poppins', sans-serif;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.product-price {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #666;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Loading Skeleton Styles */
+.product-skeleton {
+  background: #fff;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  animation: pulse 1.5s ease-in-out infinite alternate;
+}
+
+.product-skeleton-image {
+  width: 100%;
+  height: 0;
+  padding-bottom: 120%; /* Match the product image aspect ratio */
+  background-color: #f0f0f0;
+  animation: pulse 1.5s ease-in-out infinite alternate;
+}
+
+.product-skeleton-title {
+  height: 16px;
+  width: 70%;
+  margin: 15px auto 5px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.product-skeleton-price {
+  height: 14px;
+  width: 40%;
+  margin: 5px auto 15px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Error state */
+.products-error {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+}
+
+/* Navigation Arrows */
+.product-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  background: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.product-arrow:hover {
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.product-arrow svg {
+  width: 22px;
+  height: 22px;
+  color: #333;
+}
+
+.left-arrow {
+  left: 15px;
+}
+
+.right-arrow {
+  right: 15px;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .product-card {
+    min-width: 250px;
+  }
+  
+  .products-row {
+    gap: 20px;
+    padding: 10px 50px;
+  }
+}
+
+@media (max-width: 768px) {
+  .new-arrivals-header {
+    margin-bottom: 30px;
+  }
+  
+  .new-arrivals-title {
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+  
+  .new-arrivals-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .product-card {
+    min-width: 220px;
+  }
+  
+  .products-row {
+    gap: 15px;
+    padding: 10px 40px;
+  }
+  
+  .new-arrivals-container {
+    padding: 30px 15px 50px;
+  }
+  
+  .product-arrow {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .product-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .left-arrow {
+    left: 10px;
+  }
+  
+  .right-arrow {
+    right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .new-arrivals-title {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+  }
+  
+  .product-card {
+    min-width: 180px;
+  }
+  
+  .products-row {
+    padding: 10px 35px;
+  }
+  
+  .new-arrivals-container {
+    padding: 25px 10px 40px;
+  }
+  
+  .product-arrow {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .product-arrow svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .left-arrow {
+    left: 5px;
+  }
+  
+  .right-arrow {
+    right: 5px;
+  }
+}

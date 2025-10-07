@@ -1,0 +1,47 @@
+/* Reset default styles and scroll fixes */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Scrollbar fix - prevent horizontal scroll */
+html, body, #root {
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+.App {
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Basic typography */
+body {
+  font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Main content area */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+main h1 {
+  color: #333;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+main p {
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}

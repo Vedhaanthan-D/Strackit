@@ -1,0 +1,584 @@
+/* BannerSlider.module.css */
+.slider {
+  position: relative;
+  width: 100vw;
+  height: auto; /* Auto height to show full banner */
+  min-height: 500px; /* Minimum height */
+  max-height: none; /* Remove max-height restriction */
+  overflow: hidden;
+  margin-left: calc(-50vw + 50%); /* Full width breakout */
+  left: 0;
+  right: 0;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100vw; /* Full viewport width */
+  height: auto; /* Auto height for container */
+}
+
+.bannerImage {
+  width: 100vw; /* Full viewport width */
+  height: auto; /* Auto height to maintain aspect ratio */
+  min-height: 500px; /* Minimum height to ensure visibility */
+  max-height: 80vh; /* Limit to 80% of viewport height */
+  object-fit: cover; /* Cover to fill width, may crop height if needed */
+  object-position: center; /* Center the image content */
+  display: block;
+  transition: opacity 0.5s ease-in-out;
+  margin: 0 auto; /* Center the image horizontally */
+}
+
+/* Banner Overlay Content */
+.bannerOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 80px;
+  z-index: 5;
+}
+
+.bannerContent {
+  max-width: 600px;
+  color: white;
+  text-align: left;
+  margin-left: 900px;
+}
+
+/* Banner 1 Content - Left side positioning */
+.banner1Content {
+  margin-left: 15px;
+  text-align: left;
+  
+}
+
+/* Banner 2 Content - Right side positioning */  
+.banner2Content {
+  margin-left: 15px;
+  text-align: left;
+  
+}
+
+/* Additional responsive positioning for tablets */
+@media (max-width: 1024px) {
+  .banner1Content {
+    margin-left: -250px;
+  }
+  
+  .banner2Content {
+    margin-left: 500px;
+  }
+}
+
+.bannerLabel {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.bannerTitle {
+  font-family: 'Jost', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: rgb(0, 0, 0);
+  line-height: 1.2;
+  margin: 0 0 20px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.bannerDescription {
+  font-family: 'Jost', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 1.6;
+  margin: 0 0 30px 0;
+  max-width: 400px;
+}
+
+.bannerButton {
+  background: transparent;
+  border: 2px solid rgb(0, 0, 0);
+  color: rgb(0, 0, 0);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 15px 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.bannerButton:hover {
+  background: white;
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.bannerButton:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+/* Navigation Arrows */
+.slider .arrow {
+  position: absolute;
+  top: 40%; /* Adjust this value to move arrows up (lower percentage) or down (higher percentage) */
+  transform: translateY(-50%);
+  background: #958286;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  overflow: hidden; /* Contain the icon animation */
+}
+
+.slider .arrow:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Arrow Icon Animation */
+.slider .arrow svg {
+  position: relative;
+  transition: none; /* Remove default transitions */
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  will-change: transform, opacity; /* Optimize animations */
+}
+
+/* Right Arrow Animation */
+.slider .rightArrow:hover svg {
+  animation: slideRightArrow 0.6s ease-in-out forwards;
+  animation-fill-mode: both;
+}
+
+.slider .rightArrow:not(:hover) svg {
+  animation: reverseSlideRightArrow 0.6s ease-in-out forwards;
+  animation-fill-mode: both;
+}
+
+/* Left Arrow Animation */
+.slider .leftArrow:hover svg {
+  animation: slideLeftArrow 0.6s ease-in-out forwards;
+  animation-fill-mode: both;
+}
+
+.slider .leftArrow:not(:hover) svg {
+  animation: reverseSlideLeftArrow 0.6s ease-in-out forwards;
+  animation-fill-mode: both;
+}
+
+/* Positioning for arrows */
+.slider .leftArrow {
+  left: 40px; /* Increased distance from left edge */
+}
+
+.slider .rightArrow {
+  right: 40px; /* Increased distance from right edge */
+}
+
+/* Keyframe Animations for Arrows */
+@keyframes slideRightArrow {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+  41% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes reverseSlideRightArrow {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+  41% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideLeftArrow {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+  41% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes reverseSlideLeftArrow {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+  41% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Dot Indicators */
+/* Dot indicators removed from banner slider as requested */
+/* 
+.dotsContainer {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(1.2);
+}
+
+.activeDot {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 1);
+}
+*/
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .slider {
+    height: auto; /* Auto height for mobile */
+    min-height: 350px; /* Increased minimum for mobile */
+    max-height: none; /* Remove max-height restriction */
+    width: 100vw; /* Ensure full width on mobile */
+  }
+  
+  .bannerImage {
+    max-height: 70vh; /* Adjusted for mobile */
+    width: 100vw; /* Full width on mobile */
+    min-height: 350px; /* Ensure minimum height on mobile */
+  }
+  
+  .arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  .leftArrow {
+    left: 45px;
+  }
+  
+  .rightArrow {
+    right: 45px;
+  }
+  
+  .dotsContainer {
+    bottom: 15px;
+    gap: 10px;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .slider {
+    height: auto; /* Auto height for small mobile */
+    min-height: 300px; /* Increased minimum for small mobile */
+    max-height: none; /* Remove max-height restriction */
+    width: 100vw; /* Ensure full width on small mobile */
+  }
+  
+  .bannerImage {
+    max-height: 60vh; /* Adjusted for small mobile */
+    width: 100vw; /* Full width on small mobile */
+    min-height: 300px; /* Ensure minimum height on small mobile */
+  }
+  
+  .arrow {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
+  
+  .leftArrow {
+    left: 45px;
+  }
+  
+  .rightArrow {
+    right: 45px;
+  }
+  
+  /* Dot indicators responsive styles removed from banner slider as requested */
+  /*
+  .dotsContainer {
+    bottom: 12px;
+    gap: 8px;
+  }
+  
+  .dot {
+    width: 8px;
+    height: 8px;
+  }
+  */
+
+  /* Overlay responsive styles */
+  .bannerOverlay {
+    padding: 0 30px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .bannerContent {
+    text-align: center;
+    max-width: 90%;
+  }
+
+  /* Banner responsive positioning */
+  .banner1Content {
+    margin-left: -250px;
+    text-align: center;
+  }
+
+  .banner2Content {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .bannerTitle {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+
+  .bannerDescription {
+    font-size: 1rem;
+    margin-bottom: 25px;
+    max-width: 100%;
+  }
+
+  .bannerLabel {
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+  }
+
+  .bannerButton {
+    font-size: 0.8rem;
+    padding: 12px 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bannerOverlay {
+    padding: 0 20px;
+  }
+
+  .bannerTitle {
+    font-size: 2rem;
+  }
+
+  .bannerDescription {
+    font-size: 0.9rem;
+  }
+
+  .bannerButton {
+    font-size: 0.75rem;
+    padding: 10px 20px;
+  }
+}
+
+/* Smooth fade animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.bannerImage {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Focus styles for accessibility */
+.arrow:focus,
+.dot:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .arrow {
+    background: #fff;
+    color: #000;
+    border: 2px solid #000;
+  }
+  
+  .dot {
+    border-color: #fff;
+  }
+  
+  .activeDot {
+    background: #fff;
+  }
+}
+
+/* Loading Skeleton Styles */
+.bannerSkeleton {
+  position: relative;
+  width: 100vw;
+  height: auto;
+  min-height: 500px;
+}
+
+.skeletonImage {
+  width: 100%;
+  height: 500px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.skeletonText {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 4px;
+}
+
+.skeletonLabel {
+  height: 16px;
+  width: 120px;
+  margin-bottom: 20px;
+}
+
+.skeletonTitle {
+  height: 48px;
+  width: 400px;
+  margin-bottom: 20px;
+}
+
+.skeletonDescription {
+  height: 20px;
+  width: 350px;
+  margin-bottom: 30px;
+}
+
+.skeletonButton {
+  height: 50px;
+  width: 140px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Skeleton responsive styles */
+@media (max-width: 768px) {
+  .skeletonTitle {
+    height: 36px;
+    width: 280px;
+  }
+  
+  .skeletonDescription {
+    width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skeletonTitle {
+    height: 32px;
+    width: 200px;
+  }
+  
+  .skeletonDescription {
+    width: 180px;
+  }
+  
+  .skeletonButton {
+    height: 40px;
+    width: 120px;
+  }
+}

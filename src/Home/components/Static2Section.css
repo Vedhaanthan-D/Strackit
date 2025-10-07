@@ -1,0 +1,149 @@
+/* Static2Section.css */
+
+.static2-section {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: #f9f9f9;
+  padding: 0;
+  margin: 0;
+}
+
+.static2-container {
+  display: flex;
+  width: 100%;
+  margin: 0;
+}
+
+.static2-image-column {
+  width: 65%;
+  position: relative;
+  overflow: hidden;
+}
+
+.static2-image {
+  width: 690px;
+  height: 690px;
+  object-fit: cover;
+  object-position: center; /* Center the image content */
+  display: block;
+  /*margin: 0 auto; /* Center horizontally */
+}
+
+.static2-content-column {
+  width: 35%;
+  display: flex;
+  align-items: center;
+  padding: 40px 40px 40px 0;
+  box-sizing: border-box;
+  margin-left: -120px;
+}
+
+.static2-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.static2-label {
+  font-family: 'Jost', sans-serif;
+  color: #929292;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.static2-heading {
+  font-family: 'Jost', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #222;
+  margin: 0 0 24px 0;
+}
+
+.static2-paragraph {
+  font-family: 'Jost', sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.static2-button {
+  font-family: 'Jost', sans-serif;
+  background: transparent;
+  border: 1px solid #222;
+  padding: 12px 30px;
+  font-size: 0.9rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  display: inline-block;
+  width: fit-content;
+}
+
+.static2-button:hover {
+  background-color: #222;
+  color: #fff;
+}
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+  .static2-container {
+    width: 100%;
+  }
+  
+  .static2-heading {
+    font-size: 2.2rem;
+  }
+  
+  .static2-content-column {
+    padding: 30px 30px 30px 0;
+    margin-left: -20px;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .static2-container {
+    flex-direction: column;
+  }
+  
+  .static2-image-column,
+  .static2-content-column {
+    width: 100%;
+  }
+  
+  .static2-image-column {
+    height: 400px;
+  }
+  
+  .static2-content-column {
+    padding: 40px 30px;
+    margin-left: 0;
+  }
+  
+  .static2-heading {
+    font-size: 2rem;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .static2-image-column {
+    height: 300px;
+  }
+  
+  .static2-content-column {
+    padding: 30px 20px;
+  }
+  
+  .static2-heading {
+    font-size: 1.8rem;
+  }
+}

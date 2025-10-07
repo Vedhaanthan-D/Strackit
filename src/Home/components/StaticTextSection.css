@@ -1,0 +1,303 @@
+/* statictextsection.css */
+.quoteSection {
+  width: 100%;
+  max-width: 200vw; /* Prevent horizontal scroll */
+  background-color: #fff;
+  padding: 0 40px;
+  box-sizing: border-box;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+.static-text-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 96px 20px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.static-label {
+  color: #929292;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 1.1rem;
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+
+.static-quote {
+  text-align: center;
+  font-family: 'Jost', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #373A3C;
+  line-height: 1.4;
+  margin-bottom: 40px;
+  width: 100%;
+  max-width: none;
+  white-space: pre-line;
+}
+
+.static-btn {
+  display: inline-block;
+  margin: 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid #222;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  color: #222;
+  transition: border-bottom-width 0.2s;
+  text-align: right;
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  padding: 12px 0;
+  outline: none;
+}
+
+.static-btn:hover {
+  border-bottom-width: 4px;
+}
+
+.static-btn:focus {
+  outline: 2px solid #222;
+  outline-offset: 4px;
+}
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+  .static-text-row {
+    padding: 80px 0;
+    max-width: 1000px;
+  }
+
+  .static-quote {
+    font-size: 2.2rem;
+  }
+
+  .static-label {
+    font-size: 1rem;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .quoteSection {
+    padding: 0 25px;
+  }
+
+  .static-text-row {
+    padding: 60px 40px 60px 0;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .static-label {
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+  }
+
+  .static-quote {
+    font-size: 1.8rem;
+    line-height: 1.4;
+    margin-bottom: 30px;
+    max-width: none;
+    white-space: pre-line;
+    text-align: right;
+  }
+
+  .static-btn {
+    margin: 0;
+    text-align: right;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .quoteSection {
+    padding: 0 20px;
+  }
+
+  .static-text-row {
+    padding: 50px 30px 50px 0;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .static-quote {
+    font-size: 1.5rem;
+    line-height: 1.4;
+    margin-bottom: 25px;
+    max-width: none;
+    white-space: pre-line;
+    text-align: right;
+  }
+
+  .static-label {
+    font-size: 0.8rem;
+    margin-bottom: 25px;
+  }
+
+  .static-btn {
+    font-size: 0.9rem;
+    text-align: right;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 360px) {
+  .static-text-row {
+    padding: 40px 0;
+  }
+
+  .static-quote {
+    font-size: 1.3rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .static-btn {
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .static-label {
+    color: #666;
+  }
+  
+  .static-quote {
+    color: #000;
+  }
+  
+  .static-btn {
+    color: #000;
+    border-bottom-color: #000;
+  }
+}
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+  .quoteSection {
+    padding: 100px 30px;
+  }
+
+  .quoteText {
+    font-size: 32px;
+    line-height: 48px;
+    max-width: 800px;
+  }
+
+  .quoteLabel {
+    margin-bottom: 35px;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .quoteSection {
+    padding: 80px 25px;
+  }
+
+  .quoteText {
+    font-size: 28px;
+    line-height: 42px;
+    max-width: 100%;
+    margin-bottom: 40px;
+    padding: 0 10px;
+  }
+
+  .quoteLabel {
+    font-size: 0.8rem;
+    margin-bottom: 30px;
+    letter-spacing: 1.5px;
+  }
+
+  .aboutBtn {
+    font-size: 0.85rem;
+    letter-spacing: 1.2px;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .quoteSection {
+    padding: 60px 20px;
+  }
+
+  .quoteText {
+    font-size: 24px;
+    line-height: 36px;
+    margin-bottom: 35px;
+  }
+
+  .quoteLabel {
+    font-size: 0.75rem;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+  }
+
+  .aboutBtn {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    padding: 10px 0;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 360px) {
+  .quoteSection {
+    padding: 50px 15px;
+  }
+
+  .quoteText {
+    font-size: 20px;
+    line-height: 30px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .aboutBtn {
+    transition: none;
+  }
+  
+  .aboutBtn:hover {
+    transform: none;
+  }
+  
+  .aboutBtn:active {
+    transform: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .quoteLabel {
+    color: #AEAEAE;
+    opacity: 1;
+  }
+  
+  .quoteText {
+    color: #404040;
+  }
+  
+  .aboutBtn {
+    color: #000000;
+    border-bottom-color: #000000;
+  }
+  
+  .aboutBtn:hover {
+    border-bottom-color: #000000;
+    color: #000000;
+  }
+}
