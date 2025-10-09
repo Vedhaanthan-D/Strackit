@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaTwitter, FaDribbble, FaBehance, FaInstagram } from 'react-icons/fa';
-import aoneLogo from '../../assets/aone-logo.webp';
+import aoneLogo from '../../Home/assets/aone-logo.webp';
 import '../styles/Footer.css';
 
 /* Base64 encoded SVG payment method icons as fallbacks */
