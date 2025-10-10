@@ -10,8 +10,8 @@ const BannerSkeleton = () => (
     <div className="imageContainer">
       <div className="bannerSkeleton">
         <div className="skeletonImage"></div>
-        <div className="bannerOverlay">
-          <div className="bannerContent banner1Content">
+        <div className="homeBannerOverlay">
+          <div className="homeBannerContent banner1Content">
             <div className="skeletonText skeletonLabel"></div>
             <div className="skeletonText skeletonTitle"></div>
             <div className="skeletonText skeletonDescription"></div>
@@ -124,8 +124,8 @@ const BannerSlider = () => {
         />
         
         {/* Banner Overlay Content */}
-        <div className="bannerOverlay">
-          <div className={`bannerContent ${currentIndex === 0 ? 'banner1Content' : 'banner2Content'}`}>
+        <div className="homeBannerOverlay">
+          <div className={`homeBannerContent ${currentIndex === 0 ? 'homeBanner1Content' : 'homeBanner2Content'}`}>
             <span className="bannerLabel">{bannerContent[currentIndex]?.label}</span>
             <h1 className="bannerTitle">
               {bannerContent[currentIndex]?.title}

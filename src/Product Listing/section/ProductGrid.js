@@ -173,7 +173,7 @@ const ProductGrid = ({ masterCategory, secondaryCategory }) => {
       {/* Main Content Area */}
       <div className="products-main">
         {/* Products Grid */}
-        <div className="products-grid">
+        <div className="product-grid-products-grid">
           {products
             .filter(product => product && product.id)
             .map((product) => {
@@ -183,26 +183,26 @@ const ProductGrid = ({ masterCategory, secondaryCategory }) => {
               (product.image ? `${IMAGE_PREFIX}${product.image}` : '');
 
             return (
-              <div key={product.id} className="product-item">
-                <div className="product-image-wrapper">
+              <div key={product.id} className="product-grid-item">
+                <div className="product-grid-image-wrapper">
                   {isDiscounted && (
-                    <div className="sale-tag">Sale</div>
+                    <div className="product-grid-sale-tag">Sale</div>
                   )}
                   <img
                     src={imageUrl}
                     alt={product.name || 'Product'}
-                    className="product-img"
+                    className="product-grid-img"
                     onError={handleImageError}
                   />
                   
                   {/* Action Buttons - Show on Hover */}
-                  <div className="product-actions">
-                    <button className="action-btn cart-btn" title="Add to Cart">
+                  <div className="product-grid-actions">
+                    <button className="product-grid-action-btn product-grid-cart-btn" title="Add to Cart">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M3 3h2l.4 2m0 0h13.2a1 1 0 0 1 .98 1.2l-1.6 8a1 1 0 0 1-.98.8H6.4m0 0L5 7H3m3.4 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm10 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
                       </svg>
                     </button>
-                    <button className="action-btn quick-view-btn" title="Quick View">
+                    <button className="product-grid-action-btn product-grid-quick-view-btn" title="Quick View">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M15 3h6v6m-11 5l8-8m-13 4v8a2 2 0 0 0 2 2h8"/>
                       </svg>
@@ -210,21 +210,21 @@ const ProductGrid = ({ masterCategory, secondaryCategory }) => {
                   </div>
                 </div>
                 
-                <div className="product-details">
-                  <h4 className="product-title">{product.name}</h4>
+                <div className="product-grid-details">
+                  <h4 className="product-grid-title">{product.name}</h4>
                   
-                  <div className="product-price">
+                  <div className="product-grid-price">
                     {isDiscounted ? (
                       <>
-                        <span className="current-price">
+                        <span className="product-grid-current-price">
                           {formatPrice(product.discountedPrice)}
                         </span>
-                        <span className="old-price">
+                        <span className="product-grid-old-price">
                           {formatPrice(product.originalPrice)}
                         </span>
                       </>
                     ) : (
-                      <span className="current-price">
+                      <span className="product-grid-current-price">
                         {formatPrice(product.prize || product.originalPrice || product.discountedPrice)}
                       </span>
                     )}

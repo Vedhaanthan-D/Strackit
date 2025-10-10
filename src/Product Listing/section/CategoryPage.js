@@ -20,6 +20,8 @@ const CategoryPage = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        // Reset selected secondary when navigating to different master category
+        setSelectedSecondary(null);
         
         // Fetch master categories to get the current category details
         const masterData = await fetchMasterCategories(HOME_CONFIG.shopId);
@@ -34,6 +36,11 @@ const CategoryPage = () => {
         const data = await getSecondaryCategories(HOME_CONFIG.shopId, id);
         const active = (data || []).filter(s => s.status === 'active' || s.status === 1);
         setSecondaries(active);
+        
+        // Automatically select the first subcategory if available
+        if (active.length > 0) {
+          setSelectedSecondary(active[0]);
+        }
       } catch (err) {
         setError(err.message || 'Failed to load category data');
       } finally {
@@ -147,9 +154,20 @@ const CategoryPage = () => {
               : masterCategory?.category
             }
           </h2>
-          {selectedSecondary && (
+          {selectedSecondary ? (
             <p className="categoryDescription">
-              Showing products from {selectedSecondary.category}
+              {secondaries[0]?.id === selectedSecondary.id 
+                ? `Showing products from ${selectedSecondary.category} (auto-selected)` 
+                : `Showing products from ${selectedSecondary.category}`
+              }
+            </p>
+          ) : secondaries.length === 0 ? (
+            <p className="categoryDescription">
+              Showing all products from {masterCategory?.category}
+            </p>
+          ) : (
+            <p className="categoryDescription">
+              Loading subcategories...
             </p>
           )}
         </div>
@@ -157,6 +175,7 @@ const CategoryPage = () => {
         <ProductGrid 
           masterCategory={id}
           secondaryCategory={selectedSecondary?.id}
+          key={`${id}-${selectedSecondary?.id || 'all'}`}
         />
       </div>
     </div>
