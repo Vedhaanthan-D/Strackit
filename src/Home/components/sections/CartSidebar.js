@@ -2,9 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiX, FiPlus, FiMinus, FiChevronLeft, FiChevronRight, FiShoppingCart } from 'react-icons/fi';
 import { MdNote, MdLocalOffer, MdLocalShipping } from 'react-icons/md';
-import { CART_CONFIG, IMAGE_PREFIX, FREE_SHIPPING_THRESHOLD } from '../../../config/appIds.js';
+import { CART_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
 import { fetchCart, addToCart, removeFromCart, updateCartQuantity } from 'shops-query/src/modules/cart/index.js';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
+import { fetchCouponCode } from 'shops-query/src/modules/CouponCode/Controller/index.js';
+import { fetchShippingCost } from 'shops-query/src/modules/ShippingCost/Controller/index.js';
 import '../styles/CartSidebar.css';
 
 // Empty Cart Icon Component
@@ -40,12 +42,14 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
   const [loading, setLoading] = useState(false);
   const [recommendedLoading, setRecommendedLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [coupons, setCoupons] = useState([]);
+  const [shippingCosts, setShippingCosts] = useState([]);
+  const [freeShippingThreshold, setFreeShippingThreshold] = useState(500);
   const recommendedScrollRef = useRef(null);
   
   // Constants from config
   const { shopId, userId } = CART_CONFIG;
   const imagePrefix = IMAGE_PREFIX;
-  const freeShippingThreshold = FREE_SHIPPING_THRESHOLD;
   
   // Calculate cart totals
   const subtotal = cartItems.reduce((total, item) => {
@@ -56,8 +60,101 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
   }, 0);
   
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-  const amountForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
-  const freeShippingProgress = Math.min(100, (subtotal / freeShippingThreshold) * 100);
+  
+  // Dynamic free shipping calculation
+  const calculateFreeShippingEligibility = () => {
+    // Check for free shipping coupons first
+    const freeShippingCoupon = coupons.find(coupon => {
+      const isActive = coupon.status === 'active' || coupon.status === 1;
+      const isValidDate = new Date() >= new Date(coupon.validityFrom) && 
+                          new Date() <= new Date(coupon.validityTo);
+      const meetsMinimum = subtotal >= parseFloat(coupon.priceRange || 0);
+      
+      // Check if coupon provides free shipping (discount could be 100% of shipping or name/description indicates free shipping)
+      const isFreeShipping = coupon.name?.toLowerCase().includes('free shipping') ||
+                             coupon.description?.toLowerCase().includes('free shipping') ||
+                             coupon.code?.toLowerCase().includes('freeship');
+      
+      return isActive && isValidDate && meetsMinimum && isFreeShipping;
+    });
+    
+    if (freeShippingCoupon) {
+      return {
+        qualifies: true,
+        threshold: parseFloat(freeShippingCoupon.priceRange || 0),
+        couponBased: true
+      };
+    }
+    
+    // Check shipping cost tiers
+    const applicableShipping = shippingCosts
+      .filter(shipping => subtotal >= parseFloat(shipping.purchaseRange || 0))
+      .sort((a, b) => parseFloat(b.purchaseRange) - parseFloat(a.purchaseRange))[0];
+    
+    if (applicableShipping && parseFloat(applicableShipping.price) === 0) {
+      return {
+        qualifies: true,
+        threshold: parseFloat(applicableShipping.purchaseRange || 0),
+        couponBased: false
+      };
+    }
+    
+    // Find next free shipping tier
+    const nextFreeTier = shippingCosts
+      .filter(shipping => 
+        parseFloat(shipping.price || 0) === 0 && 
+        parseFloat(shipping.purchaseRange || 0) > subtotal
+      )
+      .sort((a, b) => parseFloat(a.purchaseRange) - parseFloat(b.purchaseRange))[0];
+    
+    if (nextFreeTier) {
+      return {
+        qualifies: false,
+        threshold: parseFloat(nextFreeTier.purchaseRange),
+        couponBased: false
+      };
+    }
+    
+    // Use default threshold
+    return {
+      qualifies: subtotal >= freeShippingThreshold,
+      threshold: freeShippingThreshold,
+      couponBased: false
+    };
+  };
+  
+  const freeShippingInfo = calculateFreeShippingEligibility();
+  const amountForFreeShipping = Math.max(0, freeShippingInfo.threshold - subtotal);
+  const freeShippingProgress = Math.min(100, (subtotal / freeShippingInfo.threshold) * 100);
+
+  // Fetch coupon data
+  const fetchCouponData = async () => {
+    try {
+      const couponData = await fetchCouponCode(shopId);
+      setCoupons(couponData || []);
+    } catch (err) {
+      setCoupons([]);
+    }
+  };
+
+  // Fetch shipping cost data
+  const fetchShippingData = async () => {
+    try {
+      const shippingData = await fetchShippingCost(shopId);
+      setShippingCosts(shippingData || []);
+      
+      // Update default threshold based on shipping data
+      const freeShippingTiers = shippingData
+        .filter(shipping => parseFloat(shipping.price || 0) === 0)
+        .sort((a, b) => parseFloat(a.purchaseRange) - parseFloat(b.purchaseRange));
+      
+      if (freeShippingTiers.length > 0) {
+        setFreeShippingThreshold(parseFloat(freeShippingTiers[0].purchaseRange));
+      }
+    } catch (err) {
+      setShippingCosts([]);
+    }
+  };
 
   // Fetch cart data
   const fetchCartData = async () => {
@@ -94,7 +191,7 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
         setRecommendedProducts(availableProducts);
       }
     } catch (err) {
-      // Silently handle error
+      setRecommendedProducts([]);
     } finally {
       setRecommendedLoading(false);
     }
@@ -127,7 +224,8 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
       );
       setCartItemCount(newCartItems.reduce((total, item) => total + item.quantity, 0));
     } catch (err) {
-      // Silently handle error
+      // Failed to update quantity, refresh cart data
+      fetchCartData();
     }
   };
 
@@ -151,7 +249,8 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
         setCartItemCount(prev => prev - removedItem.quantity);
       }
     } catch (err) {
-      // Silently handle error
+      // Failed to remove item, refresh cart data
+      fetchCartData();
     }
   };
 
@@ -170,7 +269,8 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
       // Refresh recommendations (to exclude newly added item)
       fetchRecommendedProducts();
     } catch (err) {
-      // Silently handle error
+      // Failed to add item
+      setError('Failed to add item to cart');
     }
   };
 
@@ -201,10 +301,12 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
     e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik01MCA0MEMzNy41IDQwIDI3LjUgNTAgMjcuNSA2Mi41QzMwIDYwIDMzLjc1IDU4Ljc1IDM3LjUgNTguNzVDNDEuMjUgNTguNzUgNDUgNjAgNDcuNSA2Mi41QzQ4Ljc1IDYzLjc1IDUxLjI1IDYzLjc1IDUyLjUgNjIuNUM1NSA2MCA1OC43NSA1OC43NSA2Mi41IDU4Ljc1QzY2LjI1IDU4Ljc1IDcwIDYwIDcyLjUgNjIuNUM3Mi41IDUwIDYyLjUgNDAgNTAgNDBaIiBmaWxsPSIjRDFEMUQxIi8+Cjwvc3ZnPgo=';
   };
 
-  // Fetch data when sidebar opens
+  // Fetch initial data when sidebar opens
   useEffect(() => {
     if (isOpen) {
       fetchCartData();
+      fetchCouponData();
+      fetchShippingData();
     }
   }, [isOpen]);
 
@@ -248,13 +350,19 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                   {freeShippingProgress >= 100 ? '✓' : '📦'}
                 </div>
               </div>
-              {amountForFreeShipping > 0 ? (
+              {!freeShippingInfo.qualifies ? (
                 <p className="shipping-text">
                   Buy <strong>₹{amountForFreeShipping.toFixed(2)}</strong> more to enjoy <strong>FREE shipping</strong>
+                  {freeShippingInfo.couponBased && (
+                    <span className="coupon-indicator"> (Coupon eligible)</span>
+                  )}
                 </p>
               ) : (
-                <p className="shipping-text">
-                   <strong>Congratulations! You qualify for FREE shipping</strong>
+                <p className="shipping-text congratulations">
+                  <strong>Congratulations! You qualify for FREE shipping</strong>
+                  {freeShippingInfo.couponBased && (
+                    <span className="coupon-indicator"> (Coupon applied)</span>
+                  )}
                 </p>
               )}
             </div>

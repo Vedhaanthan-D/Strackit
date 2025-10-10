@@ -67,7 +67,8 @@ const ViewCart = () => {
         )
       );
     } catch (err) {
-      // Silently handle error
+      // Failed to update quantity, refresh cart data
+      fetchCartData();
     }
   };
 
@@ -85,7 +86,8 @@ const ViewCart = () => {
         prevItems.filter(item => item.productId !== productId)
       );
     } catch (err) {
-      // Silently handle error
+      // Failed to remove item, refresh cart data
+      fetchCartData();
     }
   };
 
@@ -101,8 +103,7 @@ const ViewCart = () => {
 
   // Handle checkout
   const handleCheckout = () => {
-    // Navigate to checkout or handle checkout process
-    // navigate('/checkout');
+    navigate('/checkout');
   };
 
   // Fetch cart data on component mount
@@ -164,7 +165,7 @@ const ViewCart = () => {
                             <div className="product-details">
                               <h3 className="product-name">{item.name}</h3>
                               <p className="product-price">₹{finalPrice.toFixed(2)}</p>
-                              <p className="product-variant">Title: <strong>{item.title}</strong></p>
+                              <p className="product-variant"><strong>{item.title}</strong></p>
                               <button 
                                 className="delete-btn"
                                 onClick={() => removeItem(item.productId)}

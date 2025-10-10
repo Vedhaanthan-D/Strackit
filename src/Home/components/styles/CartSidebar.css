@@ -131,11 +131,31 @@
   color: #374151;
   margin: 0;
   line-height: 1.4;
+  transition: all 0.3s ease;
 }
 
 .shipping-text strong {
   font-weight: 600;
   color: #111827;
+}
+
+.shipping-text.congratulations {
+  color: #059669;
+  font-weight: 500;
+}
+
+.shipping-text.congratulations strong {
+  color: #047857;
+  font-weight: 600;
+}
+
+.coupon-indicator {
+  font-size: 12px;
+  color: #8B5A3C;
+  font-weight: 500;
+  font-style: italic;
+  display: block;
+  margin-top: 2px;
 }
 
 /* Cart Content */

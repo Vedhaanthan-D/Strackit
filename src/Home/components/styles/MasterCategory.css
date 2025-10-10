@@ -24,6 +24,7 @@
   align-items: center;
   max-width: 1400px;
   margin: 0 auto;
+  overflow: hidden; /* Prevent overflow issues */
 }
 
 .categoryRow {
@@ -34,6 +35,8 @@
   padding: 0 50px;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* Internet Explorer 10+ */
+  align-items: stretch; /* Ensure all boxes have same height */
+  justify-content: flex-start; /* Align boxes to the start */
 }
 
 .categoryRow::-webkit-scrollbar {
@@ -42,8 +45,9 @@
 
 .categoryBox {
   position: relative;
-  min-width: 280px;
-  height: 400px;
+  width: 280px; /* Fixed width instead of min-width */
+  height: 400px; /* Fixed height */
+  flex: 0 0 280px; /* Don't grow or shrink, maintain fixed width */
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
@@ -62,6 +66,7 @@
   object-fit: cover;
   object-position: center; /* Center the image content */
   transition: transform 0.3s ease;
+  display: block; /* Ensure consistent image display */
 }
 
 .categoryBox:hover .categoryImage {
@@ -70,6 +75,7 @@
 
 .categoryOverlay {
   position: absolute;
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;
@@ -83,7 +89,9 @@
   align-items: center;
   justify-content: center;
   height: 100%;
+  width: 100%;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .categoryName {
@@ -91,10 +99,14 @@
   font-size: 1.8rem;
   font-weight: 700;
   text-align: center;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 2px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   font-family: 'Poppins', sans-serif;
   line-height: 1.2;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 /* Arrow Buttons */
@@ -137,6 +149,9 @@
 /* Loading Skeleton Styles */
 .skeleton {
   animation: pulse 1.5s ease-in-out infinite alternate;
+  width: 280px !important;
+  height: 400px !important;
+  flex: 0 0 280px !important;
 }
 
 @keyframes pulse {
@@ -189,8 +204,9 @@
 /* Responsive Design */
 @media (max-width: 1200px) {
   .categoryBox {
-    min-width: 250px;
+    width: 250px;
     height: 350px;
+    flex: 0 0 250px;
   }
   
   .categoryName {
@@ -200,6 +216,12 @@
   .categoryTitle {
     font-size: 2.2rem;
   }
+  
+  .skeleton {
+    width: 250px !important;
+    height: 350px !important;
+    flex: 0 0 250px !important;
+  }
 }
 
 @media (max-width: 768px) {
@@ -208,12 +230,14 @@
   }
   
   .categoryBox {
-    min-width: 220px;
+    width: 220px;
     height: 320px;
+    flex: 0 0 220px;
   }
   
   .categoryName {
     font-size: 1.4rem;
+    letter-spacing: 1.5px;
   }
   
   .categoryTitle {
@@ -233,6 +257,12 @@
   .categoryArrow svg {
     font-size: 1.3rem;
   }
+  
+  .skeleton {
+    width: 220px !important;
+    height: 320px !important;
+    flex: 0 0 220px !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -241,12 +271,14 @@
   }
   
   .categoryBox {
-    min-width: 180px;
+    width: 180px;
     height: 280px;
+    flex: 0 0 180px;
   }
   
   .categoryName {
     font-size: 1.2rem;
+    letter-spacing: 1px;
   }
   
   .categoryTitle {
@@ -273,5 +305,11 @@
   
   .rightArrow {
     right: 5px;
+  }
+  
+  .skeleton {
+    width: 180px !important;
+    height: 280px !important;
+    flex: 0 0 180px !important;
   }
 }
