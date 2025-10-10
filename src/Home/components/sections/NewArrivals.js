@@ -8,8 +8,10 @@ import '../styles/NewArrivals.css';
 const ProductSkeleton = () => (
   <div className="product-skeleton">
     <div className="product-skeleton-image"></div>
-    <div className="product-skeleton-title"></div>
-    <div className="product-skeleton-price"></div>
+    <div className="product-info">
+      <div className="product-skeleton-title"></div>
+      <div className="product-skeleton-price"></div>
+    </div>
   </div>
 );
 
@@ -167,7 +169,7 @@ const NewArrivals = ({
                   onError={handleImageError}
                 />
                 
-                {/* Sold Out Badge */}
+                {/* Sold Out Badge
                 {product.noStock && (
                   <div className="sold-out-badge">
                     <div className="sold-out-circle">
@@ -175,7 +177,7 @@ const NewArrivals = ({
                       <span className="sold-out-text">OUT</span>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
               
               <div className="product-info">

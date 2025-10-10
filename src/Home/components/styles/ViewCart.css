@@ -146,9 +146,9 @@
 }
 
 .product-image {
-  width: 140px;
-  height: 140px;
-  overflow: hidden;
+  width: 230px;
+  /* height: 100px; */
+  /* overflow: hidden; */
   border-radius: 8px;
   flex-shrink: 0;
 }
