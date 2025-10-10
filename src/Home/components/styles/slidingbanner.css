@@ -36,6 +36,7 @@
   left: 0;
   right: 0;
   bottom: 0;
+  background: rgb(255, 255, 255); /* Black overlay */
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -47,31 +48,29 @@
   max-width: 600px;
   color: white;
   text-align: left;
-  margin-left: 900px;
+  margin-left: 0; /* Remove the large margin */
 }
 
 /* Banner 1 Content - Left side positioning */
 .banner1Content {
-  margin-left: 15px;
+  margin-left: 0;
   text-align: left;
-  
 }
 
 /* Banner 2 Content - Right side positioning */  
 .banner2Content {
-  margin-left: 15px;
+  margin-left: 0;
   text-align: left;
-  
 }
 
 /* Additional responsive positioning for tablets */
 @media (max-width: 1024px) {
   .banner1Content {
-    margin-left: -250px;
+    margin-left: 0;
   }
   
   .banner2Content {
-    margin-left: 500px;
+    margin-left: 0;
   }
 }
 
@@ -90,26 +89,27 @@
   font-family: 'Jost', sans-serif;
   font-size: 3.5rem;
   font-weight: 700;
-  color: rgb(0, 0, 0);
+  color: white; /* Changed to white for better visibility on dark overlay */
   line-height: 1.2;
   margin: 0 0 20px 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .bannerDescription {
   font-family: 'Jost', sans-serif;
   font-size: 1.1rem;
   font-weight: 400;
-  color: rgba(0, 0, 0, 0.9);
+  color: rgba(255, 255, 255, 0.9); /* Changed to white for better visibility */
   line-height: 1.6;
   margin: 0 0 30px 0;
   max-width: 400px;
+  margin-right: 100px;
 }
 
 .bannerButton {
   background: transparent;
-  border: 2px solid #000;
-  color: #000;
+  border: 2px solid white; /* Changed to white border */
+  color: white; /* Changed to white text */
   font-family: 'Jost', sans-serif;
   font-size: 0.9rem;
   font-weight: 600;
@@ -120,21 +120,22 @@
   transition: all 0.3s ease;
   outline: none;
   border-radius: 0;
+  margin-right: 300px;
 }
 
 .bannerButton:hover {
-  background: #000;
-  color: #fff;
-  border: 2px solid #000;
+  background: white;
+  color: #000;
+  border: 2px solid white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }
 
 .bannerButton:active {
-  background: #000;
-  color: #fff;
+  background: white;
+  color: #000;
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.3);
 }
 
 /* Navigation Arrows */
@@ -412,7 +413,7 @@
 
   /* Banner responsive positioning */
   .banner1Content {
-    margin-left: -250px;
+    margin-left: 0;
     text-align: center;
   }
 

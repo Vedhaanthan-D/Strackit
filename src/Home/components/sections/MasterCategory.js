@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { fetchMasterCategories } from 'shops-query/src/modules/masterCategories/index.js';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
@@ -21,6 +22,7 @@ const CategorySkeleton = () => (
 );
 
 const MasterCategory = () => {
+  const navigate = useNavigate();
   const [masterCategories, setMasterCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -74,10 +76,8 @@ const MasterCategory = () => {
 
   // Handle category click
   const handleCategoryClick = (category) => {
-    // Navigate to category page
-    // You can implement routing here, e.g.:
-    // window.location.href = `/category/${category.id}`;
-    // or use React Router: navigate(`/category/${category.id}`);
+    // Navigate to category page with category ID
+    navigate(`/category/${category.id}`);
   };
 
   // Handle image error
