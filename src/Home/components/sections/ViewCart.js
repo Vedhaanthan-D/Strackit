@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiPlus, FiMinus } from 'react-icons/fi';
+import { CART_CONFIG, IMAGE_PREFIX, FREE_SHIPPING_THRESHOLD } from '../../../config/appIds.js';
 import { fetchCart, removeFromCart, updateCartQuantity } from 'shops-query/src/modules/cart/index.js';
 import '../styles/ViewCart.css';
 
@@ -14,16 +15,15 @@ const ViewCart = () => {
   const [postalCode, setPostalCode] = useState('');
   const [orderNotes, setOrderNotes] = useState('');
   
-  // Constants
-  const shopId = 488;
-  const userId = 1968;
-  const imagePrefix = "https://s3.ap-south-1.amazonaws.com/business.strackit.com/";
-  const freeShippingThreshold = 530;
+  // Constants from config
+  const { shopId, userId } = CART_CONFIG;
+  const imagePrefix = IMAGE_PREFIX;
+  const freeShippingThreshold = FREE_SHIPPING_THRESHOLD;
   
   // Calculate cart totals
   const subtotal = cartItems.reduce((total, item) => {
-    const price = parseFloat(item.prize || 0);
-    const discount = parseFloat(item.Discount || 0);
+    const price = parseFloat(item.prize);
+    const discount = parseFloat(item.Discount);
     const finalPrice = price - discount;
     return total + (finalPrice * item.quantity);
   }, 0);
@@ -38,10 +38,9 @@ const ViewCart = () => {
       setLoading(true);
       setError(null);
       const cartData = await fetchCart(shopId, userId);
-      setCartItems(cartData || []);
+      setCartItems(cartData);
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching cart:', err);
     } finally {
       setLoading(false);
     }
@@ -68,7 +67,7 @@ const ViewCart = () => {
         )
       );
     } catch (err) {
-      console.error('Error updating quantity:', err);
+      // Silently handle error
     }
   };
 
@@ -86,7 +85,7 @@ const ViewCart = () => {
         prevItems.filter(item => item.productId !== productId)
       );
     } catch (err) {
-      console.error('Error removing item:', err);
+      // Silently handle error
     }
   };
 
@@ -103,7 +102,6 @@ const ViewCart = () => {
   // Handle checkout
   const handleCheckout = () => {
     // Navigate to checkout or handle checkout process
-    console.log('Proceeding to checkout...');
     // navigate('/checkout');
   };
 
@@ -147,8 +145,8 @@ const ViewCart = () => {
                 </thead>
                 <tbody>
                   {cartItems.map((item) => {
-                    const price = parseFloat(item.prize || 0);
-                    const discount = parseFloat(item.Discount || 0);
+                    const price = parseFloat(item.prize);
+                    const discount = parseFloat(item.Discount);
                     const finalPrice = price - discount;
                     const itemTotal = finalPrice * item.quantity;
                     
@@ -165,8 +163,8 @@ const ViewCart = () => {
                             </div>
                             <div className="product-details">
                               <h3 className="product-name">{item.name}</h3>
-                              <p className="product-price">${finalPrice.toFixed(2)}</p>
-                              <p className="product-variant">Title: <strong>Default Title</strong></p>
+                              <p className="product-price">₹{finalPrice.toFixed(2)}</p>
+                              <p className="product-variant">Title: <strong>{item.title}</strong></p>
                               <button 
                                 className="delete-btn"
                                 onClick={() => removeItem(item.productId)}
@@ -197,7 +195,7 @@ const ViewCart = () => {
                           </div>
                         </td>
                         <td className="total-col">
-                          <span className="item-total">${itemTotal.toFixed(2)}</span>
+                          <span className="item-total">₹{itemTotal.toFixed(2)}</span>
                         </td>
                       </tr>
                     );
@@ -230,7 +228,7 @@ const ViewCart = () => {
                 </div>
                 {amountForFreeShipping > 0 ? (
                   <p className="shipping-text">
-                    Buy <strong>${amountForFreeShipping.toFixed(2)} USD</strong> more to enjoy <strong>FREE shipping</strong>
+                    Buy <strong>₹{amountForFreeShipping.toFixed(2)}</strong> more to enjoy <strong>FREE shipping</strong>
                   </p>
                 ) : (
                   <p className="shipping-text">
@@ -292,7 +290,7 @@ const ViewCart = () => {
           <div className="order-total">
             <div className="subtotal">
               <span>Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>₹{subtotal.toFixed(2)}</span>
             </div>
             <div className="shipping">
               <span>Shipping</span>
@@ -300,7 +298,7 @@ const ViewCart = () => {
             </div>
             <div className="total">
               <span>Total</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>₹{subtotal.toFixed(2)}</span>
             </div>
 
             <p className="tax-note">Taxes and shipping calculated at checkout</p>
@@ -316,8 +314,6 @@ const ViewCart = () => {
           </button>
         </div>
       </div>
-      
-      
     </div>
   );
 };

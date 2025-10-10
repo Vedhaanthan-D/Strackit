@@ -690,20 +690,10 @@
   flex-shrink: 0; /* Prevent icon from shrinking */
 }
 
-/* Specific custom icons for each action */
-.action-btn:nth-child(1) .action-icon {
-  /* Order Note - Custom SVG icon */
-  background-image: url('../../assets/order.svg');
-}
-
-.action-btn:nth-child(2) .action-icon {
-  /* Coupon - Custom PNG icon */
-  background-image: url('../../assets/coupon.png');
-}
-
-.action-btn:nth-child(3) .action-icon {
-  /* Shipping - Custom PNG icon */
-  background-image: url('../../assets/ship.png');
+/* React Icon styling for action buttons */
+.action-btn .action-icon {
+  font-size: 16px;
+  margin-right: 8px;
 }
 
 .cart-total {

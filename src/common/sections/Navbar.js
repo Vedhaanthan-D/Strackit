@@ -8,8 +8,8 @@ import {
   FiX,
   FiChevronDown 
 } from 'react-icons/fi';
-import logoImage from '../../Home/assets/aone-logo.webp';
 import '../styles/header.css';
+import aoneLogo from '../../Home/assets/aone-logo.jpg';
 
 const Navbar = ({
   navigationLinks = [
@@ -20,7 +20,7 @@ const Navbar = ({
     { name: 'Pages', path: '/pages' }
   ],
   languageOptions = ['English', 'French'],
-  currencyOptions = ['USD', 'INR'],
+  currencyOptions = ['INR', 'USD'],
   cartCount = 0,
   onSearchClick = () => {},
   onUserClick = () => {},
@@ -30,7 +30,7 @@ const Navbar = ({
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(languageOptions[0]);
-  const [selectedCurrency, setSelectedCurrency] = useState(currencyOptions[0]);
+  const [selectedCurrency, setSelectedCurrency] = useState('INR');
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
   
@@ -127,18 +127,7 @@ const Navbar = ({
         {/* Center Section - Logo */}
         <div className="logoContainer">
           <Link to="/" className="logoLink">
-            <img 
-              src={logoImage} 
-              alt="AONE Logo" 
-              className="logoImage"
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'block';
-              }}
-            />
-            <div className="logoText" style={{ display: 'none' }}>
-              AONE
-            </div>
+            <img src={aoneLogo} alt="AONE Logo" className="logoImage" />
           </Link>
         </div>
 

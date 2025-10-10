@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
+import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
 import '../styles/NewArrivals.css';
 
 // Loading Skeleton Component
@@ -23,12 +24,6 @@ const NewArrivals = ({
   const [error, setError] = useState(null);
   const productsContainerRef = useRef(null);
   const [scrollPosition, setScrollPosition] = useState(0);
-  
-  // S3 image prefix for product images
-  const imagePrefix = "https://s3.ap-south-1.amazonaws.com/business.strackit.com/";
-  
-  // Shop ID for fetching products
-  const shopId = 12; // Using the same shop ID as in other components
 
   useEffect(() => {
     const fetchNewArrivals = async () => {
@@ -36,7 +31,7 @@ const NewArrivals = ({
         setLoading(true);
         
         // Fetch products from the shop
-        const productData = await getProductsController(shopId);
+        const productData = await getProductsController(HOME_CONFIG.shopId);
         
         if (productData && productData.length > 0) {
           // Filter published products
@@ -70,7 +65,7 @@ const NewArrivals = ({
     };
 
     fetchNewArrivals();
-  }, [shopId]);
+  }, []);
 
   // Handle image error
   const handleImageError = (e) => {
@@ -162,10 +157,10 @@ const NewArrivals = ({
               <div className="product-image-container">
                 <img
                   src={product.productImage && product.productImage.length > 0 
-                    ? `${imagePrefix}${product.productImage[0].image}`
+                    ? `${IMAGE_PREFIX}${product.productImage[0].image}`
                     : product.featureImage 
-                      ? `${imagePrefix}${product.featureImage}`
-                      : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTI1QzEyMy4xMjUgMTI1IDEwMi4xODggMTQ2LjM3NSAxMDIuMTg4IDE3Mi44MTJDMTA2Ljg3NSAxNjguNTYyIDExMy4xMjUgMTY2LjI1IDEyMCAxNjYuMjVDMTI2Ljg3NSAxNjYuMjUgMTMzLjEyNSAxNjguMTI1IDEzNy44MTIgMTcyLjgxMkMxNDAuNjI1IDE3NS42MjUgMTQ2LjI1IDE3NS42MjUgMTQ5LjA2MiAxNzIuODEyQzE1My43NSAxNjguMTI1IDE2MCAxNjUuODEyIDE2Ni44NzUgMTY1LjgxMkMxNzMuNzUgMTY1LjgxMiAxODAuNjI1IDE2OC41NjIgMTg0Ljg3NSAxNzIuODEyQzE4NC44NzUgMTQ2LjM3NSAxNjQuMzc1IDEyNSAxMzggMTI1SDE1MFoiIGZpbGw9IiNEMUQxRDEiLz4KPHBhdGggZD0iTTE5OCAxODYuMjVDMTk1LjE4OCAxODYuMjUgMTkzLjMxMiAxODUuODEyIDE5MS40MzggMTg0LjgxMkMxODcuMTg4IDE4My4zNzUgMTgyLjUgMTgzLjM3NSAxNzguMjUgMTg0LjgxMkMxNzYuMzc1IDE4NS4zNzUgMTc0LjUgMTg2LjI1IDE3MiAxODYuMjVDMTY5LjUgMTg2LjI1IDE2Ny42MjUgMTg1LjgxMiAxNjUuNzUgMTg0LjgxMkMxNjEuNSAxODMuMzc1IDE1Ni44MTIgMTgzLjM3NSAxNTIuNTYyIDE4NC44MTJDMTUwLjY4OCAxODUuMzc1IDE0OC44MTIgMTg2LjI1IDE0Ni4zMTIgMTg2LjI1QzE0My44MTIgMTg2LjI1IDE0MS45MzggMTg1LjgxMiAxNDAuMDYyIDE4NC44MTJDMTM1LjgxMiAxODMuMzc1IDEzMS4xMjUgMTgzLjM3NSAxMjYuODc1IDE4NC44MTJDMTMxLjU2MiAxOTUuNjI1IDE0NCAyMDEuNjg4IDE1OCAxOTkuMzEyQzE3MiAxOTYuOTM4IDE4My4zNzUgMTg3LjU2MiAxODggMTczLjI1QzE5MS4yNSAxNzcuMDYyIDE5NS4xODggMTc5Ljg3NSAyMDAgMTgxLjNDMTk5LjUgMTgyLjc1IDE5OSAxODQuNjI1IDE5OCAxODYuMjVaIiBmaWxsPSIjRDFEMUQxIi8+Cjwvc3ZnPgo='
+                      ? `${IMAGE_PREFIX}${product.featureImage}`
+                      : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTI1QzEyMy4xMjUgMTI1IDEwMi4xODggMTQ2LjM3NSAxMDIuMTg4IDE3Mi44MTJDMTA2Ljg3NSAxNjguNTYyIDExMy4xMjUgMTY2LjI1IDEyMCAxNjYuMjVDMTI2Ljg3NSAxNjYuMjUgMTMzLjEyNSAxNjguMTI1IDEzNy44MTIgMTcyLjgxMkMxNDAuNjI1IDE3NS42MjUgMTQ2LjI1IDE3NS42MjUgMTQ5LjA2MiAxNzIuODEyQzE1My43NSAxNjguMTI1IDE2MCAxNjUuODEyIDE2Ni44NzUgMTY1LjgxMkMxNzMuNzUgMTY1LjgxMiAxODAuNjI1IDE2OC41NjIgMTg0Ljg3NSAxNzIuODEyQzE4NC44NzUgMTQ2LjM3NSAxNjNCMzc1IDEyNSAxMzggMTI1SDE1MFoiIGZpbGw9IiNEMUQxRDEiLz4KPHBhdGggZD0iTTE5OCAxODYuMjVDMTk1LjE4OCAxODYuMjUgMTkzLjMxMiAxODUuODEyIDE5MS40MzggMTg0LjgxMkMxODcuMTg4IDE4My4zNzUgMTgyLjUgMTgzLjM3NSAxNzguMjUgMTg0LjgxMkMxNzYuMzc1IDE4NS4zNzUgMTc0LjUgMTg2LjI1IDE3MiAxODYuMjVDMTY5LjUgMTg2LjI1IDE2Ny42MjUgMTg1LjgxMiAxNjUuNzUgMTg0LjgxMkMxNjEuNSAxODMuMzc1IDE1Ni44MTIgMTgzLjM3NSAxNTIuNTYyIDE4NC44MTJDMTUwLjY4OCAxODUuMzc1IDE0OC44MTIgMTg2LjI1IDE0Ni4zMTIgMTg2LjI1QzE0My44MTIgMTg2LjI1IDE0MS45MzggMTg1LjgxMiAxNDAuMDYyIDE4NC44MTJDMTM1LjgxMiAxODMuMzc1IDEzMS4xMjUgMTgzLjM3NSAxMjYuODc1IDE4NC44MTJDMTMxLjU2MiAxOTUuNjI1IDE0NCAyMDEuNjg4IDE1OCAxOTkuMzEyQzE3MiAxOTYuOTM4IDE4My4zNzUgMTg3LjU2MiAxODggMTczLjI1QzE5MS4yNSAxNzcuMDYyIDE5NS4xODggMTc5Ljg3NSAyMDAgMTgxLjNDMTk5LjUgMTgyLjc1IDE5OSAxODQuNjI1IDE5OCAxODYuMjVaIiBmaWxsPSIjRDFEMUQxIi8+Cjwvc3ZnPgo='
                   }
                   alt={product.name}
                   className="product-image"
@@ -185,7 +180,7 @@ const NewArrivals = ({
               
               <div className="product-info">
                 <h3 className="product-name">{product.name}</h3>
-                <p className="product-price">€{(parseFloat(product.prize) || 0).toFixed(2)}</p>
+                <p className="product-price">₹{parseFloat(product.prize).toFixed(2)}</p>
               </div>
             </div>
           ))}

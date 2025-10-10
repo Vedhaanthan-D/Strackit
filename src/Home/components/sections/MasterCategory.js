@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { fetchMasterCategories } from 'shops-query/src/modules/masterCategories/index.js';
+import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
 import '../styles/MasterCategory.css';
 
 // Loading Skeleton for categories
@@ -24,59 +25,29 @@ const MasterCategory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [scrollPosition, setScrollPosition] = useState(0);
-  
-  // S3 image prefix for master category images
-  const imagePrefix = "https://s3.ap-south-1.amazonaws.com/business.strackit.com/";
-  
-  // Shop ID for fetching categories
-  const shopId = 12; // Using the same shop ID as in BannerSlider
 
-  // Fallback categories for error handling or empty response
-  // const fallbackCategories = [
-  //   {
-  //     id: 'fallback-1',
-  //     category: 'Accessory',
-  //     image: 'accessories.jpg',
-  //     status: 'active'
-  //   },
-  //   {
-  //     id: 'fallback-2',
-  //     category: 'Clothing',
-  //     image: 'clothing.jpg',
-  //     status: 'active'
-  //   },
-  //   {
-  //     id: 'fallback-3',
-  //     category: 'Shoes',
-  //     image: 'shoes.jpg',
-  //     status: 'active'
-  //   }
-  // ];
-
+  // Fetch master categories on component mount
   // Fetch master categories on component mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
         
-        const categoryData = await fetchMasterCategories(shopId);
+        const categoryData = await fetchMasterCategories(HOME_CONFIG.shopId);
         
         if (categoryData && categoryData.length > 0) {
           // Filter active categories and sort by position
           const activeCategories = categoryData
             .filter(cat => cat.status === 'active' || cat.status === 1)
-            .sort((a, b) => (a.position || 0) - (b.position || 0));
+            .sort((a, b) => a.position - b.position);
           
           setMasterCategories(activeCategories);
           setError(null);
         } else {
-          // setMasterCategories(fallbackCategories);
           setMasterCategories([]);
         }
       } catch (err) {
         setError(err);
-        // Use fallback categories on error
-        // setMasterCategories(fallbackCategories);
         setMasterCategories([]);
       } finally {
         setLoading(false);
@@ -84,7 +55,7 @@ const MasterCategory = () => {
     };
 
     fetchCategories();
-  }, [shopId]);
+  }, []);
 
   // Scroll functions for horizontal navigation
   const scrollLeft = () => {
@@ -152,7 +123,7 @@ const MasterCategory = () => {
               onClick={() => handleCategoryClick(category)}
             >
               <img
-                src={`${imagePrefix}${category.image}`}
+                src={`${IMAGE_PREFIX}${category.image}`}
                 alt={category.category}
                 className="categoryImage"
                 onError={(e) => handleImageError(e, category.category)}

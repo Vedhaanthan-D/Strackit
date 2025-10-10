@@ -1,20 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiX, FiPlus, FiMinus, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiX, FiPlus, FiMinus, FiChevronLeft, FiChevronRight, FiShoppingCart } from 'react-icons/fi';
+import { MdNote, MdLocalOffer, MdLocalShipping } from 'react-icons/md';
+import { CART_CONFIG, IMAGE_PREFIX, FREE_SHIPPING_THRESHOLD } from '../../../config/appIds.js';
 import { fetchCart, addToCart, removeFromCart, updateCartQuantity } from 'shops-query/src/modules/cart/index.js';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
 import '../styles/CartSidebar.css';
 
 // Empty Cart Icon Component
 const EmptyCartIcon = () => (
-  <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="empty-cart-icon">
-    <rect x="15" y="25" width="50" height="35" rx="4" stroke="#D1D5DB" strokeWidth="2" fill="none"/>
-    <path d="M25 25V20C25 16.6863 27.6863 14 31 14H49C52.3137 14 55 16.6863 55 20V25" stroke="#D1D5DB" strokeWidth="2" fill="none"/>
-    <circle cx="30" cy="40" r="2" fill="#D1D5DB"/>
-    <circle cx="50" cy="40" r="2" fill="#D1D5DB"/>
-    <path d="M35 45L45 35" stroke="#D1D5DB" strokeWidth="2"/>
-    <path d="M45 45L35 35" stroke="#D1D5DB" strokeWidth="2"/>
-  </svg>
+  <FiShoppingCart className="empty-cart-icon" size={80} />
 );
 
 // Loading Skeleton for cart items
@@ -47,16 +42,15 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
   const [error, setError] = useState(null);
   const recommendedScrollRef = useRef(null);
   
-  // Constants
-  const shopId = 488;
-  const userId = 1968;
-  const imagePrefix = "https://s3.ap-south-1.amazonaws.com/business.strackit.com/";
-  const freeShippingThreshold = 530;
+  // Constants from config
+  const { shopId, userId } = CART_CONFIG;
+  const imagePrefix = IMAGE_PREFIX;
+  const freeShippingThreshold = FREE_SHIPPING_THRESHOLD;
   
   // Calculate cart totals
   const subtotal = cartItems.reduce((total, item) => {
-    const price = parseFloat(item.prize || 0);
-    const discount = parseFloat(item.Discount || 0);
+    const price = parseFloat(item.prize);
+    const discount = parseFloat(item.Discount);
     const finalPrice = price - discount;
     return total + (finalPrice * item.quantity);
   }, 0);
@@ -71,11 +65,10 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
       setLoading(true);
       setError(null);
       const cartData = await fetchCart(shopId, userId);
-      setCartItems(cartData || []);
-      setCartItemCount(cartData?.reduce((total, item) => total + item.quantity, 0) || 0);
+      setCartItems(cartData);
+      setCartItemCount(cartData?.reduce((total, item) => total + item.quantity, 0));
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching cart:', err);
     } finally {
       setLoading(false);
     }
@@ -101,7 +94,7 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
         setRecommendedProducts(availableProducts);
       }
     } catch (err) {
-      console.error('Error fetching recommended products:', err);
+      // Silently handle error
     } finally {
       setRecommendedLoading(false);
     }
@@ -134,7 +127,7 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
       );
       setCartItemCount(newCartItems.reduce((total, item) => total + item.quantity, 0));
     } catch (err) {
-      console.error('Error updating quantity:', err);
+      // Silently handle error
     }
   };
 
@@ -158,7 +151,7 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
         setCartItemCount(prev => prev - removedItem.quantity);
       }
     } catch (err) {
-      console.error('Error removing item:', err);
+      // Silently handle error
     }
   };
 
@@ -177,7 +170,7 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
       // Refresh recommendations (to exclude newly added item)
       fetchRecommendedProducts();
     } catch (err) {
-      console.error('Error adding to cart:', err);
+      // Silently handle error
     }
   };
 
@@ -257,11 +250,11 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
               </div>
               {amountForFreeShipping > 0 ? (
                 <p className="shipping-text">
-                  Buy <strong>${amountForFreeShipping.toFixed(2)} USD</strong> more to enjoy <strong>FREE shipping</strong>
+                  Buy <strong>₹{amountForFreeShipping.toFixed(2)}</strong> more to enjoy <strong>FREE shipping</strong>
                 </p>
               ) : (
                 <p className="shipping-text">
-                  🎉 <strong>Congratulations! You qualify for FREE shipping</strong>
+                   <strong>Congratulations! You qualify for FREE shipping</strong>
                 </p>
               )}
             </div>
@@ -295,8 +288,8 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
             /* Cart Items */
             <div className="cart-items">
               {cartItems.map((item) => {
-                const price = parseFloat(item.prize || 0);
-                const discount = parseFloat(item.Discount || 0);
+                const price = parseFloat(item.prize);
+                const discount = parseFloat(item.Discount);
                 const finalPrice = price - discount;
                 
                 return (
@@ -313,11 +306,11 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                       <div className="cart-item-price">
                         {discount > 0 ? (
                           <>
-                            <span className="discounted-price">${finalPrice.toFixed(2)}</span>
-                            <span className="original-price">${price.toFixed(2)}</span>
+                            <span className="discounted-price">₹{finalPrice.toFixed(2)}</span>
+                            <span className="original-price">₹{price.toFixed(2)}</span>
                           </>
                         ) : (
-                          <span className="current-price">${price.toFixed(2)}</span>
+                          <span className="current-price">₹{price.toFixed(2)}</span>
                         )}
                       </div>
                       <div className="cart-item-controls">
@@ -383,8 +376,8 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                   </>
                 ) : (
                   recommendedProducts.map((product) => {
-                    const price = parseFloat(product.prize || 0);
-                    const discount = parseFloat(product.Discount || 0);
+                    const price = parseFloat(product.prize);
+                    const discount = parseFloat(product.Discount);
                     const finalPrice = price - discount;
                     
                     return (
@@ -400,11 +393,11 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                         <div className="recommended-product-price">
                           {discount > 0 ? (
                             <>
-                              <span className="discounted-price">${finalPrice.toFixed(2)}</span>
-                              <span className="original-price">${price.toFixed(2)}</span>
+                              <span className="discounted-price">₹{finalPrice.toFixed(2)}</span>
+                              <span className="original-price">₹{price.toFixed(2)}</span>
                             </>
                           ) : (
-                            <span className="current-price">${price.toFixed(2)}</span>
+                            <span className="current-price">₹{price.toFixed(2)}</span>
                           )}
                         </div>
                         <button 
@@ -427,15 +420,15 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
           <div className="cart-footer">
             <div className="cart-actions">
               <button className="action-btn">
-                <span className="action-icon"></span>
+                <MdNote className="action-icon" />
                 Order Note
               </button>
               <button className="action-btn">
-                <span className="action-icon"></span>
+                <MdLocalOffer className="action-icon" />
                 Coupon
               </button>
               <button className="action-btn">
-                <span className="action-icon"></span>
+                <MdLocalShipping className="action-icon" />
                 Shipping
               </button>
             </div>
@@ -443,7 +436,7 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
             <div className="cart-total">
               <div className="total-line">
                 <span className="total-label">Total</span>
-                <span className="total-amount">${subtotal.toFixed(2)}</span>
+                <span className="total-amount">₹{subtotal.toFixed(2)}</span>
               </div>
               <p className="tax-note">Taxes and <span className="shipping-link">shipping</span> calculated at checkout</p>
             </div>
@@ -485,8 +478,8 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                 </>
               ) : (
                 recommendedProducts.map((product) => {
-                  const price = parseFloat(product.prize || 0);
-                  const discount = parseFloat(product.Discount || 0);
+                  const price = parseFloat(product.prize);
+                  const discount = parseFloat(product.Discount);
                   const finalPrice = price - discount;
                   
                   return (
@@ -502,11 +495,11 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                       <div className="recommended-product-price">
                         {discount > 0 ? (
                           <>
-                            <span className="discounted-price">${finalPrice.toFixed(2)}</span>
-                            <span className="original-price">${price.toFixed(2)}</span>
+                            <span className="discounted-price">₹{finalPrice.toFixed(2)}</span>
+                            <span className="original-price">₹{price.toFixed(2)}</span>
                           </>
                         ) : (
-                          <span className="current-price">${price.toFixed(2)}</span>
+                          <span className="current-price">₹{price.toFixed(2)}</span>
                         )}
                       </div>
                       <button 

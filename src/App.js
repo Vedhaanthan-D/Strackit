@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ErrorBoundary from './components/ErrorBoundary';
 import { 
   Navbar,
   BannerSlider,
@@ -40,46 +39,32 @@ function App() {
           {/* Home Page Route */}
           <Route path="/" element={
             <>
-              <ErrorBoundary>
-                <BannerSlider />
-              </ErrorBoundary>
+              <BannerSlider />
               <StaticTextSection />
-              <ErrorBoundary>
-                <MasterCategory />
-              </ErrorBoundary>
-              <ErrorBoundary>
-                <NewArrivals 
-                  title="NEW ARRIVALS" 
-                  subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur"
-                  limit={8}
-                  sortNewest={true}
-                />
-              </ErrorBoundary>
-              <ErrorBoundary>
-                <Static2Section />
-              </ErrorBoundary>
-              <ErrorBoundary>
-                <NewArrivals 
-                  title="YOU MIGHT LIKE" 
-                  subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur" 
-                  limit={8}
-                  sortNewest={false}
-                />
-              </ErrorBoundary>
+              <MasterCategory />
+              <NewArrivals 
+                title="NEW ARRIVALS" 
+                subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur"
+                limit={8}
+                sortNewest={true}
+              />
+              <Static2Section />
+              <NewArrivals 
+                title="YOU MIGHT LIKE" 
+                subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur" 
+                limit={8}
+                sortNewest={false}
+              />
             </>
           } />
           
           {/* Cart Page Route */}
           <Route path="/cart" element={
-            <ErrorBoundary>
-              <ViewCart />
-            </ErrorBoundary>
+            <ViewCart />
           } />
         </Routes>
         
-        <ErrorBoundary>
-          <Footer />
-        </ErrorBoundary>
+        <Footer />
         
         {/* Cart Sidebar */}
         <CartSidebar 
