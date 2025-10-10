@@ -141,6 +141,8 @@
   align-items: flex-start;
   text-align: left;
   gap: 12px;
+  background: #F9F9F9;
+
 }
 
 .product-image {
@@ -514,6 +516,7 @@
     flex-direction: row;
     gap: 10px;
     align-items: flex-start;
+    background: #F9F9F9;
   }
   
   .product-image {
