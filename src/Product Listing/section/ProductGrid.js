@@ -51,6 +51,7 @@ const ProductGrid = ({ masterCategory, secondaryCategory }) => {
 
 
         // Step 4: Resolve secondary category to string identifier if provided
+        // If no secondaryCategory is provided, show all products from the master category
         let secondaryCategoryIdentifier = null;
         if (secondaryCategory) {
           try {
@@ -87,10 +88,11 @@ const ProductGrid = ({ masterCategory, secondaryCategory }) => {
         }
 
         // Step 5: Fetch products
+        // If no secondary category is selected, fetch all products from master category
         const fetchedProducts = await fetchProductsByCategory(
           masterCategoryIdentifier, 
           HOME_CONFIG.shopId, 
-          secondaryCategoryIdentifier
+          secondaryCategoryIdentifier || null  // Pass null when no secondary category selected
         );
 
         setProducts(fetchedProducts || []);

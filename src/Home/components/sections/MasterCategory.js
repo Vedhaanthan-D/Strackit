@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { fetchMasterCategories } from 'shops-query/src/modules/masterCategories/index.js';
+import { getSecondaryCategories } from 'shops-query/src/modules/SecondaryCategories/queries/index.js';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
 import '../styles/MasterCategory.css';
 
@@ -27,9 +28,19 @@ const MasterCategory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [subcategoryCounts, setSubcategoryCounts] = useState({});
 
-  // Fetch master categories on component mount
-  // Fetch master categories on component mount
+  // Fetch subcategory counts for a master category
+  const fetchSubcategoryCount = async (masterCategoryId) => {
+    try {
+      const secondaryCategories = await getSecondaryCategories(HOME_CONFIG.shopId, masterCategoryId);
+      return secondaryCategories ? secondaryCategories.length : 0;
+    } catch (error) {
+      return 0;
+    }
+  };
+
+  // Fetch master categories and their subcategory counts
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -44,9 +55,21 @@ const MasterCategory = () => {
             .sort((a, b) => a.position - b.position);
           
           setMasterCategories(activeCategories);
+          
+          // Fetch subcategory counts for each master category
+          const counts = {};
+          await Promise.all(
+            activeCategories.map(async (category) => {
+              const count = await fetchSubcategoryCount(category.id);
+              counts[category.id] = count;
+            })
+          );
+          
+          setSubcategoryCounts(counts);
           setError(null);
         } else {
           setMasterCategories([]);
+          setSubcategoryCounts({});
         }
       } catch (err) {
         setError(err);
@@ -107,7 +130,7 @@ const MasterCategory = () => {
       <div className="categorySlider">
         {/* Left Arrow */}
         <button 
-          className="categoryArrow leftArrow"
+          className="categoryArrow masterCategoryLeftArrow"
           onClick={scrollLeft}
           aria-label="Scroll categories left"
         >
@@ -116,28 +139,40 @@ const MasterCategory = () => {
 
         {/* Categories Row */}
         <div className="categoryRow">
-          {masterCategories.map((category) => (
-            <div 
-              key={category.id}
-              className="categoryBox"
-              onClick={() => handleCategoryClick(category)}
-            >
-              <img
-                src={`${IMAGE_PREFIX}${category.image}`}
-                alt={category.category}
-                className="categoryImage"
-                onError={(e) => handleImageError(e, category.category)}
-              />
-              <div className="categoryOverlay">
-                <span className="categoryName">{category.category}</span>
+          {masterCategories.map((category) => {
+            const subcategoryCount = subcategoryCounts[category.id] || 0;
+            
+            return (
+              <div 
+                key={category.id}
+                className="categoryBox"
+                onClick={() => handleCategoryClick(category)}
+              >
+                <img
+                  src={`${IMAGE_PREFIX}${category.image}`}
+                  alt={category.category}
+                  className="categoryImage"
+                  onError={(e) => handleImageError(e, category.category)}
+                />
+                <div className="categoryOverlay">
+                  <div className="categoryTextContainer">
+                    <div className="categoryName">{category.category}</div>
+                    <div className={`categorySubtext ${subcategoryCount === 0 ? 'empty' : ''}`}>
+                      {subcategoryCount > 0 
+                        ? `${subcategoryCount} ${subcategoryCount === 1 ? 'product' : 'products'}`
+                        : 'No products'
+                      }
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Right Arrow */}
         <button 
-          className="categoryArrow rightArrow"
+          className="categoryArrow masterCategoryRightArrow"
           onClick={scrollRight}
           aria-label="Scroll categories right"
         >

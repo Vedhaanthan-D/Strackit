@@ -1,32 +1,69 @@
-/* BannerSlider.module.css */
+
 .slider {
   position: relative;
   width: 100vw;
-  height: auto; /* Auto height to show full banner */
-  min-height: 500px; /* Minimum height */
-  max-height: none; /* Remove max-height restriction */
+  height: auto;
+  min-height: 500px;
+  max-height: none;
   overflow: hidden;
-  margin-left: calc(-50vw + 50%); /* Full width breakout */
+  margin-left: calc(-50vw + 50%);
   left: 0;
   right: 0;
 }
 
 .imageContainer {
   position: relative;
-  width: 100vw; /* Full viewport width */
-  height: auto; /* Auto height for container */
+  width: 100vw;
+  height: auto;
 }
 
 .bannerImage {
-  width: 100vw; /* Full viewport width */
-  height: auto; /* Auto height to maintain aspect ratio */
-  min-height: 500px; /* Minimum height to ensure visibility */
-  max-height: 80vh; /* Limit to 80% of viewport height */
-  object-fit: cover; /* Cover to fill width, may crop height if needed */
-  object-position: center; /* Center the image content */
+  width: 100vw;
+  height: auto;
+  min-height: 500px;
+  max-height: 80vh;
+  object-fit: cover;
+  object-position: center;
   display: block;
-  transition: opacity 0.5s ease-in-out;
-  margin: 0 auto; /* Center the image horizontally */
+  margin: 0 auto;
+  will-change: transform, opacity;
+}
+
+/* Banner image pre-animation state */
+.bannerImage.pre-animate {
+  transform: scale(1.08);
+  opacity: 0;
+}
+
+/* Banner image animated state */
+.bannerImage.animate-in {
+  transform: scale(1);
+  opacity: 1;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Banner animation keyframes */
+@keyframes fadeScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeUpIn {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Banner Overlay Content */
@@ -36,7 +73,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.3); /* Semi-transparent dark overlay for text readability */
+  background: rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -48,7 +85,47 @@
   max-width: 600px;
   color: white;
   text-align: left;
-  margin-right: 30px; /* Remove the large margin */
+  margin-right: 30px;
+}
+
+/* Content animation states */
+.homeBannerContent .pre-animate {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+/* Staggered animations for banner content */
+.bannerLabel.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition-delay: 0.25s; /* Start right after image animation */
+}
+
+.bannerTitle.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition-delay: 0.3s; /* 50ms after label */
+}
+
+.bannerDescription.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition-delay: 0.35s; /* 50ms after title */
+}
+
+.bannerButton.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.3s ease, border 0.3s ease; /* Keep original transitions too */
+  transition-delay: 0.4s; /* 50ms after description */
 }
 
 /* Banner 1 Content - Left side positioning */
@@ -85,6 +162,12 @@
   letter-spacing: 2px;
   margin-bottom: 20px;
   display: block;
+  will-change: transform, opacity;
+}
+
+.bannerLabel.pre-animate {
+  opacity: 0;
+  transform: translateY(40px);
 }
 
 .bannerTitle {
@@ -95,6 +178,12 @@
   line-height: 1.2;
   margin: 0 0 20px 0;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  will-change: transform, opacity;
+}
+
+.bannerTitle.pre-animate {
+  opacity: 0;
+  transform: translateY(40px);
 }
 
 .bannerDescription {
@@ -106,6 +195,12 @@
   margin: 0 0 30px 0;
   max-width: 400px;
   margin-right: 100px;
+  will-change: transform, opacity;
+}
+
+.bannerDescription.pre-animate {
+  opacity: 0;
+  transform: translateY(40px);
 }
 
 .bannerButton {
@@ -119,25 +214,75 @@
   letter-spacing: 2px;
   padding: 14px 45px;
   cursor: pointer;
-  transition: all 0.3s ease;
   outline: none;
   border-radius: 0;
   margin-right: 300px;
+  overflow: hidden;
+  position: relative;
+  will-change: transform, opacity;
+}
+
+.bannerButton.pre-animate {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+/* Button text wrapper to control the sliding animation */
+.buttonTextWrapper {
+  display: inline-block;
+  position: relative;
+  height: 1.2em;
+  overflow: hidden;
+}
+
+/* Top text (visible initially) */
+.buttonTextTop {
+  display: block;
+  position: relative;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+/* Bottom text (hidden initially) */
+.buttonTextBottom {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+/* Hover effects for button text sliding */
+.bannerButton:hover .buttonTextTop {
+  transform: translateY(-100%);
+}
+
+.bannerButton:hover .buttonTextBottom {
+  transform: translateY(0);
+}
+
+/* Return to original position when not hovered */
+.bannerButton:not(:hover) .buttonTextTop {
+  transform: translateY(0);
+}
+
+.bannerButton:not(:hover) .buttonTextBottom {
+  transform: translateY(100%);
 }
 
 .bannerButton:hover {
-  background: white;
-  color: #000;
+  background: transparent;
+  color: white;
   border: 2px solid white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+  box-shadow: none;
 }
 
 .bannerButton:active {
-  background: white;
-  color: #000;
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  box-shadow: none;
 }
 
 /* Navigation Arrows */
@@ -178,23 +323,23 @@
 
 /* Right Arrow Animation */
 .slider .rightArrow:hover svg {
-  animation: slideRightArrow 0.6s ease-in-out forwards;
+  animation: slideRightArrow 0.3s ease-in-out forwards;
   animation-fill-mode: both;
 }
 
 .slider .rightArrow:not(:hover) svg {
-  animation: reverseSlideRightArrow 0.6s ease-in-out forwards;
+  animation: reverseSlideRightArrow 0.3s ease-in-out forwards;
   animation-fill-mode: both;
 }
 
 /* Left Arrow Animation */
 .slider .leftArrow:hover svg {
-  animation: slideLeftArrow 0.6s ease-in-out forwards;
+  animation: slideLeftArrow 0.3s ease-in-out forwards;
   animation-fill-mode: both;
 }
 
 .slider .leftArrow:not(:hover) svg {
-  animation: reverseSlideLeftArrow 0.6s ease-in-out forwards;
+  animation: reverseSlideLeftArrow 0.3s ease-in-out forwards;
   animation-fill-mode: both;
 }
 

@@ -1,20 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
 import '../styles/NewArrivals.css';
-
-// Arrow icons (you can replace these with actual icon components)
-const ChevronLeft = () => (
-  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-  </svg>
-);
-
-const ChevronRight = () => (
-  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-  </svg>
-);
 
 // Loading Skeleton Component
 const ProductSkeleton = () => (
@@ -36,8 +24,6 @@ const NewArrivals = ({
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
   const scrollContainerRef = useRef(null);
 
   // Helper function to check if product has discount
@@ -56,61 +42,40 @@ const NewArrivals = ({
     e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTI1QzEyMy4xMjUgMTI1IDEwMi4xODggMTQ2LjM3NSAxMDIuMTg4IDE3Mi44MTJDMTA2Ljg3NSAxNjguNTYyIDExMy4xMjUgMTY2LjI1IDEyMCAxNjYuMjVDMTI2Ljg3NSAxNjYuMjUgMTMzLjEyNSAxNjguMTI1IDEzNy44MTIgMTcyLjgxMkMxNDAuNjI1IDE3NS42MjUgMTQ2LjI1IDE3NS42MjUgMTQ5LjA2MiAxNzIuODEyQzE1My43NSAxNjguMTI1IDE2MCAxNjUuODEyIDE2Ni44NzUgMTY1LjgxMkMxNzMuNzUgMTY1LjgxMiAxODAuNjI1IDE2OC41NjIgMTg0Ljg3NSAxNzIuODEyQzE4NC44NzUgMTQ2LjM3NSAxNzEuODc1IDEyNSAxNTAgMTI1WiIgZmlsbD0iI0QxRDFEMSIvPgo8cGF0aCBkPSJNMTk4IDE4Ni4yNUMxOTUuMTg4IDE4Ni4yNSAxOTMuMzEyIDE4NS44MTIgMTkxLjQzOCAxODQuODEyQzE4Ny4xODggMTgzLjM3NSAxODIuNSAxODMuMzc1IDE3OC4yNSAxODQuODEyQzE3Ni4zNzUgMTg1LjM3NSAxNzQuNSAxODYuMjUgMTcyIDE4Ni4yNUMxNjkuNSAxODYuMjUgMTY3LjYyNSAxODUuODEyIDE2NS43NSAxODQuODEyQzE2MS41IDE4My4zNzUgMTU2LjgxMiAxODMuMzc1IDE1Mi41NjIgMTg0LjgxMkMxNTAuNjg4IDE4NS4zNzUgMTQ4LjgxMiAxODYuMjUgMTQ2LjMxMiAxODYuMjVDMTQzLjgxMiAxODYuMjUgMTQxLjkzOCAxODUuODEyIDE0MC4wNjIgMTg0LjgxMkMxMzUuODEyIDE4My4zNzUgMTMxLjEyNSAxODMuMzc1IDEyNi44NzUgMTg0LjgxMkMxMzEuNTYyIDE5NS42MjUgMTQ0IDIwMS42ODggMTU4IDE5OS4zMTJDMTcyIDE5Ni45MzggMTgzLjM3NSAxODcuNTYyIDE4OCAxNzMuMjVDMTkxLjI1IDE3Ny4wNjIgMTk1LjE4OCAxNzkuODc1IDIwMCAxODEuM0MxOTkuNSAxODIuNzUgMTk5IDE4NC42MjUgMTk4IDE4Ni4yNVoiIGZpbGw9IiNEMUQxRDEiLz4KPC9zdmc+Cg==';
   };
 
-  // Check scroll position and update button states
-  const checkScrollButtons = () => {
-    if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
-    }
-  };
-
-  // Scroll left function
+  // Navigation functions for arrows
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
-      const scrollAmount = scrollContainerRef.current.clientWidth * 0.8;
-      scrollContainerRef.current.scrollBy({
-        left: -scrollAmount,
-        behavior: 'smooth'
-      });
+      scrollContainerRef.current.scrollBy({ left: -320, behavior: 'smooth' });
     }
   };
 
-  // Scroll right function
   const scrollRight = () => {
     if (scrollContainerRef.current) {
-      const scrollAmount = scrollContainerRef.current.clientWidth * 0.8;
-      scrollContainerRef.current.scrollBy({
-        left: scrollAmount,
-        behavior: 'smooth'
-      });
+      scrollContainerRef.current.scrollBy({ left: 320, behavior: 'smooth' });
     }
   };
+
+
 
   useEffect(() => {
     const fetchNewArrivals = async () => {
       try {
         setLoading(true);
         
-        // Fetch products from the shop
         const productData = await getProductsController(HOME_CONFIG.shopId);
         
         if (productData && productData.length > 0) {
-          // Filter published products
           let sortedProducts = [...productData]
-            .filter(product => product && product.publish); // Only include published products
+            .filter(product => product && product.publish);
           
-          // Sort by date if specified
           if (sortNewest) {
             sortedProducts = sortedProducts.sort((a, b) => {
-              // Sort by newest first
               const dateA = a.addedon ? new Date(a.addedon) : new Date(0);
               const dateB = b.addedon ? new Date(b.addedon) : new Date(0);
               return dateB - dateA;
             });
           }
           
-          // Apply limit
           sortedProducts = sortedProducts.slice(0, limit);
           
           setProducts(sortedProducts);
@@ -129,24 +94,7 @@ const NewArrivals = ({
     fetchNewArrivals();
   }, []);
 
-  // Check scroll buttons when products change
-  useEffect(() => {
-    if (!loading && products.length > 0) {
-      // Small delay to ensure DOM is updated
-      setTimeout(checkScrollButtons, 100);
-    }
-  }, [loading, products]);
 
-  // Add scroll event listener
-  useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
-    if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', checkScrollButtons);
-      return () => {
-        scrollContainer.removeEventListener('scroll', checkScrollButtons);
-      };
-    }
-  }, []);
 
   // Show loading state with skeletons
   if (loading) {
@@ -157,27 +105,28 @@ const NewArrivals = ({
           {subtitle && <p className="new-arrivals-subtitle">{subtitle}</p>}
         </div>
         <div className="products-container">
+
           <button 
-            className={`new-arrivals-nav-arrow new-arrivals-left-arrow ${!canScrollLeft ? 'disabled' : ''}`}
-            onClick={scrollLeft}
-            disabled={!canScrollLeft}
-            aria-label="Scroll left"
+            className="new-arrivals-nav-arrow new-arrivals-left-arrow disabled"
+            disabled
+            aria-label="Previous products"
           >
-            <ChevronLeft />
+            <FiChevronLeft />
           </button>
+          
+          <button 
+            className="new-arrivals-nav-arrow new-arrivals-right-arrow disabled"
+            disabled
+            aria-label="Next products"
+          >
+            <FiChevronRight />
+          </button>
+          
           <div className="products-grid" ref={scrollContainerRef}>
             {[1, 2, 3, 4, 5, 6].map((item) => (
               <ProductSkeleton key={item} />
             ))}
           </div>
-          <button 
-            className={`new-arrivals-nav-arrow new-arrivals-right-arrow ${!canScrollRight ? 'disabled' : ''}`}
-            onClick={scrollRight}
-            disabled={!canScrollRight}
-            aria-label="Scroll right"
-          >
-            <ChevronRight />
-          </button>
         </div>
       </div>
     );
@@ -192,25 +141,9 @@ const NewArrivals = ({
           {subtitle && <p className="new-arrivals-subtitle">{subtitle}</p>}
         </div>
         <div className="products-container">
-          <button 
-            className={`new-arrivals-nav-arrow new-arrivals-left-arrow ${!canScrollLeft ? 'disabled' : ''}`}
-            onClick={scrollLeft}
-            disabled={!canScrollLeft}
-            aria-label="Scroll left"
-          >
-            <ChevronLeft />
-          </button>
           <div className="products-error">
             <p>Unable to load products. Please check back later.</p>
           </div>
-          <button 
-            className={`new-arrivals-nav-arrow new-arrivals-right-arrow ${!canScrollRight ? 'disabled' : ''}`}
-            onClick={scrollRight}
-            disabled={!canScrollRight}
-            aria-label="Scroll right"
-          >
-            <ChevronRight />
-          </button>
         </div>
       </div>
     );
@@ -224,14 +157,23 @@ const NewArrivals = ({
       </div>
       
       <div className="products-container">
+
         <button 
-          className={`new-arrivals-nav-arrow new-arrivals-left-arrow ${!canScrollLeft ? 'disabled' : ''}`}
+          className="new-arrivals-nav-arrow new-arrivals-left-arrow"
           onClick={scrollLeft}
-          disabled={!canScrollLeft}
-          aria-label="Scroll left"
+          aria-label="Previous products"
         >
-          <ChevronLeft />
+          <FiChevronLeft />
         </button>
+        
+        <button 
+          className="new-arrivals-nav-arrow new-arrivals-right-arrow"
+          onClick={scrollRight}
+          aria-label="Next products"
+        >
+          <FiChevronRight />
+        </button>
+        
         <div className="products-grid" ref={scrollContainerRef}>
           {products.map((product) => {
             const isDiscounted = hasDiscount(product);
@@ -278,14 +220,6 @@ const NewArrivals = ({
             );
           })}
         </div>
-        <button 
-          className={`new-arrivals-nav-arrow new-arrivals-right-arrow ${!canScrollRight ? 'disabled' : ''}`}
-          onClick={scrollRight}
-          disabled={!canScrollRight}
-          aria-label="Scroll right"
-        >
-          <ChevronRight />
-        </button>
       </div>
     </div>
   );

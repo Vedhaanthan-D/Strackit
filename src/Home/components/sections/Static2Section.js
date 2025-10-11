@@ -31,7 +31,10 @@ const Static2Section = () => {
               className="static2-button" 
               aria-label="Shop our new fashion collection"
             >
-              SHOP NOW
+              <span className="buttonTextWrapper">
+                <span className="buttonTextTop">SHOP NOW</span>
+                <span className="buttonTextBottom">SHOP NOW</span>
+              </span>
             </button>
           </div>
         </div>

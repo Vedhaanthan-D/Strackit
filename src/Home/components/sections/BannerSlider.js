@@ -29,6 +29,9 @@ const BannerSlider = () => {
   const [bannerContent, setBannerContent] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imageLoaded, setImageLoaded] = useState(true);
+  const [imageLoading, setImageLoading] = useState(false);
+  const [animationStarted, setAnimationStarted] = useState(false);
 
   // Fetch banner data on component mount
   useEffect(() => {
@@ -75,6 +78,7 @@ const BannerSlider = () => {
           setBannerContent([]);
         }
       } catch (err) {
+        console.error('Error fetching banners:', err);
         setError(err);
         setBanners([]);
         setBannerContent([]);
@@ -85,6 +89,29 @@ const BannerSlider = () => {
 
     fetchBanners();
   }, []);
+
+  // Start animation when component mounts and image is loaded
+  useEffect(() => {
+    if (imageLoaded && !animationStarted && !loading && banners.length > 0) {
+      // Start animations after a small delay to ensure DOM is ready
+      const timer = setTimeout(() => {
+        setAnimationStarted(true);
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [imageLoaded, animationStarted, loading, banners]);
+
+  // Handle image load events with animation
+  const handleImageLoad = () => {
+    setImageLoading(false);
+    setImageLoaded(true);
+  };
+
+  const handleImageError = (e) => {
+    setImageLoading(false);
+    setImageLoaded(false);
+  };
 
   // Navigation functions
   const goToPrevious = () => {
@@ -114,30 +141,37 @@ const BannerSlider = () => {
 
   return (
     <div className="slider">
-      <div className="imageContainer">
+      <div className="imageContainer">        
         <img 
           src={banners[currentIndex]?.image} 
           alt={banners[currentIndex]?.title}
-          className="bannerImage"
+          className={`bannerImage ${animationStarted ? 'animate-in' : 'pre-animate'}`}
           onClick={handleBannerClick}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
           style={{ cursor: bannerContent[currentIndex]?.link ? 'pointer' : 'default' }}
         />
         
         {/* Banner Overlay Content */}
         <div className="homeBannerOverlay">
           <div className={`homeBannerContent ${currentIndex === 0 ? 'homeBanner1Content' : 'homeBanner2Content'}`}>
-            <span className="bannerLabel">{bannerContent[currentIndex]?.label}</span>
-            <h1 className="bannerTitle">
+            <span className={`bannerLabel ${animationStarted ? 'animate-in' : 'pre-animate'}`}>
+              {bannerContent[currentIndex]?.label}
+            </span>
+            <h1 className={`bannerTitle ${animationStarted ? 'animate-in' : 'pre-animate'}`}>
               {bannerContent[currentIndex]?.title}
             </h1>
-            <p className="bannerDescription">
+            <p className={`bannerDescription ${animationStarted ? 'animate-in' : 'pre-animate'}`}>
               {bannerContent[currentIndex]?.description || 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur'}
             </p>
             <button 
-              className="bannerButton"
+              className={`bannerButton ${animationStarted ? 'animate-in' : 'pre-animate'}`}
               onClick={handleBannerClick}
             >
-              {bannerContent[currentIndex]?.buttonText || 'SHOP NOW'}
+              <span className="buttonTextWrapper">
+                <span className="buttonTextTop">{bannerContent[currentIndex]?.buttonText || 'SHOP NOW'}</span>
+                <span className="buttonTextBottom">{bannerContent[currentIndex]?.buttonText || 'SHOP NOW'}</span>
+              </span>
             </button>
           </div>
         </div>

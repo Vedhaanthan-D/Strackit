@@ -28,7 +28,12 @@
   object-fit: cover;
   object-position: center; /* Center the image content */
   display: block;
+  transition: transform 0.6s ease;
   /*margin: 0 auto; /* Center horizontally */
+}
+
+.static2-image-column:hover .static2-image {
+  transform: scale(1.08);
 }
 
 .static2-content-column {
@@ -85,11 +90,57 @@
   font-weight: 500;
   display: inline-block;
   width: fit-content;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Button text wrapper to control the sliding animation */
+.static2-button .buttonTextWrapper {
+  display: inline-block;
+  position: relative;
+  height: 1.2em;
+  overflow: hidden;
+}
+
+/* Top text (visible initially) */
+.static2-button .buttonTextTop {
+  display: block;
+  position: relative;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+/* Bottom text (hidden initially) */
+.static2-button .buttonTextBottom {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+/* Hover effects for button text sliding */
+.static2-button:hover .buttonTextTop {
+  transform: translateY(-100%);
+}
+
+.static2-button:hover .buttonTextBottom {
+  transform: translateY(0);
+}
+
+/* Return to original position when not hovered */
+.static2-button:not(:hover) .buttonTextTop {
+  transform: translateY(0);
+}
+
+.static2-button:not(:hover) .buttonTextBottom {
+  transform: translateY(100%);
 }
 
 .static2-button:hover {
-  background-color: #222;
-  color: #fff;
+  background-color: transparent;
+  color: #222;
 }
 
 /* Tablet Styles */
@@ -123,6 +174,11 @@
     height: 400px;
   }
   
+  .static2-image {
+    width: 100%;
+    height: 400px;
+  }
+  
   .static2-content-column {
     padding: 40px 30px;
     margin-left: 0;
@@ -136,6 +192,11 @@
 /* Small Mobile Styles */
 @media (max-width: 480px) {
   .static2-image-column {
+    height: 300px;
+  }
+  
+  .static2-image {
+    width: 100%;
     height: 300px;
   }
   

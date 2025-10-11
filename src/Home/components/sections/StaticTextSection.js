@@ -13,7 +13,12 @@ const StaticTextSection = () => {
           content here', making it look like readable English."
         </h2>
 
-        <button className="static-btn">READ ABOUT US</button>
+        <button className="static-btn">
+          <span className="buttonTextWrapper">
+            <span className="buttonTextTop">READ ABOUT US</span>
+            <span className="buttonTextBottom">READ ABOUT US</span>
+          </span>
+        </button>
       </div>
     </section>
   );

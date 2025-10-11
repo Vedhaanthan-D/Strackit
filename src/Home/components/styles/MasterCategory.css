@@ -94,6 +94,15 @@
   box-sizing: border-box;
 }
 
+.categoryTextContainer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+}
+
 .categoryName {
   color: #ffffff;
   font-size: 1.8rem;
@@ -104,9 +113,32 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   font-family: 'Poppins', sans-serif;
   line-height: 1.2;
-  width: 100%;
   margin: 0;
   padding: 0;
+}
+
+.categorySubtext {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.categoryBox:hover .categorySubtext {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.categorySubtext.empty {
+  color: rgba(204, 204, 204, 0.8);
 }
 
 /* Arrow Buttons */
@@ -136,14 +168,39 @@
 .categoryArrow svg {
   font-size: 1.5rem;
   color: #2d2d2d;
+  position: relative;
+  transition: none; /* Remove default transitions */
+  will-change: transform, opacity; /* Optimize animations */
 }
 
-.leftArrow {
-  left: 30px;
+/* Right Arrow Animation */
+.masterCategoryRightArrow:hover svg {
+  animation: slideRightArrow 0.3s ease-in-out forwards;
+  animation-fill-mode: both;
 }
 
-.rightArrow {
-  right: 35px;
+.masterCategoryRightArrow:not(:hover) svg {
+  animation: reverseSlideRightArrow 0.3s ease-in-out forwards;
+  animation-fill-mode: both;
+}
+
+/* Left Arrow Animation */
+.masterCategoryLeftArrow:hover svg {
+  animation: slideLeftArrow 0.3s ease-in-out forwards;
+  animation-fill-mode: both;
+}
+
+.masterCategoryLeftArrow:not(:hover) svg {
+  animation: reverseSlideLeftArrow 0.3s ease-in-out forwards;
+  animation-fill-mode: both;
+}
+
+.masterCategoryLeftArrow {
+  left: 15px;
+}
+
+.masterCategoryRightArrow {
+  right: 10px;
 }
 
 /* Loading Skeleton Styles */
@@ -213,6 +270,10 @@
     font-size: 1.6rem;
   }
   
+  .categorySubtext {
+    font-size: 0.9rem;
+  }
+  
   .categoryTitle {
     font-size: 2.2rem;
   }
@@ -238,6 +299,10 @@
   .categoryName {
     font-size: 1.4rem;
     letter-spacing: 1.5px;
+  }
+  
+  .categorySubtext {
+    font-size: 0.85rem;
   }
   
   .categoryTitle {
@@ -281,6 +346,10 @@
     letter-spacing: 1px;
   }
   
+  .categorySubtext {
+    font-size: 0.8rem;
+  }
+  
   .categoryTitle {
     font-size: 1.8rem;
   }
@@ -311,5 +380,82 @@
     width: 180px !important;
     height: 280px !important;
     flex: 0 0 180px !important;
+  }
+}
+
+/* Keyframe Animations for Arrows */
+@keyframes slideRightArrow {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+  41% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes reverseSlideRightArrow {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+  41% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideLeftArrow {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+  41% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes reverseSlideLeftArrow {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+  41% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
   }
 }

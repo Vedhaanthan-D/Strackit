@@ -60,10 +60,56 @@
   font-weight: 500;
   padding: 12px 0;
   outline: none;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Button text wrapper to control the sliding animation */
+.static-btn .buttonTextWrapper {
+  display: inline-block;
+  position: relative;
+  height: 1.2em;
+  overflow: hidden;
+}
+
+/* Top text (visible initially) */
+.static-btn .buttonTextTop {
+  display: block;
+  position: relative;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+/* Bottom text (hidden initially) */
+.static-btn .buttonTextBottom {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+/* Hover effects for button text sliding */
+.static-btn:hover .buttonTextTop {
+  transform: translateY(-100%);
+}
+
+.static-btn:hover .buttonTextBottom {
+  transform: translateY(0);
+}
+
+/* Return to original position when not hovered */
+.static-btn:not(:hover) .buttonTextTop {
+  transform: translateY(0);
+}
+
+.static-btn:not(:hover) .buttonTextBottom {
+  transform: translateY(100%);
 }
 
 .static-btn:hover {
-  border-bottom-width: 4px;
+  border-bottom-width: 2px; /* Keep the same as the default */
 }
 
 .static-btn:focus {

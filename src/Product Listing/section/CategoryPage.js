@@ -37,10 +37,8 @@ const CategoryPage = () => {
         const active = (data || []).filter(s => s.status === 'active' || s.status === 1);
         setSecondaries(active);
         
-        // Automatically select the first subcategory if available
-        if (active.length > 0) {
-          setSelectedSecondary(active[0]);
-        }
+        // Do not automatically select any subcategory
+        // User must manually select a subcategory to see filtered products
       } catch (err) {
         setError(err.message || 'Failed to load category data');
       } finally {
@@ -100,21 +98,21 @@ const CategoryPage = () => {
           : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         backgroundColor: '#667eea'
       }}>
-        <div className="bannerOverlay">
+        <div className="categoryPageBannerOverlay">
           {/* Title and Breadcrumb */}
-          <div className="bannerContent">
+          <div className="categoryPageBannerContent">
             <div className="breadcrumb">
               <span onClick={() => navigate('/')} className="breadcrumbLink">Home</span>
               <span className="breadcrumbSeparator">›</span>
               <span className="breadcrumbCurrent">{masterCategory?.category}</span>
             </div>
-            <h1 className="bannerTitle">{masterCategory?.category}</h1>
+            <h1 className="categoryPageBannerTitle">{masterCategory?.category}</h1>
           </div>
 
           {/* Secondary Categories Thumbnails Row */}
           {secondaries.length > 0 && (
             <div className="bannerThumbnailsSection">
-              <button className="thumbnailArrow leftArrow" onClick={scrollLeft}>
+              <button className="thumbnailArrow categoryPageLeftArrow" onClick={scrollLeft}>
                 <FiChevronLeft />
               </button>
               
@@ -137,7 +135,7 @@ const CategoryPage = () => {
                 ))}
               </div>
 
-              <button className="thumbnailArrow rightArrow" onClick={scrollRight}>
+              <button className="thumbnailArrow categoryPageRightArrow" onClick={scrollRight}>
                 <FiChevronRight />
               </button>
             </div>
@@ -156,10 +154,7 @@ const CategoryPage = () => {
           </h2>
           {selectedSecondary ? (
             <p className="categoryDescription">
-              {secondaries[0]?.id === selectedSecondary.id 
-                ? `Showing products from ${selectedSecondary.category} (auto-selected)` 
-                : `Showing products from ${selectedSecondary.category}`
-              }
+              Showing products from {selectedSecondary.category}
             </p>
           ) : secondaries.length === 0 ? (
             <p className="categoryDescription">
@@ -167,7 +162,7 @@ const CategoryPage = () => {
             </p>
           ) : (
             <p className="categoryDescription">
-              Loading subcategories...
+              Showing all products from {masterCategory?.category}. Click on a subcategory above to filter products.
             </p>
           )}
         </div>
