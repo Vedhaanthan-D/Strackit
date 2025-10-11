@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiShoppingBag, FiSearch } from 'react-icons/fi';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
 import '../styles/NewArrivals.css';
@@ -195,6 +195,36 @@ const NewArrivals = ({
                     className="new-arrivals-product-image"
                     onError={handleImageError}
                   />
+                  
+                  {/* Hover Action Icons */}
+                  <div className="product-hover-actions">
+                    <button
+                      className="product-action-icon"
+                      tabIndex="0"
+                      role="button"
+                      aria-label={`Add ${product.name} to cart`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Add to cart functionality here
+                        console.log('Add to cart:', product.id);
+                      }}
+                    >
+                      <FiShoppingBag />
+                    </button>
+                    <button
+                      className="product-action-icon"
+                      tabIndex="0"
+                      role="button"
+                      aria-label={`Quick view ${product.name}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Quick view functionality here
+                        console.log('Quick view:', product.id);
+                      }}
+                    >
+                      <FiSearch />
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="new-arrivals-product-info">
