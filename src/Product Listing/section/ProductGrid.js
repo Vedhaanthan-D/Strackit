@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds.js';
+import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds';
 import '../styles/ProductGrid.css';
 
 const ProductGrid = ({ masterCategory, secondaryCategory }) => {
@@ -14,9 +14,9 @@ const ProductGrid = ({ masterCategory, secondaryCategory }) => {
         setError(null);
 
         // Dynamic imports
-        const { getMasterCategories } = await import('shops-query/src/modules/masterCategories/queries/get.js');
-        const { fetchProductsByCategory } = await import('shops-query/src/modules/productByCategory/queries/get.js');
-        const { getSecondaryCategories } = await import('shops-query/src/modules/SecondaryCategories/queries/index.js');
+        const { getMasterCategories } = await import('shops-query/src/modules/masterCategories/queries/get');
+        const { fetchProductsByCategory } = await import('shops-query/src/modules/productByCategory/queries/get');
+        const { getSecondaryCategories } = await import('shops-query/src/modules/SecondaryCategories/queries/index');
 
         // Step 1: Fetch master categories
         const masterCategories = await getMasterCategories(HOME_CONFIG.shopId);

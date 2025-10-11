@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiX, FiPlus, FiMinus, FiChevronLeft, FiChevronRight, FiShoppingCart } from 'react-icons/fi';
 import { MdNote, MdLocalOffer, MdLocalShipping } from 'react-icons/md';
-import { CART_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
-import { fetchCart, addToCart, removeFromCart, updateCartQuantity } from 'shops-query/src/modules/cart/index.js';
-import { getProductsController } from 'shops-query/src/modules/products/index.js';
-import { fetchCouponCode } from 'shops-query/src/modules/CouponCode/Controller/index.js';
-import { fetchShippingCost } from 'shops-query/src/modules/ShippingCost/Controller/index.js';
+import { CART_CONFIG, IMAGE_PREFIX } from '../../../config/appIds';
+import { fetchCart, addToCart, removeFromCart, updateCartQuantity } from 'shops-query/src/modules/cart/index';
+import { getProductsController } from 'shops-query/src/modules/products/index';
+import { fetchCouponCode } from 'shops-query/src/modules/CouponCode/Controller/index';
+import { fetchShippingCost } from 'shops-query/src/modules/ShippingCost/Controller/index';
 import '../styles/CartSidebar.css';
 
 // Empty Cart Icon Component

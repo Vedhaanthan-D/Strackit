@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { fetchMasterCategories } from 'shops-query/src/modules/masterCategories/index.js';
-import { getSecondaryCategories } from 'shops-query/src/modules/SecondaryCategories/queries/index.js';
-import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
+import { fetchMasterCategories } from 'shops-query/src/modules/masterCategories/index';
+import { getSecondaryCategories } from 'shops-query/src/modules/SecondaryCategories/queries/index';
+import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds';
 import '../styles/MasterCategory.css';
 
 // Loading Skeleton for categories

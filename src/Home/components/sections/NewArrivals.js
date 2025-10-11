@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiShoppingBag, FiSearch } from 'react-icons/fi';
-import { getProductsController } from 'shops-query/src/modules/products/index.js';
-import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
+import { getProductsController } from 'shops-query/src/modules/products/index';
+import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds';
 import '../styles/NewArrivals.css';
 
 // Loading Skeleton Component
@@ -163,7 +163,7 @@ const NewArrivals = ({
                       onClick={(e) => {
                         e.stopPropagation();
                         // Add to cart functionality here
-                        console.log('Add to cart:', product.id);
+                        // TODO: Implement add to cart
                       }}
                     >
                       <FiShoppingBag />
@@ -176,7 +176,7 @@ const NewArrivals = ({
                       onClick={(e) => {
                         e.stopPropagation();
                         // Quick view functionality here
-                        console.log('Quick view:', product.id);
+                        // TODO: Implement quick view modal
                       }}
                     >
                       <FiSearch />

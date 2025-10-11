@@ -1,0 +1,199 @@
+/* Instagram Section Styles - Edge-to-Edge Design */
+.instagram-section {
+  background-color: #ffffff;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.instagram-container {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* Edge-to-Edge Image Grid */
+.instagram-grid {
+  display: flex;
+  width: 100%;
+  height: 350px;
+  margin: 0;
+  padding: 0;
+}
+
+.instagram-image-box {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  transition: none;
+}
+
+.instagram-image-box:focus {
+  outline: 2px solid #e1306c;
+  outline-offset: -2px;
+  z-index: 2;
+}
+
+.instagram-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.instagram-image-box:hover .instagram-image {
+  transform: scale(1.2);
+}
+
+/* Hover Overlay and Icon */
+.instagram-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.instagram-image-box:hover .instagram-overlay {
+  opacity: 1;
+}
+
+.instagram-icon {
+  width: 48px;
+  height: 48px;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* Overlaid Follow Button */
+.instagram-follow-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.instagram-follow-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 32px;
+  background-color: #ffffff;
+  color: #333333;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.instagram-follow-button:hover {
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.instagram-follow-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(225, 48, 108, 0.3);
+}
+
+.instagram-follow-icon {
+  font-size: 20px;
+  color: #e1306c;
+}
+
+.instagram-follow-button span {
+  color: #333333;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .instagram-grid {
+    height: 300px;
+  }
+  
+  .instagram-follow-button {
+    padding: 14px 28px;
+    font-size: 15px;
+  }
+  
+  .instagram-icon {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (max-width: 768px) {
+  .instagram-grid {
+    height: 250px;
+  }
+  
+  .instagram-follow-button {
+    padding: 12px 24px;
+    font-size: 14px;
+    gap: 10px;
+  }
+  
+  .instagram-follow-icon {
+    font-size: 18px;
+  }
+  
+  .instagram-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .instagram-grid {
+    height: 200px;
+  }
+  
+  .instagram-follow-button {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+  
+  .instagram-icon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Performance optimizations */
+@media (prefers-reduced-motion: reduce) {
+  .instagram-overlay,
+  .instagram-follow-button,
+  .instagram-image {
+    transition: none;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .instagram-overlay {
+    opacity: 0;
+  }
+  
+  .instagram-image-box:active .instagram-overlay {
+    opacity: 1;
+  }
+  
+  .instagram-image-box:active .instagram-image {
+    transform: scale(1.05);
+  }
+}

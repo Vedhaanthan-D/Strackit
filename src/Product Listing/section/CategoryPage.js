@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import '../styles/CategoryPage.css';
-import { getSecondaryCategories } from 'shops-query/src/modules/SecondaryCategories/queries/index.js';
-import { fetchMasterCategories } from 'shops-query/src/modules/masterCategories/index.js';
-import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds.js';
+import { getSecondaryCategories } from 'shops-query/src/modules/SecondaryCategories/queries/index';
+import { fetchMasterCategories } from 'shops-query/src/modules/masterCategories/index';
+import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds';
 import ProductGrid from './ProductGrid';
 
 const CategoryPage = () => {

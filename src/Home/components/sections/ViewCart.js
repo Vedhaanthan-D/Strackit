@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiPlus, FiMinus } from 'react-icons/fi';
-import { CART_CONFIG, IMAGE_PREFIX, FREE_SHIPPING_THRESHOLD } from '../../../config/appIds.js';
-import { fetchCart, removeFromCart, updateCartQuantity } from 'shops-query/src/modules/cart/index.js';
+import { CART_CONFIG, IMAGE_PREFIX, FREE_SHIPPING_THRESHOLD } from '../../../config/appIds';
+import { fetchCart, removeFromCart, updateCartQuantity } from 'shops-query/src/modules/cart/index';
 import '../styles/ViewCart.css';
 
 const ViewCart = () => {

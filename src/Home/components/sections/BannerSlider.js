@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { GET_BANNER_DATA } from 'shops-query/src/modules/banner/queries/get.js';
-import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
+import { GET_BANNER_DATA } from 'shops-query/src/modules/banner/queries/get';
+import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds';
 import '../styles/slidingbanner.css';
 
 // Loading Skeleton Component
@@ -78,7 +78,6 @@ const BannerSlider = () => {
           setBannerContent([]);
         }
       } catch (err) {
-        console.error('Error fetching banners:', err);
         setError(err);
         setBanners([]);
         setBannerContent([]);
