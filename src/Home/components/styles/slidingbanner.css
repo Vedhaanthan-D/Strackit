@@ -27,6 +27,7 @@
   display: block;
   margin: 0 auto;
   will-change: transform, opacity;
+  margin-top: 0px;
 }
 
 /* Banner image pre-animation state */
@@ -291,7 +292,7 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 5;
-    background: white;
+    background: #958286;
     border: none;
     width: 50px;
     height: 50px;
@@ -330,6 +331,7 @@
 .slider .rightArrow:not(:hover) svg {
   animation: reverseSlideRightArrow 0.3s ease-in-out forwards;
   animation-fill-mode: both;
+  color: #473f41;
 }
 
 /* Left Arrow Animation */
@@ -341,6 +343,7 @@
 .slider .leftArrow:not(:hover) svg {
   animation: reverseSlideLeftArrow 0.3s ease-in-out forwards;
   animation-fill-mode: both;
+  color: #473f41;
 }
 
 /* Positioning for arrows */

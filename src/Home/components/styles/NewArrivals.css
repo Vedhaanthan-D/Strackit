@@ -43,6 +43,9 @@
   overflow-x: hidden;
   position: relative;
   z-index: 1; /* Ensure container creates stacking context */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .products-grid {
@@ -57,6 +60,20 @@
   align-items: stretch;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
+  justify-content: flex-start;
+}
+
+/* Centered grid for 4 or fewer products */
+.products-grid.centered-grid {
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: visible;
+  margin: 0 auto;
+  padding: 10px 0 30px;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -64,251 +81,7 @@
   display: none;
 }
 
-/* Navigation Arrows with Banner-style Animation */
-.new-arrivals-nav-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 50;
-  background: white;
-  border: none;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  outline: none;
-}
-
-.new-arrivals-nav-arrow:hover {
-  background: rgba(255, 255, 255, 1);
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.new-arrivals-nav-arrow:disabled,
-.new-arrivals-nav-arrow.disabled {
-  opacity: 0.4;
-  cursor: not-allowed !important;
-  pointer-events: none;
-}
-
-/* Arrow Icon Animation */
-.new-arrivals-nav-arrow svg {
-  position: relative;
-  transition: none; /* Remove default transitions */
-  width: 24px;
-  height: 24px;
-  display: inline-block;
-  will-change: transform, opacity; /* Optimize animations */
-}
-
-/* Right Arrow Animation */
-.new-arrivals-right-arrow:hover svg {
-  animation: slideRightArrow 0.3s ease-in-out forwards;
-  animation-fill-mode: both;
-}
-
-.new-arrivals-right-arrow:not(:hover) svg {
-  animation: reverseSlideRightArrow 0.3s ease-in-out forwards;
-  animation-fill-mode: both;
-}
-
-/* Left Arrow Animation */
-.new-arrivals-left-arrow:hover svg {
-  animation: slideLeftArrow 0.3s ease-in-out forwards;
-  animation-fill-mode: both;
-}
-
-.new-arrivals-left-arrow:not(:hover) svg {
-  animation: reverseSlideLeftArrow 0.3s ease-in-out forwards;
-  animation-fill-mode: both;
-}
-
-/* Positioning for arrows */
-.new-arrivals-left-arrow {
-  left: 40px;
-}
-
-.new-arrivals-right-arrow {
-  right: 40px;
-}
-
-/* Keyframe Animations for Arrows */
-@keyframes slideRightArrow {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  40% {
-    transform: translateX(150%);
-    opacity: 0;
-  }
-  41% {
-    transform: translateX(-150%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes reverseSlideRightArrow {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  40% {
-    transform: translateX(-150%);
-    opacity: 0;
-  }
-  41% {
-    transform: translateX(150%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideLeftArrow {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  40% {
-    transform: translateX(-150%);
-    opacity: 0;
-  }
-  41% {
-    transform: translateX(150%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes reverseSlideLeftArrow {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  40% {
-    transform: translateX(150%);
-    opacity: 0;
-  }
-  41% {
-    transform: translateX(-150%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
 /* Grid layout - no scrollbar needed */
-
-/* Navigation Arrows */
-.new-arrivals-nav-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 50;
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid rgba(204, 204, 204, 0.8);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-  user-select: none;
-  backdrop-filter: blur(5px);
-}
-
-.new-arrivals-nav-arrow:hover {
-  background: rgba(255, 255, 255, 1);
-  border-color: rgba(187, 187, 187, 1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  transform: translateY(-50%) scale(1.1);
-  cursor: pointer;
-}
-
-.new-arrivals-nav-arrow:active {
-  transform: translateY(-50%) scale(0.95);
-}
-
-.new-arrivals-nav-arrow:hover svg {
-  color: #222;
-}
-
-.new-arrivals-nav-arrow.disabled {
-  opacity: 0.4;
-  cursor: not-allowed !important;
-  pointer-events: none;
-}
-
-.new-arrivals-nav-arrow svg {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  position: relative;
-  transition: none; /* Remove default transitions */
-  will-change: transform, opacity; /* Optimize animations */
-  cursor: pointer;
-  pointer-events: none;
-}
-
-/* Right Arrow Animation */
-.new-arrivals-right-arrow:hover svg {
-  animation: slideRightArrow 0.3s ease-in-out forwards;
-  animation-fill-mode: both;
-}
-
-.new-arrivals-right-arrow:not(:hover) svg {
-  animation: reverseSlideRightArrow 0.3s ease-in-out forwards;
-  animation-fill-mode: both;
-}
-
-/* Left Arrow Animation */
-.new-arrivals-left-arrow:hover svg {
-  animation: slideLeftArrow 0.3s ease-in-out forwards;
-  animation-fill-mode: both;
-}
-
-.new-arrivals-left-arrow:not(:hover) svg {
-  animation: reverseSlideLeftArrow 0.3s ease-in-out forwards;
-  animation-fill-mode: both;
-}
-
-.new-arrivals-nav-arrow:focus {
-  outline: 2px solid #007acc;
-  outline-offset: 2px;
-}
-
-.new-arrivals-nav-arrow:focus:not(:focus-visible) {
-  outline: none;
-}
-
-.new-arrivals-left-arrow {
-  left: 5px;
-}
-
-.new-arrivals-right-arrow {
-  right: 5px;
-}
 
 .new-arrivals-product-card {
   background: #fff;
@@ -328,6 +101,23 @@
   padding: 20px 15px;
   animation: cardFadeIn 0.6s ease-out forwards;
   flex-shrink: 0;
+}
+
+/* Specific styles for centered cards */
+.centered-grid .new-arrivals-product-card {
+  margin: 0 15px;
+}
+
+/* Responsive behavior for product grid */
+@media (max-width: 992px) {
+  .products-grid.centered-grid {
+    justify-content: center;
+    padding: 10px 20px 30px;
+  }
+  
+  .centered-grid .new-arrivals-product-card {
+    margin: 0 10px 20px;
+  }
 }
 
 @keyframes cardFadeIn {
@@ -894,98 +684,5 @@
     margin: 5px auto 12px;
   }
   
-  .new-arrivals-nav-arrow {
-    width: 35px;
-    height: 35px;
-  }
-  
-  .new-arrivals-nav-arrow svg {
-    width: 18px;
-    height: 18px;
-  }
-  
-  .new-arrivals-left-arrow {
-    left: 20px;
-  }
-  
-  .new-arrivals-right-arrow {
-    right: 20px;
-  }
 }
 
-/* Keyframe Animations for Arrows */
-@keyframes slideRightArrow {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  40% {
-    transform: translateX(150%);
-    opacity: 0;
-  }
-  41% {
-    transform: translateX(-150%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes reverseSlideRightArrow {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  40% {
-    transform: translateX(-150%);
-    opacity: 0;
-  }
-  41% {
-    transform: translateX(150%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideLeftArrow {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  40% {
-    transform: translateX(-150%);
-    opacity: 0;
-  }
-  41% {
-    transform: translateX(150%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes reverseSlideLeftArrow {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  40% {
-    transform: translateX(150%);
-    opacity: 0;
-  }
-  41% {
-    transform: translateX(-150%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}

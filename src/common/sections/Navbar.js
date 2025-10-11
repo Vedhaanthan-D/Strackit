@@ -16,7 +16,6 @@ const Navbar = ({
     { name: 'Home', path: '/' },
     { name: 'Shops', path: '/shops' },
     { name: 'Products', path: '/products' },
-    { name: 'Blog', path: '/blog' },
     { name: 'Pages', path: '/pages' }
   ],
   languageOptions = ['English', 'French'],

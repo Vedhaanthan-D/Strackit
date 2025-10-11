@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FiChevronLeft, FiChevronRight, FiShoppingBag, FiSearch } from 'react-icons/fi';
+import { FiShoppingBag, FiSearch } from 'react-icons/fi';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
 import '../styles/NewArrivals.css';
@@ -42,21 +42,6 @@ const NewArrivals = ({
     e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTI1QzEyMy4xMjUgMTI1IDEwMi4xODggMTQ2LjM3NSAxMDIuMTg4IDE3Mi44MTJDMTA2Ljg3NSAxNjguNTYyIDExMy4xMjUgMTY2LjI1IDEyMCAxNjYuMjVDMTI2Ljg3NSAxNjYuMjUgMTMzLjEyNSAxNjguMTI1IDEzNy44MTIgMTcyLjgxMkMxNDAuNjI1IDE3NS42MjUgMTQ2LjI1IDE3NS42MjUgMTQ5LjA2MiAxNzIuODEyQzE1My43NSAxNjguMTI1IDE2MCAxNjUuODEyIDE2Ni44NzUgMTY1LjgxMkMxNzMuNzUgMTY1LjgxMiAxODAuNjI1IDE2OC41NjIgMTg0Ljg3NSAxNzIuODEyQzE4NC44NzUgMTQ2LjM3NSAxNzEuODc1IDEyNSAxNTAgMTI1WiIgZmlsbD0iI0QxRDFEMSIvPgo8cGF0aCBkPSJNMTk4IDE4Ni4yNUMxOTUuMTg4IDE4Ni4yNSAxOTMuMzEyIDE4NS44MTIgMTkxLjQzOCAxODQuODEyQzE4Ny4xODggMTgzLjM3NSAxODIuNSAxODMuMzc1IDE3OC4yNSAxODQuODEyQzE3Ni4zNzUgMTg1LjM3NSAxNzQuNSAxODYuMjUgMTcyIDE4Ni4yNUMxNjkuNSAxODYuMjUgMTY3LjYyNSAxODUuODEyIDE2NS43NSAxODQuODEyQzE2MS41IDE4My4zNzUgMTU2LjgxMiAxODMuMzc1IDE1Mi41NjIgMTg0LjgxMkMxNTAuNjg4IDE4NS4zNzUgMTQ4LjgxMiAxODYuMjUgMTQ2LjMxMiAxODYuMjVDMTQzLjgxMiAxODYuMjUgMTQxLjkzOCAxODUuODEyIDE0MC4wNjIgMTg0LjgxMkMxMzUuODEyIDE4My4zNzUgMTMxLjEyNSAxODMuMzc1IDEyNi44NzUgMTg0LjgxMkMxMzEuNTYyIDE5NS42MjUgMTQ0IDIwMS42ODggMTU4IDE5OS4zMTJDMTcyIDE5Ni45MzggMTgzLjM3NSAxODcuNTYyIDE4OCAxNzMuMjVDMTkxLjI1IDE3Ny4wNjIgMTk1LjE4OCAxNzkuODc1IDIwMCAxODEuM0MxOTkuNSAxODIuNzUgMTk5IDE4NC42MjUgMTk4IDE4Ni4yNVoiIGZpbGw9IiNEMUQxRDEiLz4KPC9zdmc+Cg==';
   };
 
-  // Navigation functions for arrows
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -320, behavior: 'smooth' });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 320, behavior: 'smooth' });
-    }
-  };
-
-
-
   useEffect(() => {
     const fetchNewArrivals = async () => {
       try {
@@ -98,6 +83,9 @@ const NewArrivals = ({
 
   // Show loading state with skeletons
   if (loading) {
+    const skeletonCount = 6;
+    const shouldCenterSkeletons = skeletonCount <= 4;
+    
     return (
       <div className="new-arrivals-container">
         <div className="new-arrivals-header">
@@ -105,24 +93,7 @@ const NewArrivals = ({
           {subtitle && <p className="new-arrivals-subtitle">{subtitle}</p>}
         </div>
         <div className="products-container">
-
-          <button 
-            className="new-arrivals-nav-arrow new-arrivals-left-arrow disabled"
-            disabled
-            aria-label="Previous products"
-          >
-            <FiChevronLeft />
-          </button>
-          
-          <button 
-            className="new-arrivals-nav-arrow new-arrivals-right-arrow disabled"
-            disabled
-            aria-label="Next products"
-          >
-            <FiChevronRight />
-          </button>
-          
-          <div className="products-grid" ref={scrollContainerRef}>
+          <div className={`products-grid ${shouldCenterSkeletons ? 'centered-grid' : ''}`} ref={scrollContainerRef}>
             {[1, 2, 3, 4, 5, 6].map((item) => (
               <ProductSkeleton key={item} />
             ))}
@@ -149,6 +120,9 @@ const NewArrivals = ({
     );
   }
 
+  // Determine if products should be centered (4 or fewer products)
+  const shouldCenter = products.length <= 4;
+
   return (
     <div className="new-arrivals-container">
       <div className="new-arrivals-header">
@@ -157,24 +131,7 @@ const NewArrivals = ({
       </div>
       
       <div className="products-container">
-
-        <button 
-          className="new-arrivals-nav-arrow new-arrivals-left-arrow"
-          onClick={scrollLeft}
-          aria-label="Previous products"
-        >
-          <FiChevronLeft />
-        </button>
-        
-        <button 
-          className="new-arrivals-nav-arrow new-arrivals-right-arrow"
-          onClick={scrollRight}
-          aria-label="Next products"
-        >
-          <FiChevronRight />
-        </button>
-        
-        <div className="products-grid" ref={scrollContainerRef}>
+        <div className={`products-grid ${shouldCenter ? 'centered-grid' : ''}`} ref={scrollContainerRef}>
           {products.map((product) => {
             const isDiscounted = hasDiscount(product);
             

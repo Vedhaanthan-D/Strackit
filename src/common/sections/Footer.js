@@ -26,7 +26,7 @@ const Footer = () => {
     setEmail('');
   };
   
-  const currentYear = new Date().getFullYear();
+  // const currentYear = new Date().getFullYear();
 
   return (
     <footer className="footer">
@@ -123,7 +123,10 @@ const Footer = () => {
         {/* Footer Bottom */}
         <div className="footer-bottom">
           <div className="copyright">
-            <p>© Copyright {currentYear} | <span>Aone</span> By ShopiLaunch. Powered by Shopify.</p>
+            <p>© Copyright 2025-2026 | t11 Powered by Strackit</p>
+          </div>
+          <div className="version-info">
+            <p>version 1.0.0</p>
           </div>
           <div className="payment-methods">
             <FaCcMastercard className="payment-icon" title="Mastercard" />

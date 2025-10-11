@@ -125,10 +125,14 @@ const MasterCategory = () => {
     );
   }
 
+  // Determine if categories should be centered (3 or fewer categories)
+  // But we'll always show arrows regardless of the number of categories
+  const shouldCenter = masterCategories.length <= 3;
+
   return (
     <div className="masterCategoryContainer">
-      <div className="categorySlider">
-        {/* Left Arrow */}
+      <div className={`categorySlider ${shouldCenter ? 'centered-container' : ''}`}>
+        {/* Left Arrow - always show */}
         <button 
           className="categoryArrow masterCategoryLeftArrow"
           onClick={scrollLeft}
@@ -138,7 +142,7 @@ const MasterCategory = () => {
         </button>
 
         {/* Categories Row */}
-        <div className="categoryRow">
+        <div className={`categoryRow ${shouldCenter ? 'centered' : ''}`}>
           {masterCategories.map((category) => {
             const subcategoryCount = subcategoryCounts[category.id] || 0;
             
@@ -170,7 +174,7 @@ const MasterCategory = () => {
           })}
         </div>
 
-        {/* Right Arrow */}
+        {/* Right Arrow - always show */}
         <button 
           className="categoryArrow masterCategoryRightArrow"
           onClick={scrollRight}

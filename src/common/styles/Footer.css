@@ -178,12 +178,27 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .copyright p {
   margin: 0;
   font-size: 14px;
   color: #777;
+}
+
+.version-info {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.version-info p {
+  margin: 0;
+  font-size: 13px;
+  color: #999;
+  font-weight: 400;
 }
 
 .copyright span {
@@ -228,7 +243,20 @@
     gap: 15px;
   }
   
+  .version-info {
+    position: relative;
+    left: auto;
+    transform: none;
+    margin: 10px 0;
+    order: 2;
+  }
+  
   .payment-methods {
     justify-content: center;
+    order: 3;
+  }
+  
+  .copyright {
+    order: 1;
   }
 }

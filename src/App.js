@@ -9,6 +9,7 @@ import {
   Static2Section,
   Footer
 } from './Home/components';
+import BackToTop from './common/components/BackToTop';
 import CartSidebar from './Home/components/sections/CartSidebar';
 import ViewCart from './Home/components/sections/ViewCart';
 import CategoryPage from './Product Listing/section/CategoryPage';
@@ -77,6 +78,9 @@ function App() {
           cartItemCount={cartItemCount}
           setCartItemCount={setCartItemCount}
         />
+        
+        {/* Back to Top Button */}
+        <BackToTop />
       </div>
     </Router>
   );
