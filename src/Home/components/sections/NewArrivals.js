@@ -34,7 +34,7 @@ const NewArrivals = ({
   const [cartSuccess, setCartSuccess] = useState({}); // Track success state for each product
   const [cartQuantities, setCartQuantities] = useState({}); // Track cart quantities for each product
   const scrollContainerRef = useRef(null);
-  const { showSuccess } = useToast();
+  const { showSuccess, showError } = useToast();
 
   // Helper function to check if product has discount
   const hasDiscount = (product) => {
