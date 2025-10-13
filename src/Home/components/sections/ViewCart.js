@@ -111,6 +111,24 @@ const ViewCart = () => {
     fetchCartData();
   }, []);
 
+  // Listen for cart updates from other components
+  useEffect(() => {
+    const handleCartUpdate = (event) => {
+      const { action, shopId: eventShopId, userId: eventUserId } = event.detail;
+      
+      // Only refresh if the update is for the same shop and user
+      if (eventShopId === shopId && eventUserId === userId) {
+        fetchCartData();
+      }
+    };
+
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+    };
+  }, [shopId, userId]);
+
   return (
     <div className="view-cart-container">
       <div className="view-cart-header">

@@ -14,6 +14,7 @@ import BackToTop from './common/components/BackToTop';
 import CartSidebar from './Home/components/sections/CartSidebar';
 import ViewCart from './Home/components/sections/ViewCart';
 import CategoryPage from './Product Listing/section/CategoryPage';
+import { ToastProvider } from './common/components/Toast';
 import './App.css';
 
 function App() {
@@ -31,60 +32,62 @@ function App() {
   };
 
   return (
-    <Router>
-      <div className="App">
-        <Navbar 
-          cartCount={cartItemCount}
-          onCartClick={handleCartClick}
-        />
-        
-        <Routes>
-          {/* Home Page Route */}
-          <Route path="/" element={
-            <>
-              <BannerSlider />
-              <StaticTextSection />
-              <MasterCategory />
-              <NewArrivals 
-                title="NEW ARRIVALS" 
-                subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur"
-                limit={8}
-                sortNewest={true}
-              />
-              <Static2Section />
-              <NewArrivals 
-                title="YOU MIGHT LIKE" 
-                subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur" 
-                limit={8}
-                sortNewest={false}
-              />
-              <InstagramSection />
-            </>
-          } />
+    <ToastProvider>
+      <Router>
+        <div className="App">
+          <Navbar 
+            cartCount={cartItemCount}
+            onCartClick={handleCartClick}
+          />
           
-          {/* Category Page Route */}
-          <Route path="/category/:id" element={<CategoryPage />} />
+          <Routes>
+            {/* Home Page Route */}
+            <Route path="/" element={
+              <>
+                <BannerSlider />
+                <StaticTextSection />
+                <MasterCategory />
+                <NewArrivals 
+                  title="NEW ARRIVALS" 
+                  subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur"
+                  limit={8}
+                  sortNewest={true}
+                />
+                <Static2Section />
+                <NewArrivals 
+                  title="YOU MIGHT LIKE" 
+                  subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur" 
+                  limit={8}
+                  sortNewest={false}
+                />
+                <InstagramSection />
+              </>
+            } />
+            
+            {/* Category Page Route */}
+            <Route path="/category/:id" element={<CategoryPage />} />
+            
+            {/* Cart Page Route */}
+            <Route path="/cart" element={
+              <ViewCart />
+            } />
+          </Routes>
           
-          {/* Cart Page Route */}
-          <Route path="/cart" element={
-            <ViewCart />
-          } />
-        </Routes>
-        
-        <Footer />
-        
-        {/* Cart Sidebar */}
-        <CartSidebar 
-          isOpen={isCartSidebarOpen}
-          onClose={handleCartClose}
-          cartItemCount={cartItemCount}
-          setCartItemCount={setCartItemCount}
-        />
-        
-        {/* Back to Top Button */}
-        <BackToTop />
-      </div>
-    </Router>
+          <Footer />
+          
+          {/* Cart Sidebar */}
+          <CartSidebar 
+            isOpen={isCartSidebarOpen}
+            onClose={handleCartClose}
+            cartItemCount={cartItemCount}
+            setCartItemCount={setCartItemCount}
+          />
+          
+          {/* Back to Top Button */}
+          <BackToTop />
+        </div>
+      </Router>
+    </ToastProvider>
   );
 }
 

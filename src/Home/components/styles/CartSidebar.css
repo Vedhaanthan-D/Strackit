@@ -611,6 +611,17 @@
   color: #111827;
 }
 
+.add-to-cart-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.add-to-cart-btn.loading:hover {
+  background: #ffffff;
+  border-color: #E5E7EB;
+  color: #374151;
+}
+
 /* Recommended Product Skeleton */
 .recommended-product-skeleton {
   flex: 0 0 180px;

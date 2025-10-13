@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { FiX, FiPlus, FiMinus, FiChevronLeft, FiChevronRight, FiShoppingCart } from 'react-icons/fi';
 import { MdNote, MdLocalOffer, MdLocalShipping } from 'react-icons/md';
 import { CART_CONFIG, IMAGE_PREFIX } from '../../../config/appIds';
-import { fetchCart, addToCart, removeFromCart, updateCartQuantity } from 'shops-query/src/modules/cart/index';
+import { fetchCart, removeFromCart, updateCartQuantity } from 'shops-query/src/modules/cart/index';
+import { addProductToCart } from '../../../common/utils/cartUtils';
 import { getProductsController } from 'shops-query/src/modules/products/index';
 import { fetchCouponCode } from 'shops-query/src/modules/CouponCode/Controller/index';
 import { fetchShippingCost } from 'shops-query/src/modules/ShippingCost/Controller/index';
@@ -45,6 +46,7 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
   const [coupons, setCoupons] = useState([]);
   const [shippingCosts, setShippingCosts] = useState([]);
   const [freeShippingThreshold, setFreeShippingThreshold] = useState(500);
+  const [addingToCart, setAddingToCart] = useState({}); // Track loading state for recommended products
   const recommendedScrollRef = useRef(null);
   
   // Constants from config
@@ -256,21 +258,32 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
 
   // Add recommended product to cart
   const addToCartFunc = async (product) => {
+    const productKey = product.id || product.productId;
+    
+    if (addingToCart[productKey]) {
+      return; // Prevent multiple simultaneous additions
+    }
+    
+    setAddingToCart(prev => ({ ...prev, [productKey]: true }));
+    
     try {
-      await addToCart({
-        productId: product.id,
-        shopId,
-        userId,
-        quantity: 1
-      });
+      const result = await addProductToCart(product, 'cart', 1);
       
-      // Refresh cart data
-      fetchCartData();
-      // Refresh recommendations (to exclude newly added item)
-      fetchRecommendedProducts();
+      if (result.success) {
+        // Refresh cart data
+        fetchCartData();
+        // Refresh recommendations (to exclude newly added item)
+        fetchRecommendedProducts();
+        
+        // Clear any previous errors
+        setError(null);
+      } else {
+        throw new Error(result.error || 'Failed to add to cart');
+      }
     } catch (err) {
-      // Failed to add item
-      setError('Failed to add item to cart');
+      setError(`Failed to add ${product.name || 'item'} to cart`);
+    } finally {
+      setAddingToCart(prev => ({ ...prev, [productKey]: false }));
     }
   };
 
@@ -316,6 +329,24 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
       fetchRecommendedProducts();
     }
   }, [isOpen, cartItems]);
+
+  // Listen for cart updates from other components
+  useEffect(() => {
+    const handleCartUpdate = (event) => {
+      const { action, shopId: eventShopId, userId: eventUserId } = event.detail;
+      
+      // Only refresh if the update is for the same shop and user
+      if (eventShopId === shopId && eventUserId === userId) {
+        fetchCartData();
+      }
+    };
+
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+    };
+  }, [shopId, userId]);
 
   // Handle overlay click
   const handleOverlayClick = (e) => {
@@ -509,10 +540,11 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                           )}
                         </div>
                         <button 
-                          className="add-to-cart-btn"
+                          className={`add-to-cart-btn ${addingToCart[product.id || product.productId] ? 'loading' : ''}`}
                           onClick={() => addToCartFunc(product)}
+                          disabled={addingToCart[product.id || product.productId]}
                         >
-                          + Add to Cart
+                          {addingToCart[product.id || product.productId] ? '...' : '+ Add to Cart'}
                         </button>
                       </div>
                     );
@@ -611,10 +643,11 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                         )}
                       </div>
                       <button 
-                        className="add-to-cart-btn"
+                        className={`add-to-cart-btn ${addingToCart[product.id || product.productId] ? 'loading' : ''}`}
                         onClick={() => addToCartFunc(product)}
+                        disabled={addingToCart[product.id || product.productId]}
                       >
-                        + Add to Cart
+                        {addingToCart[product.id || product.productId] ? '...' : '+ Add to Cart'}
                       </button>
                     </div>
                   );
