@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { FiX, FiCheck } from 'react-icons/fi';
-import './Toast.css';
+import '../styles/Toast.css';
 
 // Toast Context
 const ToastContext = createContext();

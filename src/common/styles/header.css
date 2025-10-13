@@ -244,7 +244,8 @@
   display: flex;
   align-items: center;
   gap: 25px; /* Increased spacing between individual icons */
-  margin-left: 8px; /* Decreased margin to reduce space after currency dropdown */
+  margin-left: 8px;
+  margin-right: -50px; /* Decreased margin to reduce space after currency dropdown */
 }
 
 /* Icon Wrapper for tooltip positioning */

@@ -6,7 +6,8 @@ import {
   FiShoppingBag, 
   FiMenu, 
   FiX,
-  FiChevronDown 
+  FiChevronDown,
+  FiHeart
 } from 'react-icons/fi';
 import '../styles/header.css';
 import aoneLogo from '../../Home/assets/aone-logo.jpg';
@@ -208,6 +209,20 @@ const Navbar = ({
               </button>
               <div className="tooltip">
                 <span className="tooltipText">Search</span>
+                <div className="tooltipArrow"></div>
+              </div>
+            </div>
+
+            <div className="iconWrapper">
+              <button 
+                className="iconButton"
+                onClick={() => {}} // Add favorites functionality later
+                aria-label="Favorites"
+              >
+                <FiHeart />
+              </button>
+              <div className="tooltip">
+                <span className="tooltipText">Favorites</span>
                 <div className="tooltipArrow"></div>
               </div>
             </div>
