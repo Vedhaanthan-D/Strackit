@@ -171,7 +171,9 @@
   height: 500px;
   object-position: center;
   display: block;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  object-fit: cover;
+  width: 100%;
 }
 
 .new-arrivals-product-card:hover .new-arrivals-product-image {
