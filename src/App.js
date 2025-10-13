@@ -14,6 +14,7 @@ import BackToTop from './common/components/BackToTop';
 import CartSidebar from './Home/components/sections/CartSidebar';
 import ViewCart from './Home/components/sections/ViewCart';
 import CategoryPage from './Product Listing/section/CategoryPage';
+import ProductDetails from './Product Details/sections/ProductDetails';
 import { ToastProvider } from './common/components/Toast';
 import './App.css';
 
@@ -66,6 +67,9 @@ function App() {
             
             {/* Category Page Route */}
             <Route path="/category/:id" element={<CategoryPage />} />
+            
+            {/* Product Details Route */}
+            <Route path="/product/:id" element={<ProductDetails />} />
             
             {/* Cart Page Route */}
             <Route path="/cart" element={

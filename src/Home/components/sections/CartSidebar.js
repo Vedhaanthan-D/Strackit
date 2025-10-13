@@ -412,7 +412,6 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
               <button onClick={fetchCartData} className="retry-btn">Retry</button>
             </div>
           ) : cartItems.length === 0 ? (
-            /* Empty Cart */
             <div className="empty-cart">
               <EmptyCartIcon />
               <h3 className="empty-cart-title">Your cart is empty</h3>
@@ -424,7 +423,6 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
               </button>
             </div>
           ) : (
-            /* Cart Items */
             <div className="cart-items">
               {cartItems.map((item) => {
                 const price = parseFloat(item.prize);
@@ -440,35 +438,37 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                         onError={handleImageError}
                       />
                     </div>
-                    <div className="cart-item-details">
-                      <h4 className="cart-item-name">{item.name}</h4>
-                      <div className="cart-item-price">
-                        {discount > 0 ? (
-                          <>
-                            <span className="discounted-price">₹{finalPrice.toFixed(2)}</span>
-                            <span className="original-price">₹{price.toFixed(2)}</span>
-                          </>
-                        ) : (
-                          <span className="current-price">₹{price.toFixed(2)}</span>
-                        )}
+                    <div className="cart-item-content">
+                      <div className="cart-item-info">
+                        <h4 className="cart-item-name">{item.name}</h4>
+                        <div className="cart-item-price">
+                          {discount > 0 ? (
+                            <>
+                              <span className="cs-discounted-price">₹{finalPrice.toFixed(2)}</span>
+                              <span className="cs-original-price">₹{price.toFixed(2)}</span>
+                            </>
+                          ) : (
+                            <span className="cs-current-price">₹{price.toFixed(2)}</span>
+                          )}
+                        </div>
                       </div>
-                      <div className="cart-item-controls">
-                        <div className="quantity-controls">
+                      <div className="cart-item-actions">
+                        <div className="cart-quantity-controls">
                           <button 
-                            className="quantity-btn"
+                            className="cart-quantity-btn"
                             onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                             disabled={item.quantity <= 1}
                             aria-label="Decrease quantity"
                           >
-                            <FiMinus size={16} />
+                            <FiMinus size={12} />
                           </button>
-                          <span className="quantity-value">{item.quantity}</span>
+                          <span className="cart-quantity-value">{item.quantity}</span>
                           <button 
-                            className="quantity-btn"
+                            className="cart-quantity-btn"
                             onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                             aria-label="Increase quantity"
                           >
-                            <FiPlus size={16} />
+                            <FiPlus size={12} />
                           </button>
                         </div>
                         <button 
@@ -532,15 +532,15 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                         <div className="recommended-product-price">
                           {discount > 0 ? (
                             <>
-                              <span className="discounted-price">₹{finalPrice.toFixed(2)}</span>
-                              <span className="original-price">₹{price.toFixed(2)}</span>
+                              <span className="cs-discounted-price">₹{finalPrice.toFixed(2)}</span>
+                              <span className="cs-original-price">₹{price.toFixed(2)}</span>
                             </>
                           ) : (
-                            <span className="current-price">₹{price.toFixed(2)}</span>
+                            <span className="cs-current-price">₹{price.toFixed(2)}</span>
                           )}
                         </div>
                         <button 
-                          className={`add-to-cart-btn ${addingToCart[product.id || product.productId] ? 'loading' : ''}`}
+                          className={`cs-add-to-cart-btn ${addingToCart[product.id || product.productId] ? 'loading' : ''}`}
                           onClick={() => addToCartFunc(product)}
                           disabled={addingToCart[product.id || product.productId]}
                         >
@@ -635,15 +635,15 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                       <div className="recommended-product-price">
                         {discount > 0 ? (
                           <>
-                            <span className="discounted-price">₹{finalPrice.toFixed(2)}</span>
-                            <span className="original-price">₹{price.toFixed(2)}</span>
+                            <span className="cs-discounted-price">₹{finalPrice.toFixed(2)}</span>
+                            <span className="cs-original-price">₹{price.toFixed(2)}</span>
                           </>
                         ) : (
-                          <span className="current-price">₹{price.toFixed(2)}</span>
+                          <span className="cs-current-price">₹{price.toFixed(2)}</span>
                         )}
                       </div>
                       <button 
-                        className={`add-to-cart-btn ${addingToCart[product.id || product.productId] ? 'loading' : ''}`}
+                        className={`cs-add-to-cart-btn ${addingToCart[product.id || product.productId] ? 'loading' : ''}`}
                         onClick={() => addToCartFunc(product)}
                         disabled={addingToCart[product.id || product.productId]}
                       >

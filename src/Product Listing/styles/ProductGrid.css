@@ -70,50 +70,48 @@
 /* Action Buttons */
 .product-grid-actions {
   position: absolute;
-  bottom: 15px;
+  bottom: 30px;
   left: 50%;
-  transform: translateX(-50%) translateY(50px);
+  transform: translateX(-50%);
   display: flex;
-  gap: 10px;
+  gap: 15px;
   opacity: 0;
+  visibility: hidden;
   transition: all 0.3s ease;
   z-index: 2;
 }
 
 .product-grid-item:hover .product-grid-actions {
-  transform: translateX(-50%) translateY(0);
   opacity: 1;
+  visibility: visible;
 }
 
 .product-grid-action-btn {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   border: none;
-  background: white;
-  color: #333;
+  background: #ffffff;
+  color: #000000;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .product-grid-action-btn:hover {
-  background: #333;
-  color: white;
-  transform: scale(1.1);
+  background: #000000;
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.product-grid-cart-btn:hover {
-  background: #e74c3c;
-  color: white;
-}
-
-.product-grid-quick-view-btn:hover {
-  background: #3498db;
-  color: white;
+.product-grid-action-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
 }
 
 .product-grid-details {
@@ -149,13 +147,13 @@
   text-decoration: line-through;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .product-grid-container {
     padding: 15px;
   }
   
-  .product-grid-products-grid {
+  .product-grid-products-grid,
+  .loading-grid {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
   }
@@ -164,10 +162,46 @@
     height: 250px;
   }
   
-  /* Always show action buttons on mobile */
   .product-grid-actions {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+  }
+  
+  .product-grid-details {
+    padding: 15px 0;
+  }
+  
+  .product-grid-title {
+    font-size: 14px;
+  }
+  
+  .product-grid-current-price,
+  .regular-price {
+    font-size: 14px;
+  }
+  
+  .product-grid-old-price,
+  .original-price {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid-products-grid,
+  .loading-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+  
+  .product-grid-image-wrapper {
+    height: 250px;
+  }
+  
+  .product-grid-sale-tag {
+    top: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    font-size: 10px;
   }
 }
 
@@ -298,71 +332,3 @@
   margin: 0;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .product-grid-container {
-    padding: 15px;
-  }
-  
-  .product-grid,
-  .loading-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-  }
-  
-  .product-image-container {
-    height: 300px;
-  }
-  
-  .product-info {
-    padding: 15px 0;
-  }
-  
-  .product-name {
-    font-size: 14px;
-    min-height: 40px;
-  }
-  
-  .sale-price,
-  .regular-price {
-    font-size: 14px;
-  }
-  
-  .original-price {
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .product-grid,
-  .loading-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-  }
-  
-  .product-image-container {
-    height: 250px;
-  }
-  
-  .sale-badge {
-    top: 10px;
-    left: 10px;
-    padding: 4px 8px;
-    font-size: 10px;
-  }
-}
-
-/* Additional styles matching the original design */
-.product-card {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-}
-
-.product-name {
-  font-family: inherit;
-  text-transform: none;
-  letter-spacing: normal;
-}
-
-.product-pricing {
-  font-family: inherit;
-}

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds';
 import '../styles/ProductGrid.css';
 
 const ProductGrid = ({ masterCategory, secondaryCategory }) => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -128,6 +130,21 @@ const ProductGrid = ({ masterCategory, secondaryCategory }) => {
     e.target.style.display = 'none';
   };
 
+  // Handle product click - navigate to product details
+  const handleProductClick = (productId) => {
+    if (productId) {
+      navigate(`/product/${productId}`);
+    }
+  };
+
+  // Handle quick view - also navigate to product details
+  const handleQuickView = (e, productId) => {
+    e.stopPropagation(); // Prevent card click
+    if (productId) {
+      navigate(`/product/${productId}`);
+    }
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -185,7 +202,12 @@ const ProductGrid = ({ masterCategory, secondaryCategory }) => {
               (product.image ? `${IMAGE_PREFIX}${product.image}` : '');
 
             return (
-              <div key={product.id} className="product-grid-item">
+              <div 
+                key={product.id} 
+                className="product-grid-item"
+                onClick={() => handleProductClick(product.id)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="product-grid-image-wrapper">
                   {isDiscounted && (
                     <div className="product-grid-sale-tag">Sale</div>
@@ -199,12 +221,20 @@ const ProductGrid = ({ masterCategory, secondaryCategory }) => {
                   
                   {/* Action Buttons - Show on Hover */}
                   <div className="product-grid-actions">
-                    <button className="product-grid-action-btn product-grid-cart-btn" title="Add to Cart">
+                    <button 
+                      className="product-grid-action-btn product-grid-cart-btn" 
+                      title="Add to Cart"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M3 3h2l.4 2m0 0h13.2a1 1 0 0 1 .98 1.2l-1.6 8a1 1 0 0 1-.98.8H6.4m0 0L5 7H3m3.4 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm10 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
                       </svg>
                     </button>
-                    <button className="product-grid-action-btn product-grid-quick-view-btn" title="Quick View">
+                    <button 
+                      className="product-grid-action-btn product-grid-quick-view-btn" 
+                      title="Quick View"
+                      onClick={(e) => handleQuickView(e, product.id)}
+                    >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M15 3h6v6m-11 5l8-8m-13 4v8a2 2 0 0 0 2 2h8"/>
                       </svg>

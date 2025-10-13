@@ -196,16 +196,16 @@ const ViewCart = () => {
                         <td className="quantity-col">
                           <div className="quantity-controls">
                             <button 
-                              className="quantity-btn"
+                              className="viewcart-quantity-btn"
                               onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                               disabled={item.quantity <= 1}
                               aria-label="Decrease quantity"
                             >
                               <FiMinus size={16} />
                             </button>
-                            <span className="quantity-value">{item.quantity}</span>
+                            <span className="viewcart-quantity-value">{item.quantity}</span>
                             <button 
-                              className="quantity-btn"
+                              className="viewcart-quantity-btn"
                               onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                               aria-label="Increase quantity"
                             >

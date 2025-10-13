@@ -225,7 +225,7 @@
   margin: 0 auto;
 }
 
-.quantity-btn {
+.viewcart-quantity-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -235,16 +235,16 @@
   justify-content: center;
 }
 
-.quantity-btn:hover {
+.viewcart-quantity-btn:hover {
   background-color: #F3F4F6;
 }
 
-.quantity-btn:disabled {
+.viewcart-quantity-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.quantity-value {
+.viewcart-quantity-value {
   padding: 0 10px;
   min-width: 20px;
   text-align: center;

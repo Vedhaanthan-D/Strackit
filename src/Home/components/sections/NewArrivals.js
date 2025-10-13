@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FiShoppingBag, FiSearch } from 'react-icons/fi';
 import { getProductsController } from 'shops-query/src/modules/products/index';
 import { addProductToCart, getProductCartStatus } from '../../../common/utils/cartUtils';
@@ -23,6 +24,7 @@ const NewArrivals = ({
   limit = 8,
   sortNewest = true
 }) => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -103,18 +105,30 @@ const NewArrivals = ({
     }
   };
 
+  // Handle product navigation to detail page
+  const handleProductClick = (product, e) => {
+    // Don't navigate if cart button was clicked
+    if (e.target.closest('.cart-button') || e.target.closest('.cart-icon-container')) {
+      return;
+    }
+    
+    if (product && product.id) {
+      navigate(`/product/${product.id}`);
+    }
+  };
+
   // Handle adding product to cart
   const handleAddToCart = async (product, e) => {
     e.stopPropagation();
     
     if (!product) {
-      alert('Unable to add product to cart: Invalid product data');
+      showError('Unable to add product to cart: Invalid product data');
       return;
     }
 
     const stateKey = product.id || product.productId;
     if (!stateKey) {
-      alert('Unable to add product to cart: Missing product identifier');
+      showError('Unable to add product to cart: Missing product identifier');
       return;
     }
 
@@ -130,14 +144,12 @@ const NewArrivals = ({
       if (result.success) {
         setCartSuccess(prev => ({ ...prev, [stateKey]: true }));
         
-        // Show toast notification
         if (result.action === 'quantity_updated') {
           showSuccess(`${product.name} quantity updated to ${result.newQuantity} in cart`);
         } else if (result.action === 'item_added') {
           showSuccess(`${product.name} added to cart`);
         }
         
-        // Clear success message after 2 seconds
         setTimeout(() => {
           setCartSuccess(prev => ({ ...prev, [stateKey]: false }));
         }, 2000);
@@ -148,7 +160,7 @@ const NewArrivals = ({
       
     } catch (error) {
       const errorMessage = error.message || 'Unknown error occurred';
-      alert(`Failed to add ${product.name || 'product'} to cart.\nError: ${errorMessage}\nPlease try again.`);
+      showError(`Failed to add ${product.name || 'product'} to cart. ${errorMessage}`);
       
     } finally {
       setAddingToCart(prev => ({ ...prev, [stateKey]: false }));
@@ -319,6 +331,8 @@ const NewArrivals = ({
                 className="new-arrivals-product-card"
                 onMouseEnter={() => handleProductHover(product)}
                 onMouseLeave={handleProductHoverOut}
+                onClick={(e) => handleProductClick(product, e)}
+                style={{ cursor: 'pointer' }}
               >
                 <div className="new-arrivals-product-image-container">
                   {isDiscounted && (
@@ -334,7 +348,7 @@ const NewArrivals = ({
                   {/* Hover Action Icons */}
                   <div className="product-hover-actions">
                     <button
-                      className={`product-action-icon ${addingToCart[product.id || product.productId] ? 'loading' : ''} ${cartSuccess[product.id || product.productId] ? 'success' : ''}`}
+                      className={`product-action-icon cart-button ${addingToCart[product.id || product.productId] ? 'loading' : ''} ${cartSuccess[product.id || product.productId] ? 'success' : ''}`}
                       tabIndex="0"
                       role="button"
                       aria-label={cartQuantities[product.id || product.productId] > 0 
@@ -361,8 +375,7 @@ const NewArrivals = ({
                       aria-label={`Quick view ${product.name}`}
                       onClick={(e) => {
                         e.stopPropagation();
-                        // Quick view functionality here
-                        // TODO: Implement quick view modal
+                        handleProductClick(product, e);
                       }}
                     >
                       <FiSearch />

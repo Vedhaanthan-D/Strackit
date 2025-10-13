@@ -5,15 +5,6 @@ import '../styles/Toast.css';
 // Toast Context
 const ToastContext = createContext();
 
-// Hook to use toast
-export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
-  }
-  return context;
-};
-
 // Individual Toast Component
 const ToastItem = ({ message, type = 'success', duration = 3000, onClose, show }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -56,7 +47,7 @@ const ToastItem = ({ message, type = 'success', duration = 3000, onClose, show }
 };
 
 // Toast Provider Component
-export const ToastProvider = ({ children }) => {
+const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
   const showToast = useCallback((message, type = 'success', duration = 3000) => {
@@ -112,4 +103,14 @@ export const ToastProvider = ({ children }) => {
   );
 };
 
-export default ToastProvider;
+// Hook to use toast
+const useToast = () => {
+  const context = useContext(ToastContext);
+  if (!context) {
+    throw new Error('useToast must be used within a ToastProvider');
+  }
+  return context;
+};
+
+// Export everything
+export { ToastProvider, useToast };

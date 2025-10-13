@@ -6,8 +6,8 @@ export const IMAGE_PREFIX = "https://s3.ap-south-1.amazonaws.com/business.strack
 
 // Cart component configuration
 export const CART_CONFIG = {
-  userId: 1968,
-  shopId: 488
+  userId: 198,
+  shopId: 512
 };
 
 // Home component configuration
