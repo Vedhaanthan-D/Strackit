@@ -291,7 +291,7 @@
 /* For very wide screens */
 @media (min-width: 1200px) {
   .container {
-    padding: 0 120px; /* Increased padding for large screens */
+    padding: 0 30px; /* Increased padding for large screens */
   }
   
   .navigation {
@@ -300,7 +300,7 @@
   
   .rightActions {
     max-width: calc(40vw - 100px);
-    gap: 18px; /* Decreased spacing for large screens */
+    gap: 0px; /* Decreased spacing for large screens */
     padding-right: 40px;
   }
   
@@ -310,8 +310,9 @@
   }
   
   .actionIcons {
-    gap: 30px; /* Maximum icon spacing for large screens */
-    margin-left: 15px; /* Decreased margin for large screens */
+    gap: 0px; /* Maximum icon spacing for large screens */
+    margin-left: 15px;
+    margin-right: 15px; /* Decreased margin for large screens */
   }
 }
 
@@ -340,8 +341,8 @@
 /* Cart Badge */
 .cartBadge {
   position: absolute;
-  top: -6px; /* Moved slightly lower */
-  right: -6px; /* Moved slightly more to the right */
+  bottom: -6px; /* Positioned at bottom instead of top */
+  right: 10px; /* Moved slightly more to the right */
   background-color: #b17653;
   color: #fff;
   font-size: 11px;
@@ -510,7 +511,7 @@
   }
 
   .cartBadge {
-    top: -6px;
+    bottom: -6px; /* Positioned at bottom for mobile */
     right: -2px;
     font-size: 10px;
     padding: 2px 5px;
@@ -574,7 +575,7 @@
   }
 
   .cartBadge {
-    top: -5px;
+    bottom: -5px; /* Positioned at bottom for smallest screens */
     right: -2px;
     font-size: 9px;
     padding: 1px 4px;

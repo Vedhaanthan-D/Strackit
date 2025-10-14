@@ -29,10 +29,23 @@
   font-size: 1rem;
   font-weight: 400;
   color: #666;
-  margin: 0 auto;
+  margin: 0 auto 20px;
   font-family: 'Jost', sans-serif;
   line-height: 1.6;
   max-width: 600px;
+  position: relative;
+  padding-bottom: 35px;
+}
+
+.new-arrivals-subtitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: .5px;
+  background-color: #b17653;
 }
 
 .products-container {
@@ -84,23 +97,21 @@
 /* Grid layout - no scrollbar needed */
 
 .new-arrivals-product-card {
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
+  background: transparent;
+  overflow: visible;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   cursor: pointer;
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 280px;
-  min-width: 280px;
-  height: 550px;
+  width: 350px;
+  height: auto;
   margin: 0;
   border: none;
-  padding: 20px 15px;
+  padding: 0;
   animation: cardFadeIn 0.6s ease-out forwards;
   flex-shrink: 0;
+  gap: 0;
 }
 
 /* Specific styles for centered cards */
@@ -132,48 +143,82 @@
 }
 
 .new-arrivals-product-card:hover {
-  transform: scale(1.015);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-5px);
 }
 
-/* Sale Badge */
+.new-arrivals-product-card:hover .new-arrivals-product-image-container {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Sale Badge - Bold red ribbon cutting through top-right corner at 45 degrees */
 .new-arrivals-sale-badge {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  background: #e74c3c;
+  top: 10px;
+  right: -45px;
+  background: #DC3545;
   color: white;
-  padding: 8px 16px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 8px 45px;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  z-index: 3;
-  clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
-  min-width: 50px;
+  letter-spacing: 2px;
+  z-index: 10;
+  font-family: 'Jost', sans-serif;
+  transform: rotate(40deg);
+  transform-origin: center center;
+  box-shadow: 0 3px 12px rgba(220, 53, 69, 0.4);
+  line-height: 1.2;
+  white-space: nowrap;
+  width: 160px;
   text-align: center;
+}
+
+/* Add depth shadow underneath the ribbon */
+.new-arrivals-sale-badge::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), transparent);
+  filter: blur(3px);
+}
+
+/* Add subtle 3D effect to the ribbon edges */
+.new-arrivals-sale-badge::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%, rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
 }
 
 .new-arrivals-product-image-container {
   position: relative;
-  width: 100%;
-  height: 400px;
+  width: 318px;
+  height: 318px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: #f8f8f8;
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
 }
 
 .new-arrivals-product-image {
-  /* max-width: 100%;
-  max-height: 100%; */
-  height: 500px;
+  height: 490px;
   object-position: center;
   display: block;
   transition: all 0.3s ease;
-  object-fit: cover;
-  width: 100%;
+  object-fit: contain;
+  width: 318px;
+  margin-top: 60px;
 }
 
 .new-arrivals-product-card:hover .new-arrivals-product-image {
@@ -321,20 +366,23 @@
 }
 
 .new-arrivals-product-info {
-  padding: 0;
+  padding: 25px 20px;
   background: #fff;
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  margin-top: auto;
+  justify-content: center;
+  margin-top: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  height: 120px;
+  width: 318px;
 }
 
 .new-arrivals-product-name {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 600;
   color: #000;
-  margin: 0 0 12px 0;
+  margin: 0 0 15px 0;
   font-family: 'Jost', sans-serif;
   text-align: center;
   line-height: 1.4;

@@ -63,10 +63,10 @@
 
 .categoryBox {
   position: relative;
-  width: 280px; /* Fixed width instead of min-width */
-  height: 400px; /* Fixed height */
-  flex: 0 0 280px; /* Don't grow or shrink, maintain fixed width */
-  border-radius: 12px;
+  width: 433.33px; /* Fixed width instead of min-width */
+  height: 577.76px; /* Fixed height */
+  /* flex: 0 0 280px; */
+  /* border-radius: 12px; */
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;

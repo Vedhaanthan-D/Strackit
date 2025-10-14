@@ -46,8 +46,8 @@
 }
 
 .footer-logo img {
-  max-width: 100px;
-  height: auto;
+  width: 160px;
+  height: 55px;
 }
 
 .company-description {
@@ -65,7 +65,11 @@
 }
 
 .company-contact strong {
-  color: #333;
+  color: #777;
+  font-size: 14px;
+  margin: 5px 0;
+  line-height: 1.6;
+  font-weight: normal;
 }
 
 /* Column Headings */
@@ -150,25 +154,29 @@
 /* Social Icons */
 .social-icons {
   display: flex;
-  gap: 10px;
+  gap: 15px;
 }
 
 .social-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  border: 1px solid #ddd;
-  color: #333;
-  transition: all 0.3s;
+  border: 1px solid #333;
+  background-color: #000;
+  color: #fff;
+  transition: all 0.3s ease;
+  font-size: 18px;
 }
 
 .social-icon:hover {
-  background-color: #000;
-  color: #fff;
-  border-color: #000;
+  background-color: #fff;
+  color: #000;
+  border-color: #333;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Footer Bottom */

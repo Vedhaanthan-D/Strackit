@@ -24,7 +24,7 @@
   color: #929292;
   text-transform: uppercase;
   letter-spacing: 2px;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-family: 'Jost', sans-serif;
   font-weight: 500;
   margin-bottom: 40px;
@@ -34,7 +34,7 @@
   text-align: center;
   font-family: 'Jost', sans-serif;
   font-size: 2.5rem;
-  font-weight: 600;
+  font-weight: 400;
   color: #373A3C;
   line-height: 1.4;
   margin-bottom: 40px;
@@ -48,8 +48,8 @@
   margin: 0;
   background: none;
   border: none;
-  border-bottom: 2px solid #222;
-  font-size: 1rem;
+  border-bottom: 1px solid #222;
+  font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   cursor: pointer;
@@ -58,7 +58,7 @@
   text-align: right;
   font-family: 'Jost', sans-serif;
   font-weight: 500;
-  padding: 12px 0;
+  padding: 5px 0;
   outline: none;
   overflow: hidden;
   position: relative;

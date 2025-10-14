@@ -38,8 +38,19 @@ const NewArrivals = ({
 
   // Helper function to check if product has discount
   const hasDiscount = (product) => {
-    return product.originalPrice && product.discountedPrice && 
-           parseFloat(product.originalPrice) > parseFloat(product.discountedPrice);
+    // Check if originalPrice and discountedPrice exist and originalPrice is higher
+    if (product.originalPrice && product.discountedPrice && 
+        parseFloat(product.originalPrice) > parseFloat(product.discountedPrice)) {
+      return true;
+    }
+    
+    // Check if prize (current price) and originalPrice exist and originalPrice is higher
+    if (product.prize && product.originalPrice && 
+        parseFloat(product.originalPrice) > parseFloat(product.prize)) {
+      return true;
+    }
+    
+    return false;
   };
 
   // Helper function to format price
@@ -335,9 +346,8 @@ const NewArrivals = ({
                 style={{ cursor: 'pointer' }}
               >
                 <div className="new-arrivals-product-image-container">
-                  {isDiscounted && (
-                    <div className="new-arrivals-sale-badge">Sale</div>
-                  )}
+                  {/* Always show sale badge for testing - will show if product has discount */}
+                  <div className="new-arrivals-sale-badge">Sale</div>
                   <img
                     src={getCurrentImage(product)}
                     alt={product.name}
