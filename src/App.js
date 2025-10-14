@@ -8,6 +8,7 @@ import {
   StaticTextSection,
   Static2Section,
   InstagramSection,
+  BlogSection,
   Footer
 } from './Home/components';
 import BackToTop from './common/components/BackToTop';
@@ -61,23 +62,36 @@ function App() {
                   limit={8}
                   sortNewest={false}
                 />
+                <BlogSection />
                 <InstagramSection />
+                <Footer />
               </>
             } />
             
             {/* Category Page Route */}
-            <Route path="/category/:id" element={<CategoryPage />} />
+            <Route path="/category/:id" element={
+              <>
+                <CategoryPage />
+                <Footer />
+              </>
+            } />
             
             {/* Product Details Route */}
-            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/product/:id" element={
+              <>
+                <ProductDetails />
+                <Footer />
+              </>
+            } />
             
             {/* Cart Page Route */}
             <Route path="/cart" element={
-              <ViewCart />
+              <>
+                <ViewCart />
+                <Footer />
+              </>
             } />
           </Routes>
-          
-          <Footer />
           
           {/* Cart Sidebar */}
           <CartSidebar 

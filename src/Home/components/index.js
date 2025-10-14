@@ -5,4 +5,5 @@ export { default as NewArrivals } from './sections/NewArrivals';
 export { default as StaticTextSection } from './sections/StaticTextSection';
 export { default as Static2Section } from './sections/Static2Section';
 export { default as InstagramSection } from './sections/InstagramSection';
+export { default as BlogSection } from './sections/BlogSection';
 export { default as Footer } from '../../common/sections/Footer';
