@@ -8,7 +8,6 @@ import {
   StaticTextSection,
   Static2Section,
   InstagramSection,
-  BlogSection,
   Footer
 } from './Home/components';
 import BackToTop from './common/components/BackToTop';
@@ -62,7 +61,6 @@ function App() {
                   limit={8}
                   sortNewest={false}
                 />
-                <BlogSection />
                 <InstagramSection />
                 <Footer />
               </>
