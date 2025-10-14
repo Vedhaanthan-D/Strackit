@@ -28,15 +28,12 @@ const BlogSection = ({ title = "OUR BLOG", limit = 3 }) => {
           shopId: HOME_CONFIG.shopId
         });
 
-        console.log('Blog data received:', blogData);
-
         if (blogData && blogData.length > 0) {
           setBlogs(blogData);
         } else {
           setBlogs([]);
         }
       } catch (err) {
-        console.error('Error fetching blogs:', err);
         setError(err.message || 'Failed to load blogs');
       } finally {
         setLoading(false);
@@ -90,12 +87,7 @@ const BlogSection = ({ title = "OUR BLOG", limit = 3 }) => {
     );
   }
 
-  if (error) {
-    console.error('Blog section error:', error);
-  }
-
   if (blogs.length === 0) {
-    console.log('No blogs found, but rendering section anyway for debugging');
     return (
       <section className="blog-section">
         <div className="blog-container">
