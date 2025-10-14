@@ -7,6 +7,7 @@ import {
   NewArrivals,
   StaticTextSection,
   Static2Section,
+  BlogSection,
   InstagramSection,
   Footer
 } from './Home/components';
@@ -61,6 +62,7 @@ function App() {
                   limit={8}
                   sortNewest={false}
                 />
+                <BlogSection />
                 <InstagramSection />
                 <Footer />
               </>
