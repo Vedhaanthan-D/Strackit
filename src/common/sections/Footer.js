@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  FaTwitter, 
+  FaXTwitter,
   FaDribbble, 
   FaBehance, 
   FaInstagram,
@@ -8,7 +8,7 @@ import {
   FaCcVisa,
   FaCcAmex,
   FaCcPaypal
-} from 'react-icons/fa';
+} from 'react-icons/fa6';
 import aoneLogo from '../../Home/assets/aone-logo.jpg';
 import '../styles/Footer.css';
 
@@ -21,12 +21,8 @@ const Footer = () => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle newsletter subscription
-    // Reset form
     setEmail('');
   };
-  
-  // const currentYear = new Date().getFullYear();
 
   return (
     <footer className="footer">
@@ -104,8 +100,8 @@ const Footer = () => {
             
             {/* Social Media Icons */}
             <div className="social-icons">
-              <a href="#" className="social-icon" aria-label="Twitter">
-                <FaTwitter />
+              <a href="#" className="social-icon" aria-label="X (Twitter)">
+                <FaXTwitter />
               </a>
               <a href="#" className="social-icon" aria-label="Dribbble">
                 <FaDribbble />

@@ -300,7 +300,7 @@
   
   .rightActions {
     max-width: calc(40vw - 100px);
-    gap: 0px; /* Decreased spacing for large screens */
+    gap: 6px; /* Decreased spacing for large screens */
     padding-right: 40px;
   }
   
