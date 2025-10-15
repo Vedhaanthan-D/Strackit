@@ -72,7 +72,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  /* background: rgba(255, 255, 255, 0.3); */
+  background: rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -82,7 +82,7 @@
 
 .homeBannerContent {
   max-width: 600px;
-  color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255, 218);
   text-align: left;
   margin-right: 30px;
 }
@@ -173,7 +173,7 @@
   font-family: 'Jost', sans-serif;
   font-size: 3.5rem;
   font-weight: 700;
-  color: rgb(0, 0, 0); /* Changed to white for better visibility on dark overlay */
+  color: rgb(255, 255, 255); /* Changed to white for better visibility on dark overlay */
   line-height: 1.2;
   margin: 0 0 25px 0;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
@@ -189,7 +189,7 @@
   font-family: 'Jost', sans-serif;
   font-size: 1.1rem;
   font-weight: 400;
-  color: rgba(0, 0, 0, 0.9); /* Changed to white for better visibility */
+  color: rgba(255, 255, 255, 0.9); /* Changed to white for better visibility */
   line-height: 1.6;
   margin: 0 0 45px 0;
   max-width: 500px;
@@ -204,8 +204,8 @@
 
 .slidingBannerButton {
   background: transparent;
-  border: 2px solid rgb(0, 0, 0); /* Changed to white border */
-  color: rgb(0, 0, 0); /* Changed to white text */
+  border: 2px solid rgb(255, 255, 255); /* Changed to white border */
+  color: rgb(255, 255, 255); /* Changed to white text */
   font-family: 'Jost', sans-serif;
   font-size: 0.8rem;
   font-weight: 600;
@@ -306,7 +306,7 @@
     cursor: pointer;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    opacity: 45%;
+    opacity: 60%;
 }
 
 
