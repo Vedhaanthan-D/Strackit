@@ -10,7 +10,7 @@
   text-align: center;
 }
 
-.blog-section .container {
+.blog-section .blog-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
@@ -346,7 +346,7 @@
 }
 
 @media (max-width: 480px) {
-  .blog-section .container {
+  .blog-section .blog-container {
     padding: 0 15px;
   }
   

@@ -17,7 +17,7 @@
   height: auto;
 }
 
-.bannerImage {
+.slidingBannerImage {
   width: 100%;
   height: 820px;
   object-fit: cover;
@@ -29,13 +29,13 @@
 }
 
 /* Banner image pre-animation state */
-.bannerImage.pre-animate {
+.slidingBannerImage.pre-animate {
   transform: scale(1.08);
   opacity: 0;
 }
 
 /* Banner image animated state */
-.bannerImage.animate-in {
+.slidingBannerImage.animate-in {
   transform: scale(1);
   opacity: 1;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
@@ -72,7 +72,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
+  /* background: rgba(255, 255, 255, 0.3); */
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -82,7 +82,7 @@
 
 .homeBannerContent {
   max-width: 600px;
-  color: white;
+  color: rgb(0, 0, 0);
   text-align: left;
   margin-right: 30px;
 }
@@ -94,7 +94,7 @@
 }
 
 /* Staggered animations for banner content */
-.bannerLabel.animate-in {
+.slidingBannerLabel.animate-in {
   opacity: 1;
   transform: translateY(0);
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -102,7 +102,7 @@
   transition-delay: 0.25s; /* Start right after image animation */
 }
 
-.bannerTitle.animate-in {
+.slidingBannerTitle.animate-in {
   opacity: 1;
   transform: translateY(0);
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -110,7 +110,7 @@
   transition-delay: 0.3s; /* 50ms after label */
 }
 
-.bannerDescription.animate-in {
+.slidingBannerDescription.animate-in {
   opacity: 1;
   transform: translateY(0);
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -118,7 +118,7 @@
   transition-delay: 0.35s; /* 50ms after title */
 }
 
-.bannerButton.animate-in {
+.slidingBannerButton.animate-in {
   opacity: 1;
   transform: translateY(0);
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -152,7 +152,7 @@
   }
 }
 
-.bannerLabel {
+.slidingBannerLabel {
   font-family: 'Jost', sans-serif;
   font-size: 0.9rem;
   font-weight: 500;
@@ -164,32 +164,32 @@
   will-change: transform, opacity;
 }
 
-.bannerLabel.pre-animate {
+.slidingBannerLabel.pre-animate {
   opacity: 0;
   transform: translateY(40px);
 }
 
-.bannerTitle {
+.slidingBannerTitle {
   font-family: 'Jost', sans-serif;
   font-size: 3.5rem;
   font-weight: 700;
-  color: white; /* Changed to white for better visibility on dark overlay */
+  color: rgb(0, 0, 0); /* Changed to white for better visibility on dark overlay */
   line-height: 1.2;
   margin: 0 0 25px 0;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   will-change: transform, opacity;
 }
 
-.bannerTitle.pre-animate {
+.slidingBannerTitle.pre-animate {
   opacity: 0;
   transform: translateY(40px);
 }
 
-.bannerDescription {
+.slidingBannerDescription {
   font-family: 'Jost', sans-serif;
   font-size: 1.1rem;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.9); /* Changed to white for better visibility */
+  color: rgba(0, 0, 0, 0.9); /* Changed to white for better visibility */
   line-height: 1.6;
   margin: 0 0 45px 0;
   max-width: 500px;
@@ -197,15 +197,15 @@
   will-change: transform, opacity;
 }
 
-.bannerDescription.pre-animate {
+.slidingBannerDescription.pre-animate {
   opacity: 0;
   transform: translateY(40px);
 }
 
-.bannerButton {
+.slidingBannerButton {
   background: transparent;
-  border: 2px solid white; /* Changed to white border */
-  color: white; /* Changed to white text */
+  border: 2px solid rgb(0, 0, 0); /* Changed to white border */
+  color: rgb(0, 0, 0); /* Changed to white text */
   font-family: 'Jost', sans-serif;
   font-size: 0.8rem;
   font-weight: 600;
@@ -226,7 +226,7 @@
   will-change: transform, opacity;
 }
 
-.bannerButton.pre-animate {
+.slidingBannerButton.pre-animate {
   opacity: 0;
   transform: translateY(40px);
 }
@@ -258,31 +258,31 @@
 }
 
 /* Hover effects for button text sliding */
-.bannerButton:hover .buttonTextTop {
+.slidingBannerButton:hover .buttonTextTop {
   transform: translateY(-100%);
 }
 
-.bannerButton:hover .buttonTextBottom {
+.slidingBannerButton:hover .buttonTextBottom {
   transform: translateY(0);
 }
 
 /* Return to original position when not hovered */
-.bannerButton:not(:hover) .buttonTextTop {
+.slidingBannerButton:not(:hover) .buttonTextTop {
   transform: translateY(0);
 }
 
-.bannerButton:not(:hover) .buttonTextBottom {
+.slidingBannerButton:not(:hover) .buttonTextBottom {
   transform: translateY(100%);
 }
 
-.bannerButton:hover {
+.slidingBannerButton:hover {
   background: transparent;
   color: white;
   border: 2px solid white;
   box-shadow: none;
 }
 
-.bannerButton:active {
+.slidingBannerButton:active {
   background: transparent;
   color: white;
   border: 2px solid white;
@@ -480,7 +480,7 @@
     width: 100vw; /* Ensure full width on mobile */
   }
   
-  .bannerImage {
+  .slidingBannerImage {
     max-height: 70vh; /* Adjusted for mobile */
     width: 100vw; /* Full width on mobile */
     min-height: 350px; /* Ensure minimum height on mobile */
@@ -519,7 +519,7 @@
     width: 100vw; /* Ensure full width on small mobile */
   }
   
-  .bannerImage {
+  .slidingBannerImage {
     max-height: 60vh; /* Adjusted for small mobile */
     width: 100vw; /* Full width on small mobile */
     min-height: 300px; /* Ensure minimum height on small mobile */
@@ -553,13 +553,13 @@
   */
 
   /* Overlay responsive styles */
-  .bannerOverlay {
+  .slidingBannerOverlay {
     padding: 0 30px;
     justify-content: center;
     text-align: center;
   }
 
-  .bannerContent {
+  .slidingBannerContent {
     text-align: center;
     max-width: 90%;
   }
@@ -575,23 +575,23 @@
     text-align: center;
   }
 
-  .bannerTitle {
+  .slidingBannerTitle {
     font-size: 2.5rem;
     margin-bottom: 15px;
   }
 
-  .bannerDescription {
+  .slidingBannerDescription {
     font-size: 1rem;
     margin-bottom: 25px;
     max-width: 100%;
   }
 
-  .bannerLabel {
+  .slidingBannerLabel {
     font-size: 0.8rem;
     margin-bottom: 15px;
   }
 
-  .bannerButton {
+  .slidingBannerButton {
     width: 140px;
     height: 38px;
     font-size: 0.65rem;
@@ -630,7 +630,7 @@
   }
 }
 
-.bannerImage {
+.slidingBannerImage {
   animation: fadeIn 0.5s ease-in-out;
 }
 

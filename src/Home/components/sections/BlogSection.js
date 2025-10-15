@@ -57,7 +57,7 @@ const BlogSection = () => {
   if (loading) {
     return (
       <section className="blog-section">
-        <div className="container">
+        <div className="blog-container">
           <div className="blog-header">
             <h2 className="blog-title">OUR BLOG</h2>
             <div className="blog-title-underline"></div>
@@ -71,7 +71,7 @@ const BlogSection = () => {
   if (error) {
     return (
       <section className="blog-section">
-        <div className="container">
+        <div className="blog-container">
           <div className="blog-header">
             <h2 className="blog-title">OUR BLOG</h2>
             <div className="blog-title-underline"></div>
@@ -85,7 +85,7 @@ const BlogSection = () => {
   if (!blogs || blogs.length === 0) {
     return (
       <section className="blog-section">
-        <div className="container">
+        <div className="blog-container">
           <div className="blog-header">
             <h2 className="blog-title">OUR BLOG</h2>
             <div className="blog-title-underline"></div>
@@ -98,7 +98,7 @@ const BlogSection = () => {
 
   return (
     <section className="blog-section">
-      <div className="container">
+      <div className="blog-container">
         <div className="blog-header">
           <h2 className="blog-title">OUR BLOG</h2>
           <div className="blog-title-underline"></div>

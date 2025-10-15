@@ -144,7 +144,7 @@ const BannerSlider = () => {
         <img 
           src={banners[currentIndex]?.image} 
           alt={banners[currentIndex]?.title}
-          className={`bannerImage ${animationStarted ? 'animate-in' : 'pre-animate'}`}
+          className={`slidingBannerImage ${animationStarted ? 'animate-in' : 'pre-animate'}`}
           onClick={handleBannerClick}
           onLoad={handleImageLoad}
           onError={handleImageError}
@@ -154,17 +154,17 @@ const BannerSlider = () => {
         {/* Banner Overlay Content */}
         <div className="homeBannerOverlay">
           <div className={`homeBannerContent ${currentIndex === 0 ? 'homeBanner1Content' : 'homeBanner2Content'}`}>
-            <span className={`bannerLabel ${animationStarted ? 'animate-in' : 'pre-animate'}`}>
+            <span className={`slidingBannerLabel ${animationStarted ? 'animate-in' : 'pre-animate'}`}>
               {bannerContent[currentIndex]?.label}
             </span>
-            <h1 className={`bannerTitle ${animationStarted ? 'animate-in' : 'pre-animate'}`}>
+            <h1 className={`slidingBannerTitle ${animationStarted ? 'animate-in' : 'pre-animate'}`}>
               {bannerContent[currentIndex]?.title}
             </h1>
-            <p className={`bannerDescription ${animationStarted ? 'animate-in' : 'pre-animate'}`}>
+            <p className={`slidingBannerDescription ${animationStarted ? 'animate-in' : 'pre-animate'}`}>
               {bannerContent[currentIndex]?.description || 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur'}
             </p>
             <button 
-              className={`bannerButton ${animationStarted ? 'animate-in' : 'pre-animate'}`}
+              className={`slidingBannerButton ${animationStarted ? 'animate-in' : 'pre-animate'}`}
               onClick={handleBannerClick}
             >
               <span className="buttonTextWrapper">
