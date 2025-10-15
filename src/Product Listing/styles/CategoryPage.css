@@ -1,14 +1,14 @@
 .categoryPageContainer {
-  width: 100%;
+  /* width: 100%; */
   background: #fff;
 }
 
 /* Hero Banner Styles */
 .heroBanner {
-  width: 100%;
+  /* width: 100%; */
   height: 500px;
-  background-size: cover;
-  background-position: center;
+  background-size: contain;
+  background-position: center center;
   background-repeat: no-repeat;
   background-attachment: scroll;
   position: relative;
@@ -19,7 +19,7 @@
   min-height: 500px;
 }
 
-.categoryPageBannerOverlay {
+.bannerOverlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -27,22 +27,20 @@
   bottom: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.4) 0%,
-    rgba(0, 0, 0, 0.6) 50%,
-    rgba(0, 0, 0, 0.7) 100%
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.4) 100%
   );
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  color: white;
   padding: 40px 20px;
-  backdrop-filter: blur(1px);
-  z-index: 1;
+  backdrop-filter: blur(0.5px);
 }
 
-.categoryPageBannerContent {
-  text-align: left;
+.bannerContent {
+  text-align: center;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -50,8 +48,8 @@
   justify-content: center;
   flex: 1;
   padding: 60px 20px 20px 20px;
-  margin-right: 750px;
-
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .breadcrumb {
@@ -59,23 +57,25 @@
   margin-bottom: 15px;
   opacity: 0.9;
   text-align: center;
-  width: 100%;
 }
 
 .breadcrumbLink {
   cursor: pointer;
   text-decoration: underline;
+  color: white;
 }
 
 .breadcrumbSeparator {
   margin: 0 8px;
+  color: white;
 }
 
 .breadcrumbCurrent {
   opacity: 0.7;
+  color: white;
 }
 
-.categoryPageBannerTitle {
+.bannerTitle {
   font-size: 3.5rem;
   font-weight: 700;
   margin: 20px 0;
@@ -83,6 +83,7 @@
   letter-spacing: 1px;
   text-align: center;
   width: 100%;
+  color: white;
 }
 
 /* Banner Thumbnails Section */
@@ -143,14 +144,14 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.95);
+  /* background: rgba(255, 255, 255, 0.95); */
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
-  border: 3px solid rgba(255, 255, 255, 0.9);
+  /* border: 3px solid rgba(255, 255, 255, 0.9); */
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
@@ -200,21 +201,21 @@
 }
 
 .thumbnailArrow:hover {
-  background: black;
+  background: white;
   transform: translateY(-50%) scale(1.1);
 }
 
 .thumbnailArrow svg {
-  font-size: 1.3rem;
-  color: white;
+  font-size: 1.2rem;
+  color: black;
 }
 
-.categoryPageLeftArrow {
-  left: 20px;
+.leftArrow {
+  left: 10px;
 }
 
-.categoryPageRightArrow {
-  right: 20px;
+.rightArrow {
+  right: 10px;
 }
 
 /* Category Cards Grid (Below Banner) */
@@ -383,7 +384,7 @@
 @keyframes selectedPulse {
   0% {
     transform: scale(1.0);
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    /* box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); */
   }
   50% {
     transform: scale(1.15);
@@ -397,9 +398,17 @@
 
 /* Products Section */
 .productsSection {
-  padding: 40px 20px;
-  max-width: 1200px;
+  padding: 60px 40px;
+  max-width: 1400px;
   margin: 0 auto;
+}
+
+/* Products with Filters Layout */
+.products-with-filters {
+  display: flex;
+  gap: 30px;
+  margin-top: 30px;
+  align-items: flex-start;
 }
 
 .categoryInfo {
@@ -409,7 +418,7 @@
 
 .categoryInfo h2 {
   font-size: 2rem;
-  color: #333;
+  /* color: #333; */
   margin-bottom: 10px;
   font-weight: 600;
 }
@@ -418,4 +427,48 @@
   color: #666;
   font-size: 1.1rem;
   margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .products-with-filters {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .productsSection {
+    padding: 40px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroBanner {
+    height: 350px;
+    min-height: 350px;
+  }
+  
+  .bannerContent {
+    padding: 40px 20px 20px 20px;
+    margin-right: 0;
+  }
+  
+  .bannerTitle {
+    font-size: 2.5rem;
+  }
+  
+  .bannerThumbnailsSection {
+    padding: 0 20px 20px;
+  }
+  
+  .productsSection {
+    padding: 30px 15px;
+  }
+  
+  .categoryInfo h2 {
+    font-size: 1.5rem;
+  }
+  
+  .categoryDescription {
+    font-size: 1rem;
+  }
 }

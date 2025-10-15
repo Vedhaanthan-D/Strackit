@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import '../styles/CategoryPage.css';
-import { getSecondaryCategories } from 'shops-query/src/modules/SecondaryCategories/queries/index';
-import { fetchMasterCategories } from 'shops-query/src/modules/masterCategories/index';
-import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds';
+import { getSecondaryCategories } from 'shops-query/src/modules/SecondaryCategories/queries/index.js';
+import { fetchMasterCategories } from 'shops-query/src/modules/masterCategories/index.js';
+import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds.js';
 import ProductGrid from './ProductGrid';
+import FilterSidebar from './FilterSidebar';
 
 const CategoryPage = () => {
-  const { id } = useParams();
+  const { id, shopId } = useParams();
   const navigate = useNavigate();
   const [secondaries, setSecondaries] = useState([]);
   const [masterCategory, setMasterCategory] = useState(null);
   const [selectedSecondary, setSelectedSecondary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filters, setFilters] = useState({});
+  const [maxPrice, setMaxPrice] = useState(5000);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,8 +26,12 @@ const CategoryPage = () => {
         // Reset selected secondary when navigating to different master category
         setSelectedSecondary(null);
         
+        // Get dynamic shop ID - use from URL params or fallback to config
+        const currentShopId = shopId || HOME_CONFIG.shopId;
+        console.log('CategoryPage: Using shopId:', currentShopId, 'from URL:', shopId, 'fallback:', HOME_CONFIG.shopId);
+        
         // Fetch master categories to get the current category details
-        const masterData = await fetchMasterCategories(HOME_CONFIG.shopId);
+        const masterData = await fetchMasterCategories(currentShopId);
         
         // Find the current master category (handle both string and number IDs)
         const currentMaster = masterData.find(cat => 
@@ -33,12 +40,14 @@ const CategoryPage = () => {
         setMasterCategory(currentMaster);
         
         // Fetch secondary categories
-        const data = await getSecondaryCategories(HOME_CONFIG.shopId, id);
+        const data = await getSecondaryCategories(currentShopId, id);
         const active = (data || []).filter(s => s.status === 'active' || s.status === 1);
         setSecondaries(active);
         
-        // Do not automatically select any subcategory
-        // User must manually select a subcategory to see filtered products
+        // Automatically select the first subcategory if available
+        if (active.length > 0) {
+          setSelectedSecondary(active[0]);
+        }
       } catch (err) {
         setError(err.message || 'Failed to load category data');
       } finally {
@@ -47,12 +56,21 @@ const CategoryPage = () => {
     };
 
     fetchData();
-  }, [id]);
+  }, [id, shopId]);
 
   // Handle secondary category selection (no navigation)
   const handleSecondaryClick = (secondary) => {
     setSelectedSecondary(secondary);
   };
+
+  // Handle filter changes
+  const handleFiltersChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleMaxPriceUpdate = useCallback((newMaxPrice) => {
+    setMaxPrice(newMaxPrice);
+  }, []);
 
   // Scroll functions for the banner thumbnails
   const scrollLeft = () => {
@@ -98,21 +116,21 @@ const CategoryPage = () => {
           : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         backgroundColor: '#667eea'
       }}>
-        <div className="categoryPageBannerOverlay">
+        <div className="bannerOverlay">
           {/* Title and Breadcrumb */}
-          <div className="categoryPageBannerContent">
+          <div className="bannerContent">
             <div className="breadcrumb">
               <span onClick={() => navigate('/')} className="breadcrumbLink">Home</span>
               <span className="breadcrumbSeparator">›</span>
               <span className="breadcrumbCurrent">{masterCategory?.category}</span>
             </div>
-            <h1 className="categoryPageBannerTitle">{masterCategory?.category}</h1>
+            <h1 className="bannerTitle">{masterCategory?.category}</h1>
           </div>
 
           {/* Secondary Categories Thumbnails Row */}
           {secondaries.length > 0 && (
             <div className="bannerThumbnailsSection">
-              <button className="thumbnailArrow categoryPageLeftArrow" onClick={scrollLeft}>
+              <button className="thumbnailArrow leftArrow" onClick={scrollLeft}>
                 <FiChevronLeft />
               </button>
               
@@ -135,7 +153,7 @@ const CategoryPage = () => {
                 ))}
               </div>
 
-              <button className="thumbnailArrow categoryPageRightArrow" onClick={scrollRight}>
+              <button className="thumbnailArrow rightArrow" onClick={scrollRight}>
                 <FiChevronRight />
               </button>
             </div>
@@ -162,16 +180,28 @@ const CategoryPage = () => {
             </p>
           ) : (
             <p className="categoryDescription">
-              Showing all products from {masterCategory?.category}. Click on a subcategory above to filter products.
+              Loading subcategories...
             </p>
           )}
         </div>
         
-        <ProductGrid 
-          masterCategory={id}
-          secondaryCategory={selectedSecondary?.id}
-          key={`${id}-${selectedSecondary?.id || 'all'}`}
-        />
+        {/* Products with Filters Layout */}
+        <div className="products-with-filters">
+          <FilterSidebar 
+            onFiltersChange={handleFiltersChange}
+            masterCategoryId={id}
+            shopId={shopId || HOME_CONFIG.shopId}
+            maxPrice={maxPrice}
+          />
+          <ProductGrid 
+            masterCategory={id}
+            secondaryCategory={selectedSecondary?.id}
+            filters={filters}
+            shopId={shopId || HOME_CONFIG.shopId}
+            key={`${id}-${selectedSecondary?.id || 'all'}`}
+            onMaxPriceUpdate={handleMaxPriceUpdate}
+          />
+        </div>
       </div>
     </div>
   );

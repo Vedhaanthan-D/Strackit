@@ -341,7 +341,7 @@
 /* Cart Badge */
 .cartBadge {
   position: absolute;
-  bottom: -6px; /* Positioned at bottom instead of top */
+  bottom: -1px; /* Positioned at bottom instead of top */
   right: 10px; /* Moved slightly more to the right */
   background-color: #b17653;
   color: #fff;
