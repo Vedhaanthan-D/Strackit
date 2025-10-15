@@ -25,3 +25,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Section gap for white spacing between sections */
+.section-gap {
+  height: 100px;
+  background-color: #ffffff;
+  width: 100%;
+}

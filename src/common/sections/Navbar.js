@@ -135,7 +135,7 @@ const Navbar = ({
         {/* Right Section - Dropdowns and Action Icons */}
         <div className="rightActions">
           {/* Language Dropdown */}
-          <div className="dropdown" ref={languageDropdownRef}>
+          <div className={`dropdown ${isLanguageDropdownOpen ? 'open' : ''}`} ref={languageDropdownRef}>
             <button 
               className="dropdownButton"
               onClick={() => {
@@ -167,7 +167,7 @@ const Navbar = ({
           </div>
 
           {/* Currency Dropdown */}
-          <div className="dropdown" ref={currencyDropdownRef}>
+          <div className={`dropdown ${isCurrencyDropdownOpen ? 'open' : ''}`} ref={currencyDropdownRef}>
             <button 
               className="dropdownButton"
               onClick={() => {

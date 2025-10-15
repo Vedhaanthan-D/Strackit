@@ -60,6 +60,7 @@ const BlogSection = () => {
         <div className="container">
           <div className="blog-header">
             <h2 className="blog-title">OUR BLOG</h2>
+            <div className="blog-title-underline"></div>
           </div>
           <div className="blog-loading">Loading blogs...</div>
         </div>
@@ -73,6 +74,7 @@ const BlogSection = () => {
         <div className="container">
           <div className="blog-header">
             <h2 className="blog-title">OUR BLOG</h2>
+            <div className="blog-title-underline"></div>
           </div>
           <div className="blog-error">Error loading blogs: {error}</div>
         </div>
@@ -86,8 +88,9 @@ const BlogSection = () => {
         <div className="container">
           <div className="blog-header">
             <h2 className="blog-title">OUR BLOG</h2>
+            <div className="blog-title-underline"></div>
+            <p className="blog-empty">No blogs available</p>
           </div>
-          <div className="blog-empty">No blogs available</div>
         </div>
       </section>
     );
@@ -98,6 +101,7 @@ const BlogSection = () => {
       <div className="container">
         <div className="blog-header">
           <h2 className="blog-title">OUR BLOG</h2>
+          <div className="blog-title-underline"></div>
           <div className="blog-title-underline"></div>
         </div>
         

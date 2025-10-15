@@ -5,6 +5,7 @@
   padding: 40px 20px 60px;
   background-color: #f6f4f1;
   overflow-x: hidden;
+  /* margin: 40px 0; Add margin to create gap */
 }
 
 .new-arrivals-header {

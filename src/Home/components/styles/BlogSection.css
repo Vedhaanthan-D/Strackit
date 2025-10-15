@@ -3,35 +3,54 @@
   padding: 80px 0;
   background-color: #ffffff;
   position: relative;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .blog-section .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Blog Header */
 .blog-header {
   text-align: center;
   margin-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .blog-title {
   font-size: 36px;
   font-weight: 700;
   color: #000;
-  margin: 0;
+  margin: 0 0 20px 0;
   letter-spacing: 2px;
   text-transform: uppercase;
   position: relative;
+  text-align: center;
+  width: 100%;
 }
 
 .blog-title-underline {
-  width: 60px;
+  width: 80px;
   height: 3px;
-  background-color: #d4af37;
-  margin: 15px auto 0;
+  background-color: #d97706;
+  margin: 0 auto;
+  display: block;
 }
 
 /* Carousel Container */
@@ -244,12 +263,21 @@
 
 /* Loading and Error States */
 .blog-loading,
-.blog-error,
-.blog-empty {
+.blog-error {
   text-align: center;
   padding: 60px 20px;
   font-size: 16px;
   color: #666;
+}
+
+.blog-empty {
+  text-align: center;
+  color: #999;
+  font-size: 16px;
+  margin: 30px auto 0;
+  padding: 0;
+  width: 100%;
+  display: block;
 }
 
 .blog-error {

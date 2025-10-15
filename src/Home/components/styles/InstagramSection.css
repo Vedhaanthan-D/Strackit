@@ -18,13 +18,16 @@
 .instagram-grid {
   display: flex;
   width: 100%;
-  height: 350px;
+  height: 253px;
   margin: 0;
   padding: 0;
+  justify-content: center;
 }
 
 .instagram-image-box {
-  flex: 1;
+  width: 283px;
+  height: 283px;
+  flex: 0 0 283px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -39,7 +42,7 @@
 }
 
 .instagram-image {
-  width: 100%;
+  width: 100%;  
   height: 100%;
   object-fit: cover;
   display: block;
@@ -123,7 +126,13 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .instagram-grid {
-    height: 300px;
+    height: 253px;
+  }
+  
+  .instagram-image-box {
+    width: 253px;
+    height: 253px;
+    flex: 0 0 253px;
   }
   
   .instagram-follow-button {
@@ -139,7 +148,13 @@
 
 @media (max-width: 768px) {
   .instagram-grid {
-    height: 250px;
+    height: 253px;
+  }
+  
+  .instagram-image-box {
+    width: 253px;
+    height: 253px;
+    flex: 0 0 253px;
   }
   
   .instagram-follow-button {
@@ -160,7 +175,13 @@
 
 @media (max-width: 480px) {
   .instagram-grid {
-    height: 200px;
+    height: 253px;
+  }
+  
+  .instagram-image-box {
+    width: 253px;
+    height: 253px;
+    flex: 0 0 253px;
   }
   
   .instagram-follow-button {

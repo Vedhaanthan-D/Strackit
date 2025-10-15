@@ -194,11 +194,6 @@ const Wishlist = () => {
                     <span className="wishlistItemPrice">₹{item.prize}</span>
                   )}
                 </div>
-
-                {/* Category Badge */}
-                {item.category && (
-                  <div className="wishlistItemCategory">{item.category}</div>
-                )}
               </div>
             </div>
           ))}

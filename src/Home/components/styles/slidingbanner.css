@@ -306,6 +306,7 @@
     cursor: pointer;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    opacity: 45%;
 }
 
 
@@ -313,6 +314,7 @@
   background: rgba(255, 255, 255, 1);
   transform: translateY(-50%) scale(1.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  opacity: 100%;
 }
 
 /* Arrow Icon Animation */

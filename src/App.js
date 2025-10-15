@@ -50,13 +50,16 @@ function App() {
                 <BannerSlider />
                 <StaticTextSection />
                 <MasterCategory />
+                <div className="section-gap"></div>
                 <NewArrivals 
                   title="NEW ARRIVALS" 
                   subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur"
                   limit={8}
                   sortNewest={true}
                 />
+                <div className="section-gap"></div>
                 <Static2Section />
+                <div className="section-gap"></div>
                 <NewArrivals 
                   title="YOU MIGHT LIKE" 
                   subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur" 
