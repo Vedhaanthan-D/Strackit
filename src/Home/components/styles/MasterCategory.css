@@ -7,7 +7,7 @@
 }
 
 /* Horizontal border line at the top of master category section */
-.masterCategoryBorder {
+/* .masterCategoryBorder {
   width: 100%;
   height: 2px;
   background: linear-gradient(
@@ -16,7 +16,7 @@
     #d4d4d4 100%
   );
   margin-bottom: 40px;
-}
+} */
 
 .categoryHeader {
   text-align: center;

@@ -14,13 +14,13 @@ import YouMightAlsoLike from './YouMightAlsoLike.js';
 import '../styles/ProductDetails.css';
 
 // Star rating component
-const StarRating = ({ rating = 0, reviewCount = 0 }) => {
+const StarRating = () => {
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     stars.push(
       <span 
         key={i} 
-        className={`star ${i <= rating ? 'filled' : ''}`}
+        className="star"
       >
         ★
       </span>
@@ -30,11 +30,6 @@ const StarRating = ({ rating = 0, reviewCount = 0 }) => {
   return (
     <div className="star-rating">
       <div className="stars">{stars}</div>
-      {reviewCount > 0 ? (
-        <span className="review-count">({reviewCount} reviews)</span>
-      ) : (
-        <span className="no-reviews">No reviews</span>
-      )}
     </div>
   );
 };
@@ -529,7 +524,7 @@ const ProductDetails = () => {
           </div>
           
           {/* Rating */}
-          <StarRating rating={4} reviewCount={0} />
+          <StarRating />
           
           {/* Price Section */}
           <div className="pd-price-section">

@@ -222,17 +222,8 @@
 .star {
   font-size: 14px;
   color: #e0e0e0;
-}
-
-.star.filled {
-  color: #ffd700;
-}
-
-.review-count,
-.no-reviews {
-  font-size: 13px;
-  color: #999;
-  margin-left: 6px;
+  -webkit-text-stroke: 1px #e0e0e0;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Price Section */
