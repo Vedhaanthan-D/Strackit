@@ -1,10 +1,23 @@
-import { gql } from '@apollo/client';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloClient, InMemoryCache, HttpLink, gql } from '@apollo/client';
 
 // Create Apollo Client instance
 const client = new ApolloClient({
-  uri: process.env.REACT_APP_GRAPHQL_ENDPOINT || 'YOUR_GRAPHQL_ENDPOINT_HERE',
+  link: new HttpLink({
+    uri: 'https://api.shop.strackit.com/graphql',
+    fetch: fetch
+  }),
   cache: new InMemoryCache(),
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'no-cache',
+    },
+    watchQuery: {
+      fetchPolicy: 'no-cache',
+    },
+    mutate: {
+      fetchPolicy: 'no-cache',
+    }
+  }
 });
 
 // GQL Query for fetching blogs
@@ -25,15 +38,14 @@ const GET_BLOGS_QUERY = gql`
 
 /**
  * Fetch blogs from GraphQL API
- * @param {Object} filter - Filter object for blog query
+ * @param {Object} filter - Filter object for blog query (should include shopId and/or userId)
  * @returns {Promise<Array>} Array of blog data
  */
 export async function GET_BLOG(filter = {}) {
   try {
     const { data } = await client.query({
       query: GET_BLOGS_QUERY,
-      variables: { filter },
-      fetchPolicy: 'network-only', // Ensure fresh data from server
+      variables: { filter }
     });
 
     return data?.Blog || [];
@@ -41,27 +53,6 @@ export async function GET_BLOG(filter = {}) {
   } catch (err) {
     console.error("Error fetching blogs:", err);
     console.error("Full GraphQL Error:", JSON.stringify(err, null, 2));
-    throw err;
-  }
-}
-
-/**
- * Fetch blogs with cache-first policy
- * @param {Object} filter - Filter object for blog query
- * @returns {Promise<Array>} Array of blog data
- */
-export async function GET_BLOG_CACHED(filter = {}) {
-  try {
-    const { data } = await client.query({
-      query: GET_BLOGS_QUERY,
-      variables: { filter },
-      fetchPolicy: 'cache-first',
-    });
-
-    return data?.Blog || [];
-
-  } catch (err) {
-    console.error("Error fetching cached blogs:", err);
     throw err;
   }
 }

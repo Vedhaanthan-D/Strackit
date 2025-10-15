@@ -122,7 +122,7 @@ const Footer = () => {
             <p>© Copyright 2025-2026 | t11 Powered by Strackit</p>
           </div>
           <div className="version-info">
-            <p>version 1.0.1</p>
+            <p>version 1.0.2</p>
           </div>
           <div className="payment-methods">
             <FaCcMastercard className="payment-icon" title="Mastercard" />
