@@ -100,12 +100,11 @@ const Wishlist = () => {
 
   return (
     <div className="wishlistContainer">
-      {/* Wishlist Header with horizontal line border */}
+      {/* Wishlist Header */}
       <div className="wishlistHeader">
         <h1 className="wishlistTitle">
-          WISHLIST {wishlistItems.length > 0 && `(${wishlistItems.length} ITEMS)`}
+          WISHLIST {wishlistItems.length > 0 && <span className="itemCount">({wishlistItems.length} ITEMS)</span>}
         </h1>
-        <div className="wishlistHeaderBorder"></div>
       </div>
 
       {/* Loading State */}
