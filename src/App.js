@@ -16,6 +16,7 @@ import CartSidebar from './Home/components/sections/CartSidebar';
 import ViewCart from './Home/components/sections/ViewCart';
 import CategoryPage from './Product Listing/section/CategoryPage';
 import ProductDetails from './Product Details/sections/ProductDetails';
+import Wishlist from './Product Details/sections/Wishlist';
 import { ToastProvider } from './common/components/Toast';
 import './App.css';
 
@@ -88,6 +89,14 @@ function App() {
             <Route path="/cart" element={
               <>
                 <ViewCart />
+                <Footer />
+              </>
+            } />
+            
+            {/* Wishlist Page Route */}
+            <Route path="/wishlist" element={
+              <>
+                <Wishlist />
                 <Footer />
               </>
             } />

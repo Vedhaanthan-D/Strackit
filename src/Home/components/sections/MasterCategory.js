@@ -131,6 +131,9 @@ const MasterCategory = () => {
 
   return (
     <div className="masterCategoryContainer">
+      {/* Horizontal border line below the container top */}
+      <div className="masterCategoryBorder"></div>
+      
       <div className={`categorySlider ${shouldCenter ? 'centered-container' : ''}`}>
         {/* Left Arrow - always show */}
         <button 

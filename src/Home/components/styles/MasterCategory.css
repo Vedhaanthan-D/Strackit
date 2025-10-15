@@ -3,6 +3,19 @@
   width: 100%;
   padding: 40px 20px;
   background-color: #ffffff;
+  position: relative;
+}
+
+/* Horizontal border line at the top of master category section */
+.masterCategoryBorder {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    #d4d4d4 0%,
+    #d4d4d4 100%
+  );
+  margin-bottom: 40px;
 }
 
 .categoryHeader {

@@ -215,15 +215,15 @@ const Navbar = ({
             </div>
 
             <div className="iconWrapper">
-              <button 
+              <Link 
+                to="/wishlist"
                 className="iconButton"
-                onClick={() => {}} // Add favorites functionality later
-                aria-label="Favorites"
+                aria-label="Wishlist"
               >
                 <FiHeart />
-              </button>
+              </Link>
               <div className="tooltip">
-                <span className="tooltipText">Favorites</span>
+                <span className="tooltipText">Wishlist</span>
                 <div className="tooltipArrow"></div>
               </div>
             </div>

@@ -5,6 +5,8 @@ import { getProductsController } from 'shops-query/src/modules/products/index.js
 import { fetchProducts } from 'shops-query/src/modules/products/queries/get.js';
 import { getShippingCost } from 'shops-query/src/modules/ShippingCost/queries/index.js';
 import { addToCart } from 'shops-query/src/modules/cart/index.js';
+import { fetchWishlist } from 'shops-query/src/modules/wishlist/queries/get';
+import { addToWishlistController, removeFromWishlistController } from 'shops-query/src/modules/wishlist/index.js';
 import { useToast } from '../../common/components/Toast.js';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds.js';
 import ProductSupremeQuality from './ProductSupremeQuality.js';
@@ -85,8 +87,26 @@ const ProductDetails = () => {
   // Add to cart state
   const [addToCartLoading, setAddToCartLoading] = useState(false);
   
-  // Favorites state
-  const [isFavorite, setIsFavorite] = useState(false);
+  // Wishlist state
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+
+  // Check if product is in wishlist
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      if (!product) return;
+      
+      try {
+        const wishlistData = await fetchWishlist(HOME_CONFIG.userId, HOME_CONFIG.shopId);
+        const isProductInWishlist = wishlistData?.some(item => item.productId === parseInt(id));
+        setIsInWishlist(isProductInWishlist);
+      } catch (err) {
+        console.error('Error checking wishlist status:', err);
+      }
+    };
+
+    checkWishlistStatus();
+  }, [product, id]);
 
   // Fetch product details
   useEffect(() => {
@@ -288,14 +308,42 @@ const ProductDetails = () => {
     }
   };
 
-  // Handle favorites toggle
-  const handleFavoriteToggle = () => {
-    setIsFavorite(!isFavorite);
+  // Handle wishlist toggle
+  const handleWishlistToggle = async () => {
+    if (!product) return;
     
-    if (!isFavorite) {
-      showToastMessage(`${product?.name || 'Product'} added to favorites!`, 'success');
-    } else {
-      showToastMessage(`${product?.name || 'Product'} removed from favorites!`, 'success');
+    // Prevent multiple clicks
+    if (wishlistLoading) return;
+    
+    try {
+      setWishlistLoading(true);
+      
+      if (isInWishlist) {
+        // Remove from wishlist
+        await removeFromWishlistController({
+          userId: HOME_CONFIG.userId,
+          productId: product.id,
+          shopId: HOME_CONFIG.shopId
+        });
+        
+        setIsInWishlist(false);
+        showToastMessage(`${product?.name || 'Product'} removed from wishlist!`, 'success');
+      } else {
+        // Add to wishlist
+        await addToWishlistController(
+          product.id,
+          HOME_CONFIG.shopId,
+          HOME_CONFIG.userId
+        );
+        
+        setIsInWishlist(true);
+        showToastMessage(`${product?.name || 'Product'} added to wishlist!`, 'success');
+      }
+    } catch (error) {
+      console.error('Error toggling wishlist:', error);
+      showToastMessage('Failed to update wishlist. Please try again.', 'error');
+    } finally {
+      setWishlistLoading(false);
     }
   };
 
@@ -470,12 +518,13 @@ const ProductDetails = () => {
           <div className="product-header">
             <h1 className="product-title">{product.name}</h1>
             <button 
-              className={`favorite-button ${isFavorite ? 'active' : ''}`}
-              onClick={handleFavoriteToggle}
-              aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-              title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              className={`favorite-button ${isInWishlist ? 'active' : ''}`}
+              onClick={handleWishlistToggle}
+              disabled={wishlistLoading}
+              aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+              title={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
             >
-              <FiHeart className={`heart-icon ${isFavorite ? 'filled' : ''}`} />
+              <FiHeart className={`heart-icon ${isInWishlist ? 'filled' : ''}`} />
             </button>
           </div>
           
@@ -568,24 +617,6 @@ const ProductDetails = () => {
               <div className="policy-text">
                 <strong>Return within</strong> <strong>45 days</strong> of purchase. Duties & taxes are non-refundable.
               </div>
-            </div>
-          </div>
-
-          {/* Optional Shopify Promotion Card */}
-          <div className="promo-card">
-            <div className="promo-content">
-              <div className="shopify-logo">
-                <span className="shopify-text">shopify</span>
-              </div>
-              <div className="promo-text">
-                <h3>Enjoy a free 3-day trial.</h3>
-                <p>Then start selling for $1/month for your first 3 months.</p>
-                <p className="promo-subtext">Explore, build, and bring your business to life at your own pace.</p>
-              </div>
-              <button className="promo-btn">Sign Up Now</button>
-            </div>
-            <div className="promo-graphic">
-              <div className="box-graphic">📦</div>
             </div>
           </div>
         </div>
