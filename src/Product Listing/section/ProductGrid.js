@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { HOME_CONFIG } from '../../config/appIds.js';
 import '../styles/ProductGrid.css';
 
 const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, onMaxPriceUpdate }) => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [sortedProducts, setSortedProducts] = useState([]);
@@ -527,6 +529,11 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
     const roundedPrice = Math.ceil(priceWithTax);
     return `₹${roundedPrice.toFixed(2)}`;
   };
+  
+  // Handle navigation to product details page
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
 
   const hasDiscount = (product) => {
     if (!product) return false;
@@ -717,7 +724,12 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
             const shouldShowHoverImage = hoverImageUrl && hoverImageUrl !== primaryImageUrl;
 
             return (
-              <div key={product.id} className="product-grid-item">
+              <div 
+                key={product.id} 
+                className="product-grid-item" 
+                onClick={() => handleProductClick(product.id)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="product-grid-image-wrapper">
                   {isDiscounted && (
                     <div className="product-grid-sale-tag">Sale</div>
@@ -743,14 +755,28 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
                   
                   {/* Action Buttons - Show on Hover */}
                   <div className="product-grid-actions">
-                    <button className="product-grid-action-btn product-grid-cart-btn" title="Add to Cart">
+                    <button 
+                      className="product-grid-action-btn product-grid-cart-btn" 
+                      title="Add to Cart"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent navigation when clicking the cart button
+                        // Add your cart logic here
+                      }}
+                    >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
                         <line x1="3" y1="6" x2="21" y2="6"/>
                         <path d="m16 10a4 4 0 0 1-8 0"/>
                       </svg>
                     </button>
-                    <button className="product-grid-action-btn product-grid-quick-view-btn" title="Quick View">
+                    <button 
+                      className="product-grid-action-btn product-grid-quick-view-btn" 
+                      title="Quick View"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent navigation when clicking the quick view button
+                        // Add your quick view logic here
+                      }}
+                    >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="11" cy="11" r="8"/>
                         <path d="m21 21-4.35-4.35"/>
@@ -760,7 +786,18 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
                 </div>
                 
                 <div className="product-grid-details">
-                  <h4 className="product-grid-title">{product.name}</h4>
+                  <h4 
+                    className="product-grid-title"
+                    onClick={(e) => {
+                      // Allow click event to propagate for navigation
+                      // This is redundant since the parent div already has onClick, 
+                      // but I'm adding it for clarity
+                      handleProductClick(product.id);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {product.name}
+                  </h4>
                   
                   <div className="product-grid-price">
                     {isDiscounted ? (
