@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GET_BLOG } from 'shops-query/src/modules/blog/queries/get.js';
+import { GET_BLOG } from '../../../common/utils/blogUtils.js';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds.js';
 import '../styles/BlogSection.css';
 
