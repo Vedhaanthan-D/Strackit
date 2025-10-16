@@ -3,13 +3,10 @@ import {
   FaXTwitter,
   FaDribbble, 
   FaBehance, 
-  FaInstagram,
-  FaCcMastercard,
-  FaCcVisa,
-  FaCcAmex,
-  FaCcPaypal
+  FaInstagram
 } from 'react-icons/fa6';
 import aoneLogo from '../../Home/assets/aone-logo.jpg';
+import paymentFooter from '../../Home/assets/payment_footer.png';
 import '../styles/Footer.css';
 
 const Footer = () => {
@@ -122,13 +119,10 @@ const Footer = () => {
             <p>© Copyright 2025-2026 | t11 Powered by Strackit</p>
           </div>
           <div className="version-info">
-            <p>version 1.0.2</p>
+            <p>version 1.0.3</p>
           </div>
           <div className="payment-methods">
-            <FaCcMastercard className="payment-icon" title="Mastercard" />
-            <FaCcAmex className="payment-icon" title="American Express" />
-            <FaCcVisa className="payment-icon" title="Visa" />
-            <FaCcPaypal className="payment-icon" title="PayPal" />
+            <img src={paymentFooter} alt="Accepted Payment Methods" className="payment-methods-image" />
           </div>
         </div>
       </div>

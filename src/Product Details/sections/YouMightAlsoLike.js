@@ -432,9 +432,9 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
                       />
                       
                       {/* Hover Action Icons */}
-                      <div className="product-hover-actions">
+                      <div className="ymal-product-hover-actions">
                         <button
-                          className={`product-action-icon cart-button ${addingToCart[product.id || product.productId] ? 'loading' : ''} ${cartSuccess[product.id || product.productId] ? 'success' : ''}`}
+                          className={`ymal-product-action-icon cart-button ${addingToCart[product.id || product.productId] ? 'loading' : ''} ${cartSuccess[product.id || product.productId] ? 'success' : ''}`}
                           tabIndex="0"
                           role="button"
                           aria-label={cartQuantities[product.id || product.productId] > 0 
@@ -447,7 +447,7 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
                             : 'Add to cart'}
                         >
                           {addingToCart[product.id || product.productId] ? (
-                            <div className="spinner"></div>
+                            <div className="ymal-spinner"></div>
                           ) : cartSuccess[product.id || product.productId] ? (
                             <span className="success-check">✓</span>
                           ) : (
@@ -455,7 +455,7 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
                           )}
                         </button>
                         <button
-                          className="product-action-icon"
+                          className="ymal-product-action-icon"
                           tabIndex="0"
                           role="button"
                           aria-label={`Quick view ${product.name}`}

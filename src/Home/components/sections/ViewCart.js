@@ -181,9 +181,9 @@ const ViewCart = () => {
                               />
                             </div>
                             <div className="product-details">
-                              <h3 className="product-name">{item.name}</h3>
-                              <p className="product-price">₹{finalPrice.toFixed(2)}</p>
-                              <p className="product-variant"><strong>{item.title}</strong></p>
+                              <h3 className="view-cart-product-name">{item.name}</h3>
+                              <p className="view-cart-product-price">₹{finalPrice.toFixed(2)}</p>
+                              <p className="view-cart-product-variant"><strong>{item.title}</strong></p>
                               <button 
                                 className="delete-btn"
                                 onClick={() => removeItem(item.productId)}

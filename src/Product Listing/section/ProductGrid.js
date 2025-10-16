@@ -537,9 +537,28 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
 
   const hasDiscount = (product) => {
     if (!product) return false;
-    return product.originalPrice && 
-           product.discountedPrice && 
-           parseFloat(product.originalPrice) > parseFloat(product.discountedPrice);
+    
+    // Check for original vs discounted price
+    if (product.originalPrice && product.discountedPrice) {
+      return parseFloat(product.originalPrice) > parseFloat(product.discountedPrice);
+    }
+    
+    // Check for sale price vs regular price
+    if (product.regularPrice && product.salePrice) {
+      return parseFloat(product.regularPrice) > parseFloat(product.salePrice);
+    }
+    
+    // Check if product has a discount percentage
+    if (product.discount && parseFloat(product.discount) > 0) {
+      return true;
+    }
+    
+    // Check if product is marked as on sale
+    if (product.onSale || product.isOnSale || product.sale) {
+      return true;
+    }
+    
+    return false;
   };
 
   const handleImageError = (e) => {
@@ -592,34 +611,12 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
   }
 
   const paginatedProducts = getPaginatedProducts();
-  const totalProducts = sortedProducts.length;
-  const startProduct = (currentPage - 1) * productsPerPage + 1;
-  const endProduct = Math.min(currentPage * productsPerPage, totalProducts);
-
-  // Get dynamic product count information with pagination
-  const getProductCountInfo = () => {
-    if (totalProducts === 0) {
-      return 'No products found';
-    }
-    
-    return `Showing ${startProduct}-${endProduct} of ${totalProducts} products`;
-  };
 
   // Main render
   return (
     <div className="product-grid-container">
       {/* Results Count and Controls */}
-      <div className="product-grid-header">
-        <div className="results-count">
-          {loading ? (
-            <p>Loading products...</p>
-          ) : error ? (
-            <p>Unable to load product count</p>
-          ) : (
-            <p>{getProductCountInfo()}</p>
-          )}
-        </div>
-        
+      <div className="product-grid-header">        
         <div className="grid-controls">
           {/* Grid View Options */}
           <div className="grid-view-container">
@@ -731,9 +728,9 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
                 style={{ cursor: 'pointer' }}
               >
                 <div className="product-grid-image-wrapper">
-                  {isDiscounted && (
-                    <div className="product-grid-sale-tag">Sale</div>
-                  )}
+                 
+                    <div className="product-grid-sale-badge"></div>
+                  
                   
                   {/* Primary Image */}
                   <img

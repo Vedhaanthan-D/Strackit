@@ -98,7 +98,7 @@ const Navbar = ({
 
   return (
     <header className="header">
-      <div className="container">
+      <div className="header-container">
         {/* Left Section - Navigation Links */}
         <nav className={`navigation ${isMobileMenuOpen ? 'mobileMenuOpen' : ''}`}>
           <ul className="navList">

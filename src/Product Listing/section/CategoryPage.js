@@ -110,50 +110,50 @@ const CategoryPage = () => {
   return (
     <div className="categoryPageContainer">
       {/* Hero Banner with Master Category Background */}
-      <div className="heroBanner" style={{
+      <div className="categoryHeroBanner" style={{
         backgroundImage: masterCategory && masterCategory.image 
           ? `url(${IMAGE_PREFIX}${masterCategory.image})` 
           : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         backgroundColor: '#667eea'
       }}>
-        <div className="bannerOverlay">
+        <div className="category-bannerOverlay">
           {/* Title and Breadcrumb */}
-          <div className="bannerContent">
-            <div className="breadcrumb">
-              <span onClick={() => navigate('/')} className="breadcrumbLink">Home</span>
-              <span className="breadcrumbSeparator">›</span>
-              <span className="breadcrumbCurrent">{masterCategory?.category}</span>
+          <div className="categoryBannerContent">
+            <div className="categoryBreadcrumb">
+              <span onClick={() => navigate('/')} className="categoryBreadcrumbLink">Home</span>
+              <span className="categoryBreadcrumbSeparator">›</span>
+              <span className="categoryBreadcrumbCurrent">{masterCategory?.category}</span>
             </div>
-            <h1 className="bannerTitle">{masterCategory?.category}</h1>
+            <h1 className="categoryBannerTitle">{masterCategory?.category}</h1>
           </div>
 
           {/* Secondary Categories Thumbnails Row */}
           {secondaries.length > 0 && (
-            <div className="bannerThumbnailsSection">
-              <button className="thumbnailArrow leftArrow" onClick={scrollLeft}>
+            <div className="categoryBannerThumbnailsSection">
+              <button className="categoryThumbnailArrow categoryLeftArrow" onClick={scrollLeft}>
                 <FiChevronLeft />
               </button>
               
-              <div className="bannerThumbnailsRow">
+              <div className="categoryBannerThumbnailsRow">
                 {secondaries.map((s) => (
                   <div 
                     key={s.id} 
-                    className={`bannerThumbnail ${selectedSecondary?.id === s.id ? 'selected' : ''}`}
+                    className={`categoryBannerThumbnail ${selectedSecondary?.id === s.id ? 'selected' : ''}`}
                     onClick={() => handleSecondaryClick(s)}
                   >
-                    <div className="thumbnailImage">
+                    <div className="categoryThumbnailImage">
                       <img
                         src={`${IMAGE_PREFIX}${s.image}`}
                         alt={s.category}
                         onError={(e) => { e.target.style.display = 'none'; }}
                       />
                     </div>
-                    <div className="thumbnailName">{s.category}</div>
+                    <div className="categoryThumbnailName">{s.category}</div>
                   </div>
                 ))}
               </div>
 
-              <button className="thumbnailArrow rightArrow" onClick={scrollRight}>
+              <button className="categoryThumbnailArrow categoryRightArrow" onClick={scrollRight}>
                 <FiChevronRight />
               </button>
             </div>
@@ -162,31 +162,9 @@ const CategoryPage = () => {
       </div>
 
       {/* Products Section */}
-      <div className="productsSection">
-        <div className="categoryInfo">
-          <h2>
-            {selectedSecondary 
-              ? `${masterCategory?.category} - ${selectedSecondary.category}` 
-              : masterCategory?.category
-            }
-          </h2>
-          {selectedSecondary ? (
-            <p className="categoryDescription">
-              Showing products from {selectedSecondary.category}
-            </p>
-          ) : secondaries.length === 0 ? (
-            <p className="categoryDescription">
-              Showing all products from {masterCategory?.category}
-            </p>
-          ) : (
-            <p className="categoryDescription">
-              Loading subcategories...
-            </p>
-          )}
-        </div>
-        
+      <div className="categoryProductsSection">
         {/* Products with Filters Layout */}
-        <div className="products-with-filters">
+        <div className="categoryProducts-with-filters">
           <FilterSidebar 
             onFiltersChange={handleFiltersChange}
             masterCategoryId={id}

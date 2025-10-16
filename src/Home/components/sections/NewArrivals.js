@@ -410,7 +410,7 @@ const NewArrivals = ({
                         : 'Add to cart'}
                     >
                       {addingToCart[product.id || product.productId] ? (
-                        <div className="spinner"></div>
+                        <div className="new-arrivals-spinner"></div>
                       ) : cartSuccess[product.id || product.productId] ? (
                         <span className="success-check">✓</span>
                       ) : (

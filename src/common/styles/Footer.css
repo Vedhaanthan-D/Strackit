@@ -83,7 +83,7 @@
   position: relative;
   display: inline-block;
   padding-bottom: 8px;
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid #c1c1c1;
 }
 
 .column-line {
@@ -224,18 +224,17 @@
 
 .payment-methods {
   display: flex;
-  gap: 15px;
   align-items: center;
 }
 
-.payment-icon {
-  font-size: 32px;
-  color: #666;
-  transition: color 0.3s ease;
+.payment-methods-image {
+  height: 25px;
+  width: 200px;
+  transition: opacity 0.3s ease;
 }
 
-.payment-icon:hover {
-  color: #000;
+.payment-methods-image:hover {
+  opacity: 0.8;
 }
 
 /* Responsive styles */

@@ -8,11 +8,11 @@
 /* Product Grid Header */
 .product-grid-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: 20px;
   padding: 10px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: none;
   flex-wrap: wrap;
   gap: 15px;
 }
@@ -352,7 +352,7 @@
 .product-grid-current-price {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color:#d2691e;
 }
 
 .product-grid-old-price {
@@ -385,16 +385,32 @@
 
 .product-grid-sale-badge {
   position: absolute;
-  top: 15px;
-  left: 15px;
-  background: #e53e3e;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 65px 65px 0;
+  border-color: transparent #dc2626 transparent transparent;
+  z-index: 3;
+  overflow: visible;
+}
+
+.product-grid-sale-badge::after {
+  content: "SALE";
+  position: absolute;
+  top: 8px;
+  right: -50px;
   color: white;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  z-index: 2;
+  font-size: 10px;
+  font-weight: 800;
   text-transform: uppercase;
+  letter-spacing: 0.8px;
+  transform: rotate(45deg);
+  text-align: center;
+  width: 45px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .product-grid-info {
@@ -558,7 +574,7 @@
   
   .sale-badge {
     top: 10px;
-    left: 10px;
+    right: 10px;
     padding: 4px 8px;
     font-size: 10px;
   }

@@ -22,7 +22,7 @@
   padding: 0;
 }
 
-.container {
+.header-container {
   position: relative; /* Keep this for dropdown positioning but not navbar fixing */
   width: 100%;
   max-width: 100%;
@@ -258,7 +258,7 @@
 
 /* Ensure balanced layout on desktop */
 @media (min-width: 769px) {
-  .container {
+  .header-container {
     padding: 0 60px; /* Increased padding for better desktop spacing */
     gap: 40px; /* Increased gap for desktop */
   }
@@ -290,7 +290,7 @@
 
 /* For very wide screens */
 @media (min-width: 1200px) {
-  .container {
+  .header-container {
     padding: 0 30px; /* Increased padding for large screens */
   }
   
@@ -415,7 +415,7 @@
 
 /* Mobile Styles */
 @media (max-width: 768px) {
-  .container {
+  .header-container {
     padding: 0 20px;
     height: 80px;
     display: flex;
@@ -544,7 +544,7 @@
 
 /* Extra small devices */
 @media (max-width: 480px) {
-  .container {
+  .header-container {
     padding: 0 15px;
     height: 75px;
     width: 100%;

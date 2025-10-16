@@ -2,8 +2,8 @@
 .filter-sidebar {
   width: 280px;
   background: #fff;
-  border: 1px solid #e1e1e1;
-  border-radius: 8px;
+  border: none;
+  border-radius: 0;
   padding: 20px;
   height: fit-content;
   position: sticky;
@@ -39,14 +39,91 @@
   background: none;
   border: none;
   color: #666;
-  font-size: 12px;
+  font-size: 20px;
   cursor: pointer;
   text-decoration: underline;
   padding: 0;
+  font-weight: 500;
 }
 
 .clear-filters:hover {
+  color: black;
+}
+
+/* Active Filters Display */
+.active-filters {
+  margin-bottom: 20px;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.active-filters-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 20px;
+  padding: 0;
+  font-size: 12px;
   color: #333;
+  transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  background: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  color: #333;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 1;
+  padding: 6px 12px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  gap: 6px;
+  width: auto;
+  height: auto;
+}
+
+.filter-chip-remove:hover {
+  background: black;
+  border-color: black;
+  color: white;
+}
+
+.filter-chip-label {
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.clear-all-link {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+  padding: 0;
+  margin-left: 8px;
+}
+
+.clear-all-link:hover {
+  color: black;
+  font-weight: 500;
 }
 
 /* Loading and Error States */
@@ -62,12 +139,11 @@
 
 /* Filter Section */
 .filter-section {
-  margin-bottom: 25px;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 20px;
+  margin-bottom: 30px;
+  padding-bottom: 25px;
+  /* border-bottom: 1px solid #f0f0f0; */
   width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .filter-section:last-child {
@@ -75,17 +151,317 @@
   margin-bottom: 0;
 }
 
-.filter-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  font-size: 14px;
+/* Filter Titles */
+.filter-title {
+  font-size: 13px;
   font-weight: 600;
   color: #333;
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+  padding: 0;
+  position: relative;
+}
+
+/* Clean style matching your image - with vertical and horizontal lines */
+.filter-title.clean-style {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: none;
+  padding: 0 0 0 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Vertical line on the left */
+.filter-title.clean-style::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #000;
+  border-radius: 0;
+}
+
+/* Horizontal line extending to the right */
+.filter-title.clean-style::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+  margin-left: 15px;
+}
+
+/* Horizontal Line Style (like your image) */
+.filter-title.horizontal-style {
+  display: flex;
+  align-items: center;
+  margin: 0 0 20px 0;
+}
+
+.filter-title.horizontal-style::before {
+  content: '';
+  /* flex: 1; */
+  height: 1px;
+  background: #ddd;
+  margin-right: 15px;
+}
+
+.filter-title.horizontal-style::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+  margin-left: 15px;
+}
+
+/* Vertical Style (traditional sidebar) */
+.filter-title.vertical-style {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+/* Clean minimal horizontal divider */
+.filter-title.clean-horizontal {
+  position: relative;
+  text-align: center;
+  background: white;
+  margin: 20px 0;
+  padding: 0 15px;
+}
+
+.filter-title.clean-horizontal::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e0e0e0;
+  z-index: 1;
+}
+
+.filter-title.clean-horizontal span {
+  background: white;
+  padding: 0 10px;
+  position: relative;
+  z-index: 2;
+}
+
+/* VERTICAL LINES ONLY for titles - not entire sections */
+.filter-section {
+  position: relative;
+  padding-left: 0;
+  margin-bottom: 30px;
+}
+
+/* Remove the full-height vertical line */
+.filter-section::before {
+  display: none;
+}
+
+/* Remove different colors - keep all sections with black line */
+.filter-section:nth-child(1)::before,
+.filter-section:nth-child(2)::before,
+.filter-section:nth-child(3)::before,
+.filter-section:nth-child(4)::before,
+.filter-section:nth-child(5)::before,
+.filter-section:nth-child(6)::before {
+  display: none;
+}
+
+/* Grid layout with both horizontal and vertical lines */
+.filter-title.grid-style {
+  display: flex;
+  align-items: center;
+  margin: 0 0 10px 0;
+  position: relative;
   padding: 10px 0;
-  user-select: none;
+}
+
+.filter-title.grid-style::before {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+  margin-right: 15px;
+}
+
+.filter-title.grid-style::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+  margin-left: 15px;
+}
+
+/* Vertical accent line for grid style */
+.filter-section.grid-section {
+  border-left: 3px solid #e0e0e0;
+  padding-left: 20px;
+  margin-left: 5px;
+  position: relative;
+}
+
+
+
+.filter-section.grid-section::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  border-radius: 2px;
+}
+
+/* Simple vertical line style */
+.filter-section.vertical-line {
+  border-left: 1px solid #ddd;
+  padding-left: 15px;
+  margin-left: 10px;
+}
+
+/* Filter Options */
+.filter-options {
+  padding: 0;
+}
+
+/* Link-style Filter Options (Categories, Brands) - Clean style like your image */
+.filter-option-link {
+  display: block;
+  margin-bottom: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: none;
+}
+
+.filter-option-link .hidden-checkbox {
+  display: none;
+}
+
+.filter-text {
+  font-size: 15px;
+  font-weight: 400;
+  color: #666;
+  text-decoration: none;
   transition: color 0.2s ease;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+.filter-option-link:hover .filter-text,
+.filter-option-link input:checked + .filter-text {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Clean category list styling */
+.filter-option-link span {
+  font-size: 15px;
+  font-weight: 400;
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  line-height: 1.5;
+  display: block;
+}
+
+.filter-option-link:hover span,
+.filter-option-link input:checked + span {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Price Display */
+.price-display {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.price-display span {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Color Grid */
+.color-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.color-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #e0e0e0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.color-dot:hover {
+  border-color: #999;
+  transform: scale(1.1);
+}
+
+.color-dot.selected {
+  border-color: #333;
+  border-width: 3px;
+}
+
+.color-check {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 0 0 2px rgba(0,0,0,0.8);
+}
+
+/* Tag Grid */
+.tag-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag-button {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  background: white;
+  color: #666;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 40px;
+  text-align: center;
+}
+
+.tag-button:hover {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.tag-button.selected {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
 }
 
 .filter-section-header.has-active-filters {
@@ -187,6 +563,16 @@
   box-sizing: border-box;
 }
 
+.price-track {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  z-index: 1;
+}
+
 .price-slider {
   -webkit-appearance: none;
   appearance: none;
@@ -198,6 +584,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .price-slider::-webkit-slider-thumb {
@@ -210,6 +597,9 @@
   cursor: pointer;
   border: 2px solid #fff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
 }
 
 .price-slider::-moz-range-thumb {
@@ -220,6 +610,17 @@
   cursor: pointer;
   border: 2px solid #fff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.min-slider {
+  z-index: 1;
+}
+
+.max-slider {
+  z-index: 2;
 }
 
 .price-inputs {
@@ -398,4 +799,3 @@
     overflow: visible;
   }
 }
-
