@@ -163,15 +163,78 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
     return shuffled;
   };
 
-  // Check if product has discount
+  // Check if product has discount (improved dynamic detection)
   const hasDiscount = (product) => {
-    return product.originalPrice && product.discountedPrice && 
-           parseFloat(product.originalPrice) > parseFloat(product.discountedPrice);
+    // Check multiple price field combinations
+    const originalPrice = parseFloat(product.originalPrice || 0);
+    const discountedPrice = parseFloat(product.discountedPrice || 0);
+    const prize = parseFloat(product.prize || 0);
+    const viewPrice = parseFloat(product.viewPrice || 0);
+    const price = parseFloat(product.price || 0);
+    const discountField = parseFloat(product.discount || 0);
+    
+    // Method 1: originalPrice vs discountedPrice
+    const hasOriginalVsDiscounted = originalPrice > 0 && discountedPrice > 0 && originalPrice > discountedPrice;
+    
+    // Method 2: Check discount field
+    const hasDiscountField = discountField > 0;
+    
+    // Method 3: If we have specific original and discounted fields
+    const hasBothPriceFields = product.originalPrice && product.discountedPrice;
+    
+    const result = hasOriginalVsDiscounted || hasDiscountField;
+    
+    // Console log for debugging
+    console.log(`Product ${product.name} discount check:`, {
+      originalPrice,
+      discountedPrice,
+      prize,
+      viewPrice,
+      price,
+      discountField,
+      hasOriginalVsDiscounted,
+      hasDiscountField,
+      hasBothPriceFields,
+      result
+    });
+    
+    return result;
   };
 
-  // Format price
+  // Calculate discount percentage for display
+  const getDiscountPercentage = (product) => {
+    const originalPrice = parseFloat(product.originalPrice || product.prize || product.viewPrice || 0);
+    const discountedPrice = parseFloat(product.discountedPrice || product.price || 0);
+    
+    if (originalPrice > 0 && discountedPrice > 0 && originalPrice > discountedPrice) {
+      return Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
+    }
+    
+    // Fallback to discount field
+    if (product.discount) {
+      return Math.round(parseFloat(product.discount));
+    }
+    
+    return 0;
+  };
+
+  // Format price (improved to handle different currencies and edge cases)
   const formatPrice = (price) => {
-    return `$${parseFloat(price).toFixed(2)}`;
+    const numPrice = parseFloat(price || 0);
+    
+    // Handle zero or invalid prices
+    if (isNaN(numPrice) || numPrice <= 0) {
+      return 'Price not available';
+    }
+    
+    // Check if price looks like Indian Rupees (typically larger numbers)
+    if (numPrice >= 100) {
+      return `₹${numPrice.toFixed(0)}`;
+    } else if (numPrice > 0) {
+      return `$${numPrice.toFixed(2)}`;
+    } else {
+      return 'Contact for price';
+    }
   };
 
   // Handle image error
@@ -405,8 +468,33 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
               // Actual products
               products.map((product) => {
                 const isDiscounted = hasDiscount(product);
-                const currentPrice = isDiscounted ? product.discountedPrice : (product.prize || product.originalPrice || product.discountedPrice);
-                const originalPrice = product.originalPrice;
+                const discountPercentage = getDiscountPercentage(product);
+                
+                // Better pricing logic
+                let currentPrice, originalPrice;
+                
+                if (isDiscounted) {
+                  // If discounted, try to get both prices
+                  currentPrice = parseFloat(product.discountedPrice || product.price || product.prize || product.viewPrice || 0);
+                  originalPrice = parseFloat(product.originalPrice || product.prize || product.viewPrice || currentPrice);
+                } else {
+                  // If not discounted, use the main price
+                  currentPrice = parseFloat(product.prize || product.viewPrice || product.price || product.originalPrice || 0);
+                  originalPrice = currentPrice;
+                }
+
+                console.log(`Product ${product.name} pricing:`, {
+                  isDiscounted,
+                  currentPrice,
+                  originalPrice,
+                  productData: {
+                    prize: product.prize,
+                    viewPrice: product.viewPrice,
+                    price: product.price,
+                    originalPrice: product.originalPrice,
+                    discountedPrice: product.discountedPrice
+                  }
+                });
 
                 return (
                   <div 
@@ -417,9 +505,13 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
                     onClick={(e) => handleProductClick(product, e)}
                     style={{ cursor: 'pointer' }}
                   >
-                    {/* Sale Badge */}
+                    {/* Dynamic Sale Badge */}
                     {isDiscounted && (
-                      <div className="sale-badge">Sale</div>
+                      <div className="sale-badge" data-discount={discountPercentage > 0 ? `${discountPercentage}% OFF` : 'Sale'}>
+                        <span className="sale-text">
+                          {discountPercentage > 0 ? `${discountPercentage}% OFF` : 'Sale'}
+                        </span>
+                      </div>
                     )}
 
                     {/* Product Image */}
@@ -432,9 +524,9 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
                       />
                       
                       {/* Hover Action Icons */}
-                      <div className="ymal-product-hover-actions">
+                      <div className="product-hover-actions">
                         <button
-                          className={`ymal-product-action-icon cart-button ${addingToCart[product.id || product.productId] ? 'loading' : ''} ${cartSuccess[product.id || product.productId] ? 'success' : ''}`}
+                          className={`product-action-icon cart-button ${addingToCart[product.id || product.productId] ? 'loading' : ''} ${cartSuccess[product.id || product.productId] ? 'success' : ''}`}
                           tabIndex="0"
                           role="button"
                           aria-label={cartQuantities[product.id || product.productId] > 0 
@@ -447,7 +539,7 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
                             : 'Add to cart'}
                         >
                           {addingToCart[product.id || product.productId] ? (
-                            <div className="ymal-spinner"></div>
+                            <div className="spinner"></div>
                           ) : cartSuccess[product.id || product.productId] ? (
                             <span className="success-check">✓</span>
                           ) : (
@@ -455,7 +547,7 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
                           )}
                         </button>
                         <button
-                          className="ymal-product-action-icon"
+                          className="product-action-icon"
                           tabIndex="0"
                           role="button"
                           aria-label={`Quick view ${product.name}`}

@@ -6,7 +6,6 @@ import { getSecondaryCategories } from 'shops-query/src/modules/SecondaryCategor
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds';
 import '../styles/MasterCategory.css';
 
-// Loading Skeleton for categories
 const CategorySkeleton = () => (
   <div className="masterCategoryContainer">
     <div className="categoryRow">
@@ -30,7 +29,6 @@ const MasterCategory = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [subcategoryCounts, setSubcategoryCounts] = useState({});
 
-  // Fetch subcategory counts for a master category
   const fetchSubcategoryCount = async (masterCategoryId) => {
     try {
       const secondaryCategories = await getSecondaryCategories(HOME_CONFIG.shopId, masterCategoryId);
@@ -40,7 +38,6 @@ const MasterCategory = () => {
     }
   };
 
-  // Fetch master categories and their subcategory counts
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -49,14 +46,12 @@ const MasterCategory = () => {
         const categoryData = await fetchMasterCategories(HOME_CONFIG.shopId);
         
         if (categoryData && categoryData.length > 0) {
-          // Filter active categories and sort by position
           const activeCategories = categoryData
             .filter(cat => cat.status === 'active' || cat.status === 1)
             .sort((a, b) => a.position - b.position);
           
           setMasterCategories(activeCategories);
           
-          // Fetch subcategory counts for each master category
           const counts = {};
           await Promise.all(
             activeCategories.map(async (category) => {
@@ -82,7 +77,6 @@ const MasterCategory = () => {
     fetchCategories();
   }, []);
 
-  // Scroll functions for horizontal navigation
   const scrollLeft = () => {
     const container = document.querySelector('.categoryRow');
     const scrollAmount = 300;
@@ -97,10 +91,8 @@ const MasterCategory = () => {
     setScrollPosition(container.scrollLeft + scrollAmount);
   };
 
-  // Handle category click
-  const handleCategoryClick = (category) => {
-    // Navigate to category page with category ID
-    navigate(`/category/${category.id}`);
+  const handleCategoryClick = (categoryId) => {
+    navigate(`/category/${categoryId}`);
   };
 
   // Handle image error

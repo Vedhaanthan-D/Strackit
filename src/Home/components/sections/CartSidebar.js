@@ -10,12 +10,10 @@ import { fetchCouponCode } from 'shops-query/src/modules/CouponCode/Controller/i
 import { fetchShippingCost } from 'shops-query/src/modules/ShippingCost/Controller/index';
 import '../styles/CartSidebar.css';
 
-// Empty Cart Icon Component
 const EmptyCartIcon = () => (
   <FiShoppingCart className="empty-cart-icon" size={80} />
 );
 
-// Loading Skeleton for cart items
 const CartItemSkeleton = () => (
   <div className="cart-item-skeleton">
     <div className="cart-item-image-skeleton"></div>
@@ -26,7 +24,6 @@ const CartItemSkeleton = () => (
   </div>
 );
 
-// Loading Skeleton for recommended products
 const RecommendedProductSkeleton = () => (
   <div className="recommended-product-skeleton">
     <div className="recommended-product-image-skeleton"></div>
@@ -49,11 +46,8 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
   const [addingToCart, setAddingToCart] = useState({}); // Track loading state for recommended products
   const recommendedScrollRef = useRef(null);
   
-  // Constants from config
   const { shopId, userId } = CART_CONFIG;
   const imagePrefix = IMAGE_PREFIX;
-  
-  // Calculate cart totals
   const subtotal = cartItems.reduce((total, item) => {
     const price = parseFloat(item.prize);
     const discount = parseFloat(item.Discount);
@@ -63,16 +57,13 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
   
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
   
-  // Dynamic free shipping calculation
   const calculateFreeShippingEligibility = () => {
-    // Check for free shipping coupons first
     const freeShippingCoupon = coupons.find(coupon => {
       const isActive = coupon.status === 'active' || coupon.status === 1;
       const isValidDate = new Date() >= new Date(coupon.validityFrom) && 
                           new Date() <= new Date(coupon.validityTo);
       const meetsMinimum = subtotal >= parseFloat(coupon.priceRange || 0);
       
-      // Check if coupon provides free shipping (discount could be 100% of shipping or name/description indicates free shipping)
       const isFreeShipping = coupon.name?.toLowerCase().includes('free shipping') ||
                              coupon.description?.toLowerCase().includes('free shipping') ||
                              coupon.code?.toLowerCase().includes('freeship');
@@ -88,7 +79,6 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
       };
     }
     
-    // Check shipping cost tiers
     const applicableShipping = shippingCosts
       .filter(shipping => subtotal >= parseFloat(shipping.purchaseRange || 0))
       .sort((a, b) => parseFloat(b.purchaseRange) - parseFloat(a.purchaseRange))[0];
@@ -101,7 +91,6 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
       };
     }
     
-    // Find next free shipping tier
     const nextFreeTier = shippingCosts
       .filter(shipping => 
         parseFloat(shipping.price || 0) === 0 && 
@@ -117,7 +106,6 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
       };
     }
     
-    // Use default threshold
     return {
       qualifies: subtotal >= freeShippingThreshold,
       threshold: freeShippingThreshold,
@@ -129,7 +117,6 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
   const amountForFreeShipping = Math.max(0, freeShippingInfo.threshold - subtotal);
   const freeShippingProgress = Math.min(100, (subtotal / freeShippingInfo.threshold) * 100);
 
-  // Fetch coupon data
   const fetchCouponData = async () => {
     try {
       const couponData = await fetchCouponCode(shopId);
@@ -145,7 +132,6 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
       const shippingData = await fetchShippingCost(shopId);
       setShippingCosts(shippingData || []);
       
-      // Update default threshold based on shipping data
       const freeShippingTiers = shippingData
         .filter(shipping => parseFloat(shipping.price || 0) === 0)
         .sort((a, b) => parseFloat(a.purchaseRange) - parseFloat(b.purchaseRange));
@@ -199,7 +185,6 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
     }
   };
 
-  // Update item quantity
   const updateQuantity = async (productId, newQuantity) => {
     if (newQuantity < 1) return;
     
@@ -211,7 +196,6 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
         quantity: newQuantity
       });
       
-      // Update local state
       setCartItems(prevItems =>
         prevItems.map(item =>
           item.productId === productId
@@ -220,13 +204,11 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
         )
       );
       
-      // Update cart count
       const newCartItems = cartItems.map(item =>
         item.productId === productId ? { ...item, quantity: newQuantity } : item
       );
       setCartItemCount(newCartItems.reduce((total, item) => total + item.quantity, 0));
     } catch (err) {
-      // Failed to update quantity, refresh cart data
       fetchCartData();
     }
   };
@@ -240,18 +222,15 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
         shopId
       });
       
-      // Update local state
       setCartItems(prevItems =>
         prevItems.filter(item => item.productId !== productId)
       );
       
-      // Update cart count
       const removedItem = cartItems.find(item => item.productId === productId);
       if (removedItem) {
         setCartItemCount(prev => prev - removedItem.quantity);
       }
     } catch (err) {
-      // Failed to remove item, refresh cart data
       fetchCartData();
     }
   };
@@ -261,7 +240,7 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
     const productKey = product.id || product.productId;
     
     if (addingToCart[productKey]) {
-      return; // Prevent multiple simultaneous additions
+      return;
     }
     
     setAddingToCart(prev => ({ ...prev, [productKey]: true }));
@@ -270,12 +249,8 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
       const result = await addProductToCart(product, 'cart', 1);
       
       if (result.success) {
-        // Refresh cart data
         fetchCartData();
-        // Refresh recommendations (to exclude newly added item)
         fetchRecommendedProducts();
-        
-        // Clear any previous errors
         setError(null);
       } else {
         throw new Error(result.error || 'Failed to add to cart');
@@ -287,7 +262,6 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
     }
   };
 
-  // Scroll recommended products
   const scrollRecommended = (direction) => {
     if (recommendedScrollRef.current) {
       const scrollAmount = 250;

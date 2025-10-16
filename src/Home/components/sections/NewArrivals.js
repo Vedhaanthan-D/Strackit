@@ -81,13 +81,11 @@ const NewArrivals = ({
     return originalPrice;
   };
 
-  // Helper function to format price
   const formatPrice = (price) => {
     if (!price) return "₹0.00";
     return `₹${parseFloat(price).toFixed(2)}`;
   };
 
-  // Handle image error
   const handleImageError = (e) => {
     e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTI1QzEyMy4xMjUgMTI1IDEwMi4xODggMTQ2LjM3NSAxMDIuMTg4IDE3Mi44MTJDMTA2Ljg3NSAxNjguNTYyIDExMy4xMjUgMTY2LjI1IDEyMCAxNjYuMjVDMTI2Ljg3NSAxNjYuMjUgMTMzLjEyNSAxNjguMTI1IDEzNy44MTIgMTcyLjgxMkMxNDAuNjI1IDE3NS42MjUgMTQ2LjI1IDE3NS42MjUgMTQ5LjA2MiAxNzIuODEyQzE1My43NSAxNjguMTI1IDE2MCAxNjUuODEyIDE2Ni44NzUgMTY1LjgxMkMxNzMuNzUgMTY1LjgxMiAxODAuNjI1IDE2OC41NjIgMTg0Ljg3NSAxNzIuODEyQzE4NC44NzUgMTQ2LjM3NSAxNzEuODc1IDEyNSAxNTAgMTI1WiIgZmlsbD0iI0QxRDFEMSIvPgo8cGF0aCBkPSJNMTk4IDE4Ni4yNUMxOTUuMTg4IDE4Ni4yNSAxOTMuMzEyIDE4NS44MTIgMTkxLjQzOCAxODQuODEyQzE4Ny4xODggMTgzLjM3NSAxODIuNSAxODMuMzc1IDE3OC4yNSAxODQuODEyQzE3Ni4zNzUgMTg1LjM3NSAxNzQuNSAxODYuMjUgMTcyIDE4Ni4yNUMxNjkuNSAxODYuMjUgMTY3LjYyNSAxODUuODEyIDE2NS43NSAxODQuODEyQzE2MS41IDE4My4zNzUgMTU2LjgxMiAxODMuMzc1IDE1Mi41NjIgMTg0LjgxMkMxNTAuNjg4IDE4NS4zNzUgMTQ4LjgxMiAxODYuMjUgMTQ2LjMxMiAxODYuMjVDMTQzLjgxMiAxODYuMjUgMTQxLjkzOCAxODUuODEyIDE0MC4wNjIgMTg0LjgxMkMxMzUuODEyIDE4My4zNzUgMTMxLjEyNSAxODMuMzc1IDEyNi44NzUgMTg0LjgxMkMxMzEuNTYyIDE5NS42MjUgMTQ0IDIwMS42ODggMTU4IDE5OS4zMTJDMTcyIDE5Ni45MzggMTgzLjM3NSAxODcuNTYyIDE4OCAxNzMuMjVDMTkxLjI1IDE3Ny4wNjIgMTk1LjE4OCAxNzkuODc1IDIwMCAxODEuM0MxOTkuNSAxODIuNzUgMTk5IDE4NC42MjUgMTk4IDE4Ni4yNVoiIGZpbGw9IiNEMUQxRDEiLz4KPC9zdmc+Cg==';
   };
@@ -101,7 +99,6 @@ const NewArrivals = ({
 
     setHoveredProductId(product.id);
     
-    // Preload the feature image
     if (product.featureImage && !featureImages[product.id]) {
       const img = new Image();
       img.onload = () => {
@@ -111,7 +108,6 @@ const NewArrivals = ({
         }));
       };
       img.onerror = () => {
-        // If feature image fails to load, mark as failed so we don't retry
         setFeatureImages(prev => ({
           ...prev,
           [product.id]: null
@@ -199,15 +195,12 @@ const NewArrivals = ({
       }
       
     } catch (error) {
-      const errorMessage = error.message || 'Unknown error occurred';
-      showError(`Failed to add ${product.name || 'product'} to cart. ${errorMessage}`);
-      
+      showError(`Failed to add ${product.name || 'product'} to cart`);
     } finally {
       setAddingToCart(prev => ({ ...prev, [stateKey]: false }));
     }
   };
 
-  // Clear success states when component unmounts
   useEffect(() => {
     return () => {
       setCartSuccess({});
@@ -215,7 +208,6 @@ const NewArrivals = ({
     };
   }, []);
 
-  // Check cart status for all products when they load
   useEffect(() => {
     const checkCartStatus = async () => {
       if (products.length > 0) {
@@ -227,7 +219,7 @@ const NewArrivals = ({
             const productKey = product.id || product.productId;
             quantities[productKey] = status.quantity;
           } catch (error) {
-            // Silently handle errors
+            // Skip error
           }
         }
         
@@ -238,13 +230,11 @@ const NewArrivals = ({
     checkCartStatus();
   }, [products]);
 
-  // Listen for cart updates to refresh quantities
   useEffect(() => {
     const handleCartUpdate = (event) => {
-      const { action, productId } = event.detail;
+      const { action } = event.detail;
       
       if (action === 'add' || action === 'update_quantity') {
-        // Refresh cart quantities for all products
         const checkCartStatus = async () => {
           const quantities = {};
           
@@ -254,7 +244,7 @@ const NewArrivals = ({
               const productKey = product.id || product.productId;
               quantities[productKey] = status.quantity;
             } catch (error) {
-              // Silently handle errors
+              // Skip error
             }
           }
           
@@ -306,7 +296,6 @@ const NewArrivals = ({
           setProducts([]);
         }
       } catch (err) {
-        console.error('Error fetching data:', err);
         setError(err);
         setProducts([]);
       } finally {

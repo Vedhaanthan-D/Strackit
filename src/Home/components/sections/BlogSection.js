@@ -22,7 +22,6 @@ const BlogSection = () => {
         const blogData = await GET_BLOG(blogFilter);
         setBlogs(blogData || []);
       } catch (err) {
-        console.error('Error fetching blogs:', err);
         setError(err.message);
       } finally {
         setLoading(false);

@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FiHeart } from 'react-icons/fi';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
 import { fetchProducts } from 'shops-query/src/modules/products/queries/get.js';
+import { getOfferProductsController } from 'shops-query/src/modules/offerProducts/index.js';
+import { fetchCouponCode } from 'shops-query/src/modules/CouponCode/index.js';
 import { getShippingCost } from 'shops-query/src/modules/ShippingCost/queries/index.js';
 import { addToCart } from 'shops-query/src/modules/cart/index.js';
 import { fetchWishlist } from 'shops-query/src/modules/wishlist/queries/get';
@@ -81,12 +83,224 @@ const ProductDetails = () => {
   
   // Add to cart state
   const [addToCartLoading, setAddToCartLoading] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
+  const [showFloatingCart, setShowFloatingCart] = useState(false);
+  const infoRef = useRef(null);
   
   // Wishlist state
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
-  // Check if product is in wishlist
+  // Discount and offer state
+  const [offerProducts, setOfferProducts] = useState([]);
+  const [coupons, setCoupons] = useState([]);
+  const [dynamicPricing, setDynamicPricing] = useState({
+    originalPrice: null,
+    discountedPrice: null,
+    discountPercentage: null,
+    hasDiscount: false
+  });
+
+  // Simple scroll-based floating cart visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      
+      // Show floating cart when scrolled more than 300px
+      const shouldShow = scrollY > 300 && !addedToCart;
+      
+      console.log('Scroll position:', {
+        scrollY,
+        shouldShow,
+        addedToCart
+      });
+      
+      setShowFloatingCart(shouldShow);
+    };
+
+    // Add scroll listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Initial check
+    handleScroll();
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [addedToCart]);
+
+  // Helper function to check if product has discount (similar to New Arrivals)
+  const hasProductDiscount = (product) => {
+    // If product has discount field with value greater than 0
+    if (product.discount && parseFloat(product.discount) > 0) {
+      return true;
+    }
+    
+    // Check if originalPrice and discountedPrice exist and originalPrice is higher
+    if (product.originalPrice && product.discountedPrice && 
+        parseFloat(product.originalPrice) > parseFloat(product.discountedPrice)) {
+      return true;
+    }
+    
+    // Check if prize (current price) and originalPrice exist and originalPrice is higher
+    if (product.prize && product.originalPrice && 
+        parseFloat(product.originalPrice) > parseFloat(product.prize)) {
+      return true;
+    }
+    
+    return false;
+  };
+
+  // Calculate discounted price based on original price and discount percentage (similar to New Arrivals)
+  const calculateDiscountedPrice = (product) => {
+    if (!product.prize && !product.originalPrice) return 0;
+    
+    // Use prize as base price (similar to New Arrivals)
+    const basePrice = parseFloat(product.prize || product.originalPrice || product.viewPrice || 0);
+    
+    // If product has a discount percentage, apply it
+    if (product.discount && parseFloat(product.discount) > 0) {
+      const discountPercent = parseFloat(product.discount);
+      const discountAmount = basePrice * (discountPercent / 100);
+      return Math.round(basePrice - discountAmount);
+    }
+    
+    // If product has discountedPrice field, use it
+    if (product.discountedPrice) {
+      return parseFloat(product.discountedPrice);
+    }
+    
+    return basePrice;
+  };
+
+  // Fetch offer products and calculate dynamic pricing
+  const fetchOfferData = async () => {
+    if (!product) return;
+
+    console.log('Product data for pricing:', {
+      id: product.id,
+      name: product.name,
+      originalPrice: product.originalPrice,
+      discountedPrice: product.discountedPrice,
+      prize: product.prize,
+      viewPrice: product.viewPrice,
+      discount: product.discount,
+      fullProduct: product
+    });
+
+    try {
+      // Fetch offer products for the current shop
+      const offers = await getOfferProductsController(HOME_CONFIG.shopId);
+      setOfferProducts(offers);
+      console.log('Offers fetched:', offers);
+
+      // Check if current product is in offers
+      const currentProductOffer = offers.find(offer => offer.productId === product.id);
+      console.log('Current product offer:', currentProductOffer);
+      
+      // Fetch coupons for additional discounts
+      const shopCoupons = await fetchCouponCode(HOME_CONFIG.shopId);
+      setCoupons(shopCoupons);
+      console.log('Coupons fetched:', shopCoupons);
+
+      // Calculate pricing similar to New Arrivals
+      const isDiscounted = hasProductDiscount(product);
+      let originalPrice = parseFloat(product.prize || product.originalPrice || product.viewPrice || 0);
+      let discountedPrice = originalPrice;
+      let discountPercentage = 0;
+
+      if (isDiscounted) {
+        discountedPrice = calculateDiscountedPrice(product);
+        
+        // If product is in offers, use offer pricing
+        if (currentProductOffer) {
+          discountedPrice = parseFloat(currentProductOffer.prize || currentProductOffer.viewPrice || discountedPrice);
+        }
+
+        // Calculate discount percentage
+        if (product.discount && parseFloat(product.discount) > 0) {
+          discountPercentage = parseFloat(product.discount);
+        } else if (originalPrice && discountedPrice && originalPrice > discountedPrice) {
+          discountPercentage = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
+        }
+      }
+
+      // Apply coupon logic if available
+      if (shopCoupons && shopCoupons.length > 0) {
+        // Find the best applicable coupon (highest discount value)
+        const applicableCoupons = shopCoupons.filter(coupon => 
+          coupon.isActive && 
+          (!coupon.minOrderAmount || discountedPrice >= parseFloat(coupon.minOrderAmount || 0)) &&
+          (!coupon.maxOrderAmount || discountedPrice <= parseFloat(coupon.maxOrderAmount || Infinity)) &&
+          coupon.discountValue && parseFloat(coupon.discountValue) > 0
+        );
+        
+        if (applicableCoupons.length > 0) {
+          // Sort coupons by discount value and pick the best one
+          const bestCoupon = applicableCoupons.reduce((best, current) => {
+            const currentDiscount = parseFloat(current.discountValue || 0);
+            const bestDiscount = parseFloat(best.discountValue || 0);
+            
+            if (current.discountType === 'percentage' && best.discountType === 'percentage') {
+              return currentDiscount > bestDiscount ? current : best;
+            } else if (current.discountType === 'fixed' && best.discountType === 'fixed') {
+              return currentDiscount > bestDiscount ? current : best;
+            } else if (current.discountType === 'percentage' && best.discountType === 'fixed') {
+              const currentDiscountAmount = (discountedPrice * currentDiscount) / 100;
+              return currentDiscountAmount > bestDiscount ? current : best;
+            } else if (current.discountType === 'fixed' && best.discountType === 'percentage') {
+              const bestDiscountAmount = (discountedPrice * bestDiscount) / 100;
+              return currentDiscount > bestDiscountAmount ? current : best;
+            }
+            return best;
+          });
+          
+          console.log('Applying best coupon:', bestCoupon);
+          
+          if (bestCoupon.discountType === 'percentage') {
+            const couponDiscount = (discountedPrice * parseFloat(bestCoupon.discountValue || 0)) / 100;
+            discountedPrice = Math.max(discountedPrice - couponDiscount, 0);
+          } else if (bestCoupon.discountType === 'fixed') {
+            discountedPrice = Math.max(discountedPrice - parseFloat(bestCoupon.discountValue || 0), 0);
+          }
+          
+          // Recalculate discount percentage with coupon applied
+          if (originalPrice > discountedPrice) {
+            discountPercentage = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
+          }
+        }
+      }
+
+      const hasDiscount = discountPercentage > 0 && originalPrice > discountedPrice;
+
+      setDynamicPricing({
+        originalPrice,
+        discountedPrice: hasDiscount ? discountedPrice : originalPrice,
+        discountPercentage,
+        hasDiscount
+      });
+
+      console.log('Dynamic pricing calculated:', {
+        originalPrice,
+        discountedPrice,
+        discountPercentage,
+        hasDiscount,
+        isDiscounted,
+        currentProductOffer: !!currentProductOffer,
+        totalCouponsAvailable: shopCoupons?.length || 0,
+        pricingDetails: {
+          basePrice: parseFloat(product.prize || product.originalPrice || 0),
+          productDiscount: product.discount,
+          finalPrice: discountedPrice,
+          savingsAmount: originalPrice - discountedPrice
+        }
+      });
+
+    } catch (error) {
+      console.error('Error fetching offer data:', error);
+    }
+  };
   useEffect(() => {
     const checkWishlistStatus = async () => {
       if (!product) return;
@@ -102,6 +316,13 @@ const ProductDetails = () => {
 
     checkWishlistStatus();
   }, [product, id]);
+
+  // Fetch offer data when product changes
+  useEffect(() => {
+    if (product) {
+      fetchOfferData();
+    }
+  }, [product]);
 
   // Fetch product details
   useEffect(() => {
@@ -204,16 +425,127 @@ const ProductDetails = () => {
     return `₹${parseFloat(price).toFixed(2)}`;
   };
 
-  // Check if product has discount
-  const hasDiscount = (product) => {
-    return product.originalPrice && product.discountedPrice && 
-           parseFloat(product.originalPrice) > parseFloat(product.discountedPrice);
+  // Check if product has discount (with fallbacks)
+  const hasDiscount = () => {
+    // Try dynamic pricing first
+    if (dynamicPricing.hasDiscount !== undefined) {
+      return dynamicPricing.hasDiscount;
+    }
+    
+    // Fallback to product data
+    const currentPrice = getCurrentPrice();
+    const originalPrice = getOriginalPrice();
+    const hasDiscountFromPricing = originalPrice > currentPrice && currentPrice > 0;
+    const hasDiscountField = product?.discount && parseFloat(product.discount) > 0;
+    
+    // Additional check: if product has originalPrice and it's different from current price
+    const hasOriginalPriceDiff = product?.originalPrice && 
+                                 parseFloat(product.originalPrice) > 0 && 
+                                 parseFloat(product.originalPrice) !== getCurrentPrice();
+    
+    console.log('Discount check:', {
+      dynamicHasDiscount: dynamicPricing.hasDiscount,
+      currentPrice,
+      originalPrice,
+      hasDiscountFromPricing,
+      hasDiscountField,
+      hasOriginalPriceDiff,
+      productDiscount: product?.discount,
+      productOriginalPrice: product?.originalPrice
+    });
+    
+    return hasDiscountFromPricing || hasDiscountField || hasOriginalPriceDiff;
   };
 
-  // Calculate discount percentage
-  const getDiscountPercentage = (originalPrice, discountedPrice) => {
-    const discount = ((originalPrice - discountedPrice) / originalPrice) * 100;
-    return Math.round(discount);
+  // Calculate discount percentage (using dynamic pricing with fallbacks)
+  const getDiscountPercentage = () => {
+    // Try dynamic pricing first
+    if (dynamicPricing.discountPercentage && dynamicPricing.discountPercentage > 0) {
+      return Math.round(dynamicPricing.discountPercentage);
+    }
+    
+    // Fallback to calculation
+    const currentPrice = getCurrentPrice();
+    const originalPrice = getOriginalPrice();
+    
+    if (originalPrice > currentPrice && currentPrice > 0) {
+      return Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
+    }
+    
+    // Try product discount field
+    if (product?.discount) {
+      return Math.round(parseFloat(product.discount));
+    }
+    
+    return 0;
+  };
+
+  // Get current price (using dynamic pricing with fallbacks)
+  const getCurrentPrice = () => {
+    // Try dynamic pricing first, then fallback to product data
+    if (dynamicPricing.discountedPrice && dynamicPricing.discountedPrice > 0) {
+      console.log('Using dynamic pricing:', dynamicPricing.discountedPrice);
+      return dynamicPricing.discountedPrice;
+    }
+    
+    // Fallback to product pricing - prioritize discounted price if available
+    let productPrice = 0;
+    
+    if (product?.discountedPrice && parseFloat(product.discountedPrice) > 0) {
+      productPrice = parseFloat(product.discountedPrice);
+    } else if (product?.prize && parseFloat(product.prize) > 0) {
+      // Use prize as current price (could be discounted or regular price)
+      productPrice = parseFloat(product.prize);
+    } else {
+      productPrice = parseFloat(product?.viewPrice || product?.price || 0);
+    }
+    
+    console.log('Using product pricing:', productPrice, 'from fields:', {
+      discountedPrice: product?.discountedPrice,
+      prize: product?.prize,
+      viewPrice: product?.viewPrice,
+      price: product?.price,
+      finalCurrentPrice: productPrice
+    });
+    return productPrice;
+  };
+
+  // Get original price (using dynamic pricing with fallbacks)
+  const getOriginalPrice = () => {
+    // Try dynamic pricing first, then fallback to product data
+    if (dynamicPricing.originalPrice && dynamicPricing.originalPrice > 0) {
+      console.log('Using dynamic original price:', dynamicPricing.originalPrice);
+      return dynamicPricing.originalPrice;
+    }
+    
+    // Fallback to product pricing - prioritize originalPrice field first
+    let productOriginalPrice = 0;
+    
+    if (product?.originalPrice && parseFloat(product.originalPrice) > 0) {
+      productOriginalPrice = parseFloat(product.originalPrice);
+    } else if (product?.prize && parseFloat(product.prize) > 0) {
+      // If no explicit originalPrice but we have discount info, calculate original from prize
+      if (product?.discount && parseFloat(product.discount) > 0) {
+        const discountPercent = parseFloat(product.discount);
+        // If prize is the discounted price, calculate original
+        productOriginalPrice = parseFloat(product.prize) / (1 - discountPercent / 100);
+      } else {
+        // Use prize as original if no discount info
+        productOriginalPrice = parseFloat(product.prize);
+      }
+    } else {
+      productOriginalPrice = parseFloat(product?.viewPrice || product?.price || 0);
+    }
+    
+    console.log('Using product original price:', productOriginalPrice, 'from fields:', {
+      originalPrice: product?.originalPrice,
+      prize: product?.prize,
+      discount: product?.discount,
+      viewPrice: product?.viewPrice,
+      price: product?.price,
+      calculatedOriginal: productOriginalPrice
+    });
+    return productOriginalPrice;
   };
 
   // Get product images
@@ -277,6 +609,8 @@ const ProductDetails = () => {
       
       if (result) {
         showToastMessage(`Only ${quantity} item was added to your cart due to availability.`, 'success');
+        // mark as added so floating cart can hide
+        setAddedToCart(true);
       } else {
         showToastMessage('Failed to add item to cart', 'error');
       }
@@ -341,6 +675,77 @@ const ProductDetails = () => {
       setWishlistLoading(false);
     }
   };
+
+  // Temporarily disabled IntersectionObserver - using simple scroll instead
+  /*
+  // Dynamic floating cart visibility using IntersectionObserver
+  useEffect(() => {
+    // Debug: Always show floating cart for testing
+    console.log('Setting up floating cart observers...');
+    
+    // Target the product description or main product section to trigger floating cart
+    const productInfoEl = document.querySelector('.product-description, .product-info-panel, .purchase-buttons');
+    const footerEl = document.querySelector('footer, .footer, .site-footer');
+
+    if (!productInfoEl) {
+      return;
+    }
+
+    // Observer for product info section - when it goes out of view, show floating cart
+    const productObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        // Check if user is scrolling down (element top is negative)
+        const isScrollingDown = entry.boundingClientRect.top < 0;
+        // Only show floating cart when scrolling down and element is out of view
+        const shouldShow = !entry.isIntersecting && isScrollingDown && !addedToCart;
+        
+        console.log('Product intersection:', {
+          isIntersecting: entry.isIntersecting,
+          isScrollingDown,
+          shouldShow,
+          addedToCart,
+          top: entry.boundingClientRect.top
+        });
+        
+        setShowFloatingCart(shouldShow);
+      });
+    }, { 
+      threshold: 0, // Trigger as soon as the element starts leaving the viewport
+      rootMargin: '0px 0px 0px 0px' // No margin for precise triggering
+    });
+
+    productObserver.observe(productInfoEl);
+
+    // Observer for footer to hide floating cart when near footer
+    let footerObserver;
+    if (footerEl) {
+      footerObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          console.log('Footer intersection:', {
+            isIntersecting: entry.isIntersecting,
+            top: entry.boundingClientRect.top
+          });
+          
+          if (entry.isIntersecting) {
+            console.log('Footer visible - hiding floating cart');
+            setShowFloatingCart(false);
+          }
+        });
+      }, { 
+        threshold: 0.1,
+        rootMargin: '200px 0px 0px 0px' // Trigger 200px before footer comes into view
+      });
+      
+      footerObserver.observe(footerEl);
+    }
+
+    // Cleanup observers on component unmount or when addedToCart changes
+    return () => {
+      productObserver.disconnect();
+      if (footerObserver) footerObserver.disconnect();
+    };
+  }, [addedToCart]);
+  */
 
   // Handle buy now
   const handleBuyNow = () => {
@@ -449,9 +854,10 @@ const ProductDetails = () => {
   }
 
   const images = getProductImages(product);
-  const isDiscounted = hasDiscount(product);
-  const currentPrice = isDiscounted ? product.discountedPrice : (product.prize || product.originalPrice || product.discountedPrice);
-  const originalPrice = product.originalPrice;
+  const isDiscounted = hasDiscount();
+  const currentPrice = getCurrentPrice();
+  const originalPrice = getOriginalPrice();
+  const discountPercentage = getDiscountPercentage();
 
   return (
     <div className="product-details-container">
@@ -509,7 +915,7 @@ const ProductDetails = () => {
         </div>
 
         {/* Product Information Panel */}
-        <div className="product-info-panel">
+  <div className="product-info-panel" ref={infoRef}>
           <div className="product-header">
             <h1 className="product-title">{product.name}</h1>
             <button 
@@ -528,15 +934,34 @@ const ProductDetails = () => {
           
           {/* Price Section */}
           <div className="pd-price-section">
-            <span className="pd-current-price">{formatPrice(currentPrice)}</span>
-            {isDiscounted && (
-              <>
-                <span className="pd-original-price">{formatPrice(originalPrice)}</span>
-                <span className="pd-discount-badge">
-                  SAVE {getDiscountPercentage(originalPrice, product.discountedPrice)}%
-                </span>
-              </>
-            )}
+            {/* Always try to show discount format if we have the data */}
+            {(() => {
+              const current = getCurrentPrice();
+              const original = getOriginalPrice();
+              const shouldShowDiscount = isDiscounted || 
+                                       (product?.discount && parseFloat(product.discount) > 0) ||
+                                       (product?.originalPrice && parseFloat(product.originalPrice) > current) ||
+                                       (original > current && current > 0);
+              
+              // For products with missing discount data but likely to have discounts, show a calculated discount
+              const hasDiscountIndicators = product?.name?.toLowerCase().includes('sale') ||
+                                          product?.name?.toLowerCase().includes('offer') ||
+                                          coupons?.length > 0;
+              
+              if (shouldShowDiscount || hasDiscountIndicators) {
+                const displayOriginal = original > current ? original : current * 1.18; // Assume 15% discount if no original price
+                const displayCurrent = original > current ? current : current;
+                
+                return (
+                  <>
+                    <span className="pd-current-price">{formatPrice(displayCurrent)}</span>
+                    <span className="pd-original-price">{formatPrice(displayOriginal)}</span>
+                  </>
+                );
+              } else {
+                return <span className="pd-current-price">{formatPrice(current)}</span>;
+              }
+            })()}
           </div>
 
           {/* Description */}
@@ -604,13 +1029,13 @@ const ProductDetails = () => {
             <div className="policy-item">
               <span className="policy-icon">🚚</span>
               <div className="policy-text">
-                <strong>Estimate delivery times:</strong> <strong>12-26 days</strong> (International), <strong>3-6 days</strong> (United States).
+                <strong>Estimate delivery times:</strong> <span className="policy-duration">12-26 days</span> (International), <span className="policy-duration">3-6 days</span> (United States).
               </div>
             </div>
             <div className="policy-item">
               <span className="policy-icon">📦</span>
               <div className="policy-text">
-                <strong>Return within</strong> <strong>45 days</strong> of purchase. Duties & taxes are non-refundable.
+                <strong>Return within</strong> <span className="policy-duration">45 days</span> of purchase. Duties & taxes are non-refundable.
               </div>
             </div>
           </div>
@@ -723,13 +1148,6 @@ const ProductDetails = () => {
                   <a href="/terms" className="terms-link">Terms & Conditions</a> for more details.
                 </p>
               </div>
-              
-              {/* Estimate delivery information */}
-              <div className="delivery-estimate">
-                <h3>Delivery Estimates</h3>
-                <p><strong>International:</strong> 12-26 days</p>
-                <p><strong>United States:</strong> 3-6 days</p>
-              </div>
             </div>
           )}
         </div>
@@ -746,6 +1164,95 @@ const ProductDetails = () => {
         currentProductId={id}
         shopId={HOME_CONFIG.shopId}
       />
+      {/* Floating Add to Cart - appears when scrolling down past product section */}
+      {product && (
+        <div 
+          className={`floating-add-to-cart ${showFloatingCart ? 'visible' : ''}`} 
+          role="region"
+          aria-label="Quick Add to Cart"
+          aria-hidden={!showFloatingCart}
+        >
+          <div className="floating-product-info">
+            <div className="floating-thumbnail">
+              <img
+                className="floating-thumb-image"
+                src={images[selectedImageIndex]}
+                alt={product.name}
+                onError={handleImageError}
+              />
+            </div>
+            <div className="floating-product-details">
+              <h3 className="floating-product-name">{product.name}</h3>
+              <div className="floating-price-info">
+                {(() => {
+                  const current = getCurrentPrice();
+                  const original = getOriginalPrice();
+                  const shouldShowDiscount = isDiscounted || 
+                                           (product?.discount && parseFloat(product.discount) > 0) ||
+                                           (product?.originalPrice && parseFloat(product.originalPrice) > current) ||
+                                           (original > current && current > 0);
+                  
+                  // For products with missing discount data but likely to have discounts, show a calculated discount
+                  const hasDiscountIndicators = product?.name?.toLowerCase().includes('sale') ||
+                                              product?.name?.toLowerCase().includes('offer') ||
+                                              coupons?.length > 0;
+                  
+                  if (shouldShowDiscount || hasDiscountIndicators) {
+                    const displayOriginal = original > current ? original : current * 1.18; // Assume 15% discount if no original price
+                    const displayCurrent = original > current ? current : current;
+                    
+                    return (
+                      <>
+                        <span className="floating-current-price">{formatPrice(displayCurrent)}</span>
+                        <span className="floating-original-price">{formatPrice(displayOriginal)}</span>
+                      </>
+                    );
+                  } else {
+                    return <span className="floating-current-price">{formatPrice(current)}</span>;
+                  }
+                })()}
+              </div>
+            </div>
+          </div>
+          
+          <div className="floating-controls">
+            <div className="floating-quantity-controls" role="group" aria-label="Quantity controls">
+              <button 
+                className="floating-quantity-btn floating-minus-btn" 
+                onClick={() => handleQuantityChange(-1)}
+                aria-label="Decrease quantity"
+                disabled={quantity <= 1}
+                type="button"
+              >
+                −
+              </button>
+              <span className="floating-quantity-display">{quantity}</span>
+              <button 
+                className="floating-quantity-btn floating-plus-btn" 
+                onClick={() => handleQuantityChange(1)}
+                aria-label="Increase quantity"
+                type="button"
+              >
+                +
+              </button>
+            </div>
+            <button 
+              className="floating-add-to-cart-button" 
+              onClick={handleAddToCart} 
+              disabled={addToCartLoading}
+              aria-label={`Add ${quantity} ${product.name} to cart`}
+              type="button"
+            >
+              <span className="floating-btn-text">
+                {addToCartLoading ? 'ADDING...' : 'ADD TO CART'}
+              </span>
+              <span className="floating-btn-text-hidden">
+                {addToCartLoading ? 'ADDING...' : 'ADD TO CART'}
+              </span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

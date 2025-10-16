@@ -119,7 +119,7 @@ const Footer = () => {
             <p>© Copyright 2025-2026 | t11 Powered by Strackit</p>
           </div>
           <div className="version-info">
-            <p>version 1.0.3</p>
+            <p>version 1.0.4</p>
           </div>
           <div className="payment-methods">
             <img src={paymentFooter} alt="Accepted Payment Methods" className="payment-methods-image" />
