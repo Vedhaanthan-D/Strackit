@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiShoppingBag, FiSearch } from 'react-icons/fi';
 import { getProductsController } from 'shops-query/src/modules/products/index';
+import { fetchCouponCode } from 'shops-query/src/modules/CouponCode/index';
 import { addProductToCart, getProductCartStatus } from '../../../common/utils/cartUtils';
 import { useToast } from '../../../common/components/Toast';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds';
@@ -33,11 +34,17 @@ const NewArrivals = ({
   const [addingToCart, setAddingToCart] = useState({}); // Track loading state for each product
   const [cartSuccess, setCartSuccess] = useState({}); // Track success state for each product
   const [cartQuantities, setCartQuantities] = useState({}); // Track cart quantities for each product
+  const [coupons, setCoupons] = useState([]);  // Store available coupons
   const scrollContainerRef = useRef(null);
   const { showSuccess, showError } = useToast();
 
   // Helper function to check if product has discount
   const hasDiscount = (product) => {
+    // If product has discount field with value greater than 0
+    if (product.discount && parseFloat(product.discount) > 0) {
+      return true;
+    }
+    
     // Check if originalPrice and discountedPrice exist and originalPrice is higher
     if (product.originalPrice && product.discountedPrice && 
         parseFloat(product.originalPrice) > parseFloat(product.discountedPrice)) {
@@ -53,8 +60,30 @@ const NewArrivals = ({
     return false;
   };
 
+  // Calculate discounted price based on original price and discount percentage
+  const calculateDiscountedPrice = (product) => {
+    if (!product.prize) return 0;
+    
+    const originalPrice = parseFloat(product.prize);
+    
+    // If product has a discount percentage, apply it
+    if (product.discount && parseFloat(product.discount) > 0) {
+      const discountPercent = parseFloat(product.discount);
+      const discountAmount = originalPrice * (discountPercent / 100);
+      return Math.round(originalPrice - discountAmount);
+    }
+    
+    // If product has discountedPrice field, use it
+    if (product.discountedPrice) {
+      return parseFloat(product.discountedPrice);
+    }
+    
+    return originalPrice;
+  };
+
   // Helper function to format price
   const formatPrice = (price) => {
+    if (!price) return "₹0.00";
     return `₹${parseFloat(price).toFixed(2)}`;
   };
 
@@ -248,7 +277,14 @@ const NewArrivals = ({
       try {
         setLoading(true);
         
-        const productData = await getProductsController(HOME_CONFIG.shopId);
+        // Fetch products and coupons in parallel
+        const [productData, couponData] = await Promise.all([
+          getProductsController(HOME_CONFIG.shopId),
+          fetchCouponCode(HOME_CONFIG.shopId)
+        ]);
+        
+        // Store coupons for later use
+        setCoupons(couponData || []);
         
         if (productData && productData.length > 0) {
           let sortedProducts = [...productData]
@@ -270,6 +306,7 @@ const NewArrivals = ({
           setProducts([]);
         }
       } catch (err) {
+        console.error('Error fetching data:', err);
         setError(err);
         setProducts([]);
       } finally {
@@ -346,8 +383,10 @@ const NewArrivals = ({
                 style={{ cursor: 'pointer' }}
               >
                 <div className="new-arrivals-product-image-container">
-                  {/* Always show sale badge for testing - will show if product has discount */}
-                  <div className="new-arrivals-sale-badge">Sale</div>
+                  {/* Show sale badge only if product has discount */}
+                  {isDiscounted && (
+                    <div className="new-arrivals-sale-badge">Sale</div>
+                  )}
                   <img
                     src={getCurrentImage(product)}
                     alt={product.name}
@@ -399,10 +438,10 @@ const NewArrivals = ({
                     {isDiscounted ? (
                       <>
                         <span className="new-arrivals-current-price">
-                          {formatPrice(product.discountedPrice)}
+                          {formatPrice(calculateDiscountedPrice(product))}
                         </span>
                         <span className="new-arrivals-old-price">
-                          {formatPrice(product.originalPrice)}
+                          {formatPrice(product.prize)}
                         </span>
                       </>
                     ) : (

@@ -395,7 +395,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
+  flex-wrap: wrap;
   font-family: 'Jost', sans-serif;
   text-align: center;
   margin-top: 4px;
@@ -404,13 +405,25 @@
 .new-arrivals-current-price {
   font-size: 1rem;
   font-weight: 500;
-  color: #555;
+  color: #B96F4A;
 }
 
 .new-arrivals-old-price {
   font-size: 0.9rem;
   color: #999;
   text-decoration: line-through;
+  margin-left: 8px;
+}
+
+.new-arrivals-discount-badge {
+  font-size: 0.85rem;
+  color: #e91e63;
+  font-weight: 600;
+  background-color: rgba(233, 30, 99, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Poppins', sans-serif;
+  margin-left: 8px;
 }
 
 /* Loading Skeleton Styles */
@@ -769,6 +782,16 @@
   
   .new-arrivals-product-price {
     font-size: 0.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .new-arrivals-discount-badge {
+    font-size: 0.75rem;
+    padding: 2px 6px;
   }
   
   .new-arrivals-product-skeleton-title {
