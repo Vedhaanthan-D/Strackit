@@ -47,7 +47,12 @@ const MasterCategory = () => {
         
         if (categoryData && categoryData.length > 0) {
           const activeCategories = categoryData
-            .filter(cat => cat.status === 'active' || cat.status === 1)
+            .filter(cat => 
+              cat.status === 'active' || 
+              cat.status === 1 || 
+              cat.status === true || 
+              (cat.status === undefined || cat.status === null)  // Include items without status (treat as active by default)
+            )
             .sort((a, b) => a.position - b.position);
           
           setMasterCategories(activeCategories);
@@ -145,7 +150,7 @@ const MasterCategory = () => {
               <div 
                 key={category.id}
                 className="categoryBox"
-                onClick={() => handleCategoryClick(category)}
+                onClick={() => handleCategoryClick(category.id)}
               >
                 <img
                   src={`${IMAGE_PREFIX}${category.image}`}

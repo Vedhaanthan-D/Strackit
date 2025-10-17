@@ -26,9 +26,15 @@ const CategoryPage = () => {
         // Reset selected secondary when navigating to different master category
         setSelectedSecondary(null);
         
+        // Validate that we have a master category ID
+        if (!id) {
+          throw new Error('Master category ID is required');
+        }
+        
         // Get dynamic shop ID - use from URL params or fallback to config
         const currentShopId = shopId || HOME_CONFIG.shopId;
         console.log('CategoryPage: Using shopId:', currentShopId, 'from URL:', shopId, 'fallback:', HOME_CONFIG.shopId);
+        console.log('CategoryPage: Master category ID from URL:', id);
         
         // Fetch master categories to get the current category details
         const masterData = await fetchMasterCategories(currentShopId);
@@ -39,14 +45,28 @@ const CategoryPage = () => {
         );
         setMasterCategory(currentMaster);
         
-        // Fetch secondary categories
-        const data = await getSecondaryCategories(currentShopId, id);
-        const active = (data || []).filter(s => s.status === 'active' || s.status === 1);
-        setSecondaries(active);
-        
-        // Automatically select the first subcategory if available
-        if (active.length > 0) {
-          setSelectedSecondary(active[0]);
+        // Fetch secondary categories only if we have a valid master category ID
+        if (id && currentMaster) {
+          // Ensure the master category ID is passed as a string
+          const masterCategoryId = String(currentMaster.id || id);
+          console.log('Fetching secondary categories for masterCategoryId:', masterCategoryId);
+          
+          const data = await getSecondaryCategories(currentShopId, masterCategoryId);
+          const active = (data || []).filter(s => 
+            s.status === 'active' || 
+            s.status === 1 || 
+            s.status === true || 
+            (s.status === undefined || s.status === null)  // Include items without status (treat as active by default)
+          );
+          setSecondaries(active);
+          
+          // Automatically select the first subcategory if available
+          if (active.length > 0) {
+            setSelectedSecondary(active[0]);
+          }
+        } else {
+          console.warn('No valid master category ID found:', { id, currentMaster });
+          setSecondaries([]);
         }
       } catch (err) {
         setError(err.message || 'Failed to load category data');
