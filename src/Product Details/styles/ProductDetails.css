@@ -158,27 +158,36 @@
 
 /* Product Info Panel */
 .product-info-panel {
-  padding: 20px 0;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0px; /* tighter grouping */
 }
 
 .product-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: 0px;
+  margin-bottom: 0; /* remove extra gap under header */
 }
 
 .product-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #000000BF;
+  font-size: 24px;
+  font-weight: 550;
+  color: #000000;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.05; /* tighter line height to reduce vertical space */
   letter-spacing: 0.5px;
   flex: 1;
+  font-family: san-serif;
+}
+
+.product-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* minimal gap between title and rating */
+  margin: 0;
 }
 
 /* Favorite Button */
@@ -231,6 +240,20 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-top: 0;
+  margin: 0;
+}
+
+/* Ensure stars sit tightly under title with no extra margin */
+.star-rating { margin-bottom: 0; }
+
+
+.star-rating .review-text {
+  font-size: 13px;
+  color: #999;
+  margin-left: 6px;
+  white-space: nowrap;
+  transform: translateY(-1px);
 }
 
 .stars {
@@ -239,7 +262,7 @@
 }
 
 .star {
-  font-size: 14px;
+  font-size: 20px;
   color: #b96f4a; /* requested star color */
   -webkit-text-stroke: 0.5px #b96f4a;
   -webkit-text-fill-color: #ffffff;
@@ -248,23 +271,50 @@
 /* Price Section */
 .pd-price-section {
   display: flex;
-  align-items: center;
+  align-items: center; /* center all elements on same horizontal line */
   gap: 12px;
   flex-wrap: wrap;
+  margin-top: 23px; /* required vertical gap between rating and price */
+  margin-bottom: 0; /* no bottom margin, separator handles spacing */
 }
 
 .pd-current-price {
   font-size: 1.5rem;
-  font-weight: 500;
+  font-weight: 400;
   color: #B96F4A;
+  font-style:sans-serif;
+}
+
+
+
+.review-text {
+  font-size: 13px;
+  color: #999;
+  margin-left: 8px;
+  white-space: nowrap;
 }
 
 .pd-original-price {
-  font-size: 1.2rem;
+  font-size: 14px jost;
   color: #999;
   text-decoration: line-through;
   font-weight: 400;
   margin-left: 8px;
+  font-style:sans-serif ;
+}
+
+/* Save badge - red rounded rectangle */
+.save-badge {
+  display: inline-block;
+  background-color: #dc2626; /* red */
+  color: #fff;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 16px;
+  margin-left: 12px;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .pd-discount-badge {
@@ -278,17 +328,27 @@
   text-transform: uppercase;
 }
 
+/* Price-Description Separator */
+.price-description-separator {
+  width: 100%;
+  height: 1px;
+  background-color: #e5e5e5; /* light gray */
+  margin: 25px 0; /* 25px above and below the line */
+}
+
 /* Product Description */
 .product-description {
-  margin-top: 8px;
-  margin-bottom: 16px;
+  margin-top: 0; /* reset margin-top since separator handles spacing */
+  margin-bottom: 25px; /* 25px gap to purchase buttons */
   line-height: 1.6;
   color: #666;
   font-size: 15px;
+  font-family: sans-serif;
 }
 
 .product-description p {
   margin: 0;
+
 }
 
 /* Quantity Section */
@@ -921,7 +981,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-top: 16px;
+  padding-top: 25px; /* 25px gap from BUY IT NOW button */
   border-top: 1px solid #eee;
 }
 
@@ -1285,8 +1345,8 @@
   }
 
   .product-description {
-    margin-top: 20px;
-    margin-bottom: 16px;
+    margin-top: 0; /* separator handles spacing on mobile too */
+    margin-bottom: 25px; /* maintain 25px gap on mobile */
   }
 
   .purchase-buttons {
@@ -1334,8 +1394,8 @@
 
   .product-description {
     font-size: 14px;
-    margin-top: 20px;
-    margin-bottom: 16px;
+    margin-top: 0; /* separator handles spacing on mobile */
+    margin-bottom: 25px; /* maintain 25px gap on mobile */
   }
 
   .policy-item {
@@ -1363,6 +1423,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 20px auto 0;
+  margin-bottom: 20px; /* 20px gap to Product Supreme Quality */
   background-color: white;
   border-top: 1px solid #f0f0f0;
 }
@@ -1410,7 +1471,7 @@
 }
 
 .tab-content {
-  padding: 25px 20px 20px;
+  padding: 25px 20px 0; /* no bottom padding */
   max-width: 1000px;
   margin: 0 auto;
   line-height: 1.6;
@@ -1420,10 +1481,15 @@
 .description-content {
   color: #666;
   font-size: 16px;
+  text-align: left;
+  margin-left: 0;
+  padding-left: 0;
+  margin-bottom: 0; /* no bottom margin */
+  padding-bottom: 0; /* no bottom padding */
 }
 
 .description-section {
-  margin-bottom: 40px;
+  margin-bottom: 0; /* no bottom margin */
 }
 
 .description-section p {
@@ -1432,7 +1498,7 @@
 
 .specifications-section,
 .features-section {
-  margin-bottom: 40px;
+  margin-bottom: 0; /* no bottom margin */
 }
 
 .specifications-section h3,
@@ -1475,6 +1541,11 @@
   color: #666;
   font-size: 16px;
   line-height: 1.7;
+  text-align: left;
+  margin-left: 0;
+  padding-left: 0;
+  margin-bottom: 0; /* no bottom margin */
+  padding-bottom: 0; /* no bottom padding */
 }
 
 .shipping-content p {

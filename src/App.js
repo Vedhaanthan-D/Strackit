@@ -53,7 +53,7 @@ function App() {
                 <div className="section-gap"></div>
                 <NewArrivals 
                   title="NEW ARRIVALS" 
-                  subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur"
+                  subtitle=""
                   limit={8}
                   sortNewest={true}
                 />
@@ -62,7 +62,7 @@ function App() {
                 <div className="section-gap"></div>
                 <NewArrivals 
                   title="YOU MIGHT LIKE" 
-                  subtitle="Nemo enim ipsam voluptatem quia voluptas sit aspernatur" 
+                  subtitle="" 
                   limit={8}
                   sortNewest={false}
                 />

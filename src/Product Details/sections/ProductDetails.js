@@ -16,7 +16,7 @@ import YouMightAlsoLike from './YouMightAlsoLike.js';
 import '../styles/ProductDetails.css';
 
 // Star rating component
-const StarRating = () => {
+const StarRating = ({ product, productDetails }) => {
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     stars.push(
@@ -28,10 +28,16 @@ const StarRating = () => {
       </span>
     );
   }
-  
+
+  // Determine reviews count from a few possible fields
+  const reviewsCount = (product && (product.reviewsCount || (product.reviews && product.reviews.length))) ||
+                       (productDetails && (productDetails.reviewsCount || (productDetails.reviews && productDetails.reviews.length))) ||
+                       0;
+
   return (
-    <div className="star-rating">
+    <div className="star-rating" aria-label={`Rating: ${reviewsCount} reviews`}>
       <div className="stars">{stars}</div>
+      <div className="review-text">{reviewsCount === 0 ? 'No reviews' : `${reviewsCount} review${reviewsCount > 1 ? 's' : ''}`}</div>
     </div>
   );
 };
@@ -323,6 +329,26 @@ const ProductDetails = () => {
       fetchOfferData();
     }
   }, [product]);
+
+  // Ensure floating add-to-cart is visible on small screens once product is loaded
+  useEffect(() => {
+    if (!product) return;
+
+    // Do not show if item already added to cart
+    if (addedToCart) {
+      setShowFloatingCart(false);
+      return;
+    }
+
+    try {
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+      if (isMobile) {
+        setShowFloatingCart(true);
+      }
+    } catch (err) {
+      // ignore
+    }
+  }, [product, addedToCart]);
 
   // Fetch product details
   useEffect(() => {
@@ -917,7 +943,10 @@ const ProductDetails = () => {
         {/* Product Information Panel */}
   <div className="product-info-panel" ref={infoRef}>
           <div className="product-header">
-            <h1 className="product-title">{product.name}</h1>
+            <div className="product-title-block">
+              <h1 className="product-title">{product.name}</h1>
+              <StarRating product={product} productDetails={productDetails} />
+            </div>
             <button 
               className={`favorite-button ${isInWishlist ? 'active' : ''}`}
               onClick={handleWishlistToggle}
@@ -928,9 +957,6 @@ const ProductDetails = () => {
               <FiHeart className={`heart-icon ${isInWishlist ? 'filled' : ''}`} />
             </button>
           </div>
-          
-          {/* Rating */}
-          <StarRating />
           
           {/* Price Section */}
           <div className="pd-price-section">
@@ -956,6 +982,10 @@ const ProductDetails = () => {
                   <>
                     <span className="pd-current-price">{formatPrice(displayCurrent)}</span>
                     <span className="pd-original-price">{formatPrice(displayOriginal)}</span>
+                    {/* Save badge */}
+                    {displayOriginal > displayCurrent && (
+                      <span className="save-badge">{`SAVE ${Math.round(((displayOriginal - displayCurrent) / displayOriginal) * 100)}%`}</span>
+                    )}
                   </>
                 );
               } else {
@@ -963,6 +993,9 @@ const ProductDetails = () => {
               }
             })()}
           </div>
+
+          {/* Price-Description Separator */}
+          <div className="price-description-separator"></div>
 
           {/* Description */}
           <div className="product-description">

@@ -160,9 +160,6 @@ const BannerSlider = () => {
             <h1 className={`slidingBannerTitle ${animationStarted ? 'animate-in' : 'pre-animate'}`}>
               {bannerContent[currentIndex]?.title}
             </h1>
-            <p className={`slidingBannerDescription ${animationStarted ? 'animate-in' : 'pre-animate'}`}>
-              {bannerContent[currentIndex]?.description || 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur'}
-            </p>
             <button 
               className={`slidingBannerButton ${animationStarted ? 'animate-in' : 'pre-animate'}`}
               onClick={handleBannerClick}

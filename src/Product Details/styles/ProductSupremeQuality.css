@@ -1,8 +1,8 @@
 /* Product Supreme Quality Section */
 .product-supreme-quality {
   background-color: #ffffff;
-  padding: 80px 0;
-  margin: 60px 0;
+  padding: 80px 0 0 0; /* remove bottom padding */
+  margin: 60px 0 0 0; /* remove bottom margin */
 }
 
 .supreme-quality-container {
@@ -24,6 +24,7 @@
   margin: 0 0 24px 0;
   letter-spacing: -0.5px;
   line-height: 1.2;
+  text-align: left;
 }
 
 .supreme-quality-description {
@@ -34,6 +35,8 @@
   margin: 0 auto;
   font-weight: 400;
   text-align: left;
+  margin-left: 0;
+  padding-left: 0;
 }
 
 /* Features Section */
@@ -188,8 +191,8 @@
 
 @media (max-width: 768px) {
   .product-supreme-quality {
-    padding: 60px 0;
-    margin: 40px 0;
+    padding: 60px 0 0 0; /* remove bottom padding */
+    margin: 40px 0 0 0; /* remove bottom margin */
   }
   
   .supreme-quality-container {

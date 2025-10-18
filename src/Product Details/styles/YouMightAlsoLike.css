@@ -12,13 +12,14 @@
 
 /* Section Header */
 .you-might-also-like-title {
-  font-size: 36px;
-  font-weight: 700;
+  font-size: 31.536px;
+  font-weight: 500;
   color: #333;
   text-align: center;
   margin: 0 0 60px 0;
   letter-spacing: -0.5px;
   line-height: 1.2;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Carousel Container */

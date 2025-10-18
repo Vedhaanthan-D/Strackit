@@ -466,7 +466,7 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
               ))
             ) : (
               // Actual products
-              products.map((product) => {
+              products.map((product, index) => {
                 const isDiscounted = hasDiscount(product);
                 const discountPercentage = getDiscountPercentage(product);
                 
@@ -506,10 +506,10 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
                     style={{ cursor: 'pointer' }}
                   >
                     {/* Dynamic Sale Badge */}
-                    {isDiscounted && (
-                      <div className="sale-badge" data-discount={discountPercentage > 0 ? `${discountPercentage}% OFF` : 'Sale'}>
+                    {(isDiscounted || index === 0) && (
+                      <div className="sale-badge" data-discount={index === 0 ? 'Sale' : (discountPercentage > 0 ? `${discountPercentage}% OFF` : 'Sale')}>
                         <span className="sale-text">
-                          {discountPercentage > 0 ? `${discountPercentage}% OFF` : 'Sale'}
+                          {index === 0 ? 'Sale' : (discountPercentage > 0 ? `${discountPercentage}% OFF` : 'Sale')}
                         </span>
                       </div>
                     )}

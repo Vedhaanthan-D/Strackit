@@ -49,6 +49,13 @@
   background-color: #b17653;
 }
 
+.new-arrivals-decorative-line {
+  width: 100px;
+  height: .5px;
+  background-color: #b17653;
+  margin: 20px auto 20px;
+}
+
 .products-container {
   max-width: 1400px;
   width: 100%;

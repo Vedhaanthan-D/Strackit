@@ -355,6 +355,7 @@ const NewArrivals = ({
       <div className="new-arrivals-header">
         <h2 className="new-arrivals-title">{title}</h2>
         {subtitle && <p className="new-arrivals-subtitle">{subtitle}</p>}
+        {!subtitle && <div className="new-arrivals-decorative-line"></div>}
       </div>
       
       <div className="products-container">
