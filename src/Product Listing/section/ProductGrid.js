@@ -726,10 +726,9 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
                 className="product-grid-item" 
                 onClick={() => handleProductClick(product.id)}
                 style={{ cursor: 'pointer' }}
-              >
+              > 
                 <div className="product-grid-image-wrapper">
-                 
-                    <div className="product-grid-sale-badge"></div>
+                  { <div className="product-grid-sale-badge">sale</div>}
                   
                   
                   {/* Primary Image */}

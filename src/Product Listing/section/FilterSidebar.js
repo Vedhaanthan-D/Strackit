@@ -149,7 +149,7 @@ const FilterSidebar = ({ onFiltersChange, masterCategoryId, shopId, maxPrice = 5
     if (filters.priceRange && (filters.priceRange.min > 0 || filters.priceRange.max < maxPrice)) {
       active.push({
         type: 'priceRange',
-        label: `$${filters.priceRange.min} - $${filters.priceRange.max}`,
+        label: `₹${filters.priceRange.min} - ₹${filters.priceRange.max}`,
         value: null
       });
     }
@@ -303,8 +303,11 @@ const FilterSidebar = ({ onFiltersChange, masterCategoryId, shopId, maxPrice = 5
                 className="price-slider max-slider"
               />
             </div>
-            <div className="price-display">
-              <span>${filters.priceRange.min} - ${filters.priceRange.max}</span>
+            <div className="price-inputs">
+              <div className="price-label">Price:</div>
+              <div className="price-input">₹{filters.priceRange.min}</div>
+              <span className="price-separator">-</span>
+              <div className="price-input">₹{filters.priceRange.max}</div>
             </div>
           </div>
         </div>
