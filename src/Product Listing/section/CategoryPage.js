@@ -139,12 +139,12 @@ const CategoryPage = () => {
         <div className="category-bannerOverlay">
           {/* Title and Breadcrumb */}
           <div className="categoryBannerContent">
+            <h1 className="categoryBannerTitle">{masterCategory?.category}</h1> 
             <div className="categoryBreadcrumb">
               <span onClick={() => navigate('/')} className="categoryBreadcrumbLink">Home</span>
               <span className="categoryBreadcrumbSeparator">›</span>
               <span className="categoryBreadcrumbCurrent">{masterCategory?.category}</span>
             </div>
-            <h1 className="categoryBannerTitle">{masterCategory?.category}</h1>
           </div>
 
           {/* Secondary Categories Thumbnails Row */}
