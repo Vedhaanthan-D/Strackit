@@ -529,6 +529,17 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
     const roundedPrice = Math.ceil(priceWithTax);
     return `₹${roundedPrice.toFixed(2)}`;
   };
+
+  // Calculate discounted price from original price and discount percentage
+  const calculateDiscountedPrice = (originalPrice, discountPercentage) => {
+    if (!originalPrice || !discountPercentage || discountPercentage <= 0) {
+      return originalPrice;
+    }
+    // Formula: discountedPrice = originalPrice - (originalPrice * discount/100)
+    const discount = parseFloat(originalPrice) * (parseFloat(discountPercentage) / 100);
+    const discounted = parseFloat(originalPrice) - discount;
+    return Math.ceil(discounted); // Round up to nearest integer
+  };
   
   // Handle navigation to product details page
   const handleProductClick = (productId) => {
@@ -799,10 +810,13 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
                     {isDiscounted ? (
                       <>
                         <span className="product-grid-current-price">
-                          {formatPrice(product.discountedPrice, product.tax || product.taxPercentage || product.gst)}
+                          {formatPrice(
+                            calculateDiscountedPrice(product.prize, product.discount),
+                            product.tax || product.taxPercentage || product.gst
+                          )}
                         </span>
                         <span className="product-grid-old-price">
-                          {formatPrice(product.originalPrice, product.tax || product.taxPercentage || product.gst)}
+                          {formatPrice(product.prize, product.tax || product.taxPercentage || product.gst)}
                         </span>
                       </>
                     ) : (
