@@ -876,6 +876,13 @@ const ProductDetails = () => {
     return doc.body.textContent || "";
   };
 
+  // Clean HTML content by removing "*" and "#" symbols
+  const cleanHtmlContent = (htmlString) => {
+    if (!htmlString) return "";
+    // Remove all "*" and "#" symbols from the HTML content
+    return htmlString.replace(/[*#]/g, '');
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -1024,7 +1031,7 @@ const ProductDetails = () => {
           {/* Description */}
           <div className="product-description">
             <p>
-              {getPlainTextDescription(product.description) || 
+              {getPlainTextDescription(cleanHtmlContent(product.description)) || 
                "Cheer on your favorite red and white team in eye-popping style with these red & white striped game bib overalls! Each pair is made of 100 percent cotton for a comfortable, breathable fit regardless of the weather and includ..."}
             </p>
           </div>
@@ -1129,7 +1136,7 @@ const ProductDetails = () => {
               {productDetails?.description && (
                 <div className="description-section">
                   <div dangerouslySetInnerHTML={{ 
-                    __html: productDetails.description 
+                    __html: cleanHtmlContent(productDetails.description)
                   }} />
                 </div>
               )}
@@ -1139,7 +1146,7 @@ const ProductDetails = () => {
                 <div className="specifications-section">
                   <h3>Product Specifications</h3>
                   <div dangerouslySetInnerHTML={{ 
-                    __html: productDetails.specification 
+                    __html: cleanHtmlContent(productDetails.specification)
                   }} />
                 </div>
               )}
@@ -1149,7 +1156,7 @@ const ProductDetails = () => {
                 <div className="features-section">
                   <h3>How to Use</h3>
                   <div dangerouslySetInnerHTML={{ 
-                    __html: productDetails.howToUse 
+                    __html: cleanHtmlContent(productDetails.howToUse)
                   }} />
                 </div>
               )}
@@ -1159,7 +1166,7 @@ const ProductDetails = () => {
                 <div className="features-section">
                   <h3>Additional Information</h3>
                   <div dangerouslySetInnerHTML={{ 
-                    __html: productDetails.otherInformation 
+                    __html: cleanHtmlContent(productDetails.otherInformation)
                   }} />
                 </div>
               )}

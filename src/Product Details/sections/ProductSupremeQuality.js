@@ -90,10 +90,13 @@ const ProductSupremeQuality = ({ product, productId }) => {
     return features.slice(0, 3); // Always return exactly 3 features
   };
 
-  // Strip HTML tags from text
+  // Strip HTML tags and unwanted symbols from text
   const stripHtmlTags = (html) => {
     if (!html) return '';
-    return html.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ').trim();
+    return html.replace(/<[^>]*>/g, '')
+               .replace(/&[^;]+;/g, ' ')
+               .replace(/[*#]/g, '')  // Remove * and # symbols
+               .trim();
   };
 
   // Default feature titles

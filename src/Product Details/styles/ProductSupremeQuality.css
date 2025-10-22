@@ -1,8 +1,8 @@
 /* Product Supreme Quality Section */
 .product-supreme-quality {
   background-color: #ffffff;
-  padding: 80px 0 0 0; /* remove bottom padding */
-  margin: 60px 0 0 0; /* remove bottom margin */
+  padding: 20px 0 0 0; /* reduced top padding */
+  margin: 20px 0 0 0; /* reduced top margin */
 }
 
 .supreme-quality-container {
