@@ -174,13 +174,13 @@
 
 .product-title {
   font-size: 24px;
-  font-weight: 550;
+  font-weight: 700;
   color: #000000;
   margin: 0;
   line-height: 1.05; /* tighter line height to reduce vertical space */
   letter-spacing: 0.5px;
   flex: 1;
-  font-family: san-serif;
+  font-family: 24px jostsan-serif;
 }
 
 .product-title-block {
@@ -414,7 +414,8 @@
 
 /* Delivery / Return durations styling */
 .policy-duration {
-  font-weight: 700;
+  font-weight: 800;
+
 }
 
 /* Remove Chrome/Safari/Edge spinners */
@@ -1001,12 +1002,13 @@
 }
 
 .policy-text {
+  font-size: 15px;
   flex: 1;
 }
 
 .policy-text strong {
   color: #666666;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 /* Shopify Promo Card */

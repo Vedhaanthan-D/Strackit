@@ -14,12 +14,12 @@
 .you-might-also-like-title {
   font-size: 31.536px;
   font-weight: 500;
-  color: #333;
+  color: #000000BF;
   text-align: center;
   margin: 0 0 60px 0;
   letter-spacing: -0.5px;
   line-height: 1.2;
-  font-family: 'Poppins', sans-serif;
+  font-family: 29.478px Poppins,san-serif;
 }
 
 /* Carousel Container */
@@ -78,38 +78,51 @@
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
+  overflow: visible;
 }
 
 .sale-badge .sale-text {
   position: absolute;
-  top: 6px;
-  right: -42px;
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
+  /* Position precisely in the center of triangle */
+  top: 18px;
+  right: 18px;
+  color: white !important;
+  font-size: 11px;
+  font-weight: 800;
   text-transform: uppercase;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transform: rotate(45deg);
   transform-origin: center;
-  white-space: nowrap;
-  letter-spacing: 0.3px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  line-height: 1;
+  z-index: 15;
+  pointer-events: none;
 }
 
 /* Backup with ::after for browsers that support it */
 .sale-badge::after {
   content: attr(data-discount);
   position: absolute;
-  top: 6px;
-  right: -42px;
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
+  /* Position precisely in the center of triangle */
+  top: 18px;
+  right: 18px;
+  color: white !important;
+  font-size: 11px;
+  font-weight: 800;
   text-transform: uppercase;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transform: rotate(45deg);
   transform-origin: center;
-  white-space: nowrap;
-  letter-spacing: 0.3px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  line-height: 1;
 }
 
 /* Hide ::after when we have .sale-text */
@@ -121,6 +134,89 @@
 .sale-badge:not([data-discount])::after,
 .sale-badge[data-discount=""]::after {
   content: "Sale";
+}
+
+/* Responsive adjustments for sale badge */
+@media (max-width: 768px) {
+  .sale-badge {
+    border-width: 0 50px 50px 0;
+  }
+  
+  .sale-badge .sale-text,
+  .sale-badge::after {
+    top: 15px;
+    right: 15px;
+    font-size: 10px;
+    letter-spacing: 0.4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sale-badge {
+    border-width: 0 45px 45px 0;
+  }
+  
+  .sale-badge .sale-text,
+  .sale-badge::after {
+    top: 13px;
+    right: 13px;
+    font-size: 9px;
+    letter-spacing: 0.3px;
+  }
+}
+
+/* New Rectangular Sale Tag - Diagonal Banner Style */
+.rectangular-sale-tag {
+  position: absolute;
+  top: 12px;
+  right: -25px;
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 25px;
+  z-index: 10;
+  transform: rotate(55deg);
+  transform-origin: center;
+  border-radius: 4px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.rectangular-sale-text {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  display: block;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Responsive adjustments for diagonal sale tag */
+@media (max-width: 768px) {
+  .rectangular-sale-tag {
+    padding: 6px 16px;
+    top: 12px;
+    right: -10px;
+  }
+  
+  .rectangular-sale-text {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rectangular-sale-tag {
+    padding: 5px 14px;
+    top: 10px;
+    right: -8px;
+  }
+  
+  .rectangular-sale-text {
+    font-size: 10px;
+    letter-spacing: 0.6px;
+  }
 }
 
 /* Product Image */

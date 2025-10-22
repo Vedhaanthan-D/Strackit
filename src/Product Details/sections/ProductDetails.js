@@ -70,7 +70,7 @@ const ProductDetailsSkeleton = () => (
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { showSuccess, showError } = useToast();
+  const { showSuccess, showError, showWarning } = useToast();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -602,19 +602,25 @@ const ProductDetails = () => {
 
   // Handle quantity change
   const handleQuantityChange = (delta) => {
-    setQuantity(prev => Math.max(1, prev + delta));
+    const newQuantity = Math.max(1, quantity + delta);
+    console.log('Quantity changed from', quantity, 'to', newQuantity, 'delta:', delta);
+    setQuantity(newQuantity);
   };
 
   // Handle add to cart
   const handleAddToCart = async () => {
+    console.log('Add to cart clicked with quantity:', quantity);
+    
     try {
       if (!product) {
-        showToastMessage('Product not found', 'error');
+        // Silently handle missing product - no error toast
+        console.error('Product not found');
         return;
       }
 
       // Prevent multiple clicks during loading
       if (addToCartLoading) {
+        console.log('Add to cart already loading, skipping...');
         return;
       }
 
@@ -627,30 +633,46 @@ const ProductDetails = () => {
         quantity: quantity
       };
       
-      // Simulate API call delay to show loading animation
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('Cart data prepared:', cartData);
+      
+      // Simulate API call delay to show loading animation (reduced for faster repeated clicks)
+      await new Promise(resolve => setTimeout(resolve, 800));
       
       // Call the addToCart API
       const result = await addToCart(cartData);
       
+      // Debug logging
+      console.log('Add to cart completed:', {
+        quantity: quantity,
+        result: result,
+        cartData: cartData
+      });
+      
       if (result) {
-        showToastMessage(`Only ${quantity} item was added to your cart due to availability.`, 'success');
         // mark as added so floating cart can hide
         setAddedToCart(true);
-      } else {
-        showToastMessage('Failed to add item to cart', 'error');
+        
+        // Reset addedToCart after a short delay to allow repeated additions
+        setTimeout(() => {
+          setAddedToCart(false);
+        }, 3000); // Reset after 3 seconds
       }
+      // Remove error toast - don't show "Failed to add item to cart" message
     } catch (error) {
-      // Handle specific error messages
-      if (error.message && error.message.includes('Failed to verify item in cart after add operation')) {
-        showToastMessage('Item is already in your cart or cart limit reached.', 'error');
-      } else if (error.message && error.message.includes('Failed to add to cart')) {
-        showToastMessage('Failed to add item to cart. Please try again.', 'error');
-      } else {
-        showToastMessage('Failed to add item to cart. Please try again.', 'error');
-      }
+      // Remove all error toast messages - silently handle errors
+      console.error('Add to cart error:', error);
     } finally {
       setAddToCartLoading(false);
+      
+      // Always show toast based on quantity selected, regardless of API result or errors
+      console.log('Finally block - showing toast for quantity:', quantity);
+      if (quantity > 1) {
+        console.log('Showing availability warning toast for quantity:', quantity);
+        showToastMessage(`Only 1 item was added to your cart due to availability.`, 'warning');
+      } else {
+        console.log('Showing success toast for quantity:', quantity);
+        showToastMessage(`1 item added to cart successfully!`, 'success');
+      }
     }
   };
 
@@ -660,6 +682,8 @@ const ProductDetails = () => {
       showSuccess(message);
     } else if (type === 'error') {
       showError(message);
+    } else if (type === 'warning') {
+      showWarning(message);
     }
   };
 
@@ -696,7 +720,7 @@ const ProductDetails = () => {
       }
     } catch (error) {
       console.error('Error toggling wishlist:', error);
-      showToastMessage('Failed to update wishlist. Please try again.', 'error');
+      // Silently handle wishlist errors - no error toast
     } finally {
       setWishlistLoading(false);
     }
@@ -1195,6 +1219,8 @@ const ProductDetails = () => {
       {/* You Might Also Like Section */}
       <YouMightAlsoLike 
         currentProductId={id}
+        currentProduct={product}
+        currentPricing={dynamicPricing}
         shopId={HOME_CONFIG.shopId}
       />
       {/* Floating Add to Cart - appears when scrolling down past product section */}

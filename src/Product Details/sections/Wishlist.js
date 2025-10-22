@@ -166,10 +166,7 @@ const Wishlist = () => {
                   <FiHeart className="heartIconFilled" />
                 </button>
 
-                {/* Out of Stock Badge */}
-                {item.noStock && (
-                  <div className="outOfStockBadge">Out of Stock</div>
-                )}
+                {/* Out of Stock Badge - Removed */}
               </div>
 
               {/* Wishlist Item Details */}
