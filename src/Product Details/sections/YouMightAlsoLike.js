@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiShoppingBag, FiSearch } from 'react-icons/fi';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
 import { addProductToCart, getProductCartStatus } from '../../common/utils/cartUtils';
-import { useToast } from '../../common/components/Toast';
+import { useToast } from '../../common/sections/Toast';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds.js';
 import '../styles/YouMightAlsoLike.css';
 

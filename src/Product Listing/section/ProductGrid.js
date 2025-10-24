@@ -538,7 +538,7 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
     // Formula: discountedPrice = originalPrice - (originalPrice * discount/100)
     const discount = parseFloat(originalPrice) * (parseFloat(discountPercentage) / 100);
     const discounted = parseFloat(originalPrice) - discount;
-    return Math.ceil(discounted); // Round up to nearest integer
+    return Math.round(discounted); // Round up to nearest integer
   };
   
   // Handle navigation to product details page

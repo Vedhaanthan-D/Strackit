@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiHeart } from 'react-icons/fi';
 import { fetchWishlist } from 'shops-query/src/modules/wishlist/queries/get';
 import { removeFromWishlistController } from 'shops-query/src/modules/wishlist/index.js';
-import { useToast } from '../../common/components/Toast';
+import { useToast } from '../../common/sections/Toast';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds';
 import '../styles/Wishlist.css';
 

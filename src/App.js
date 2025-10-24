@@ -11,13 +11,13 @@ import {
   InstagramSection,
   Footer
 } from './Home/components';
-import BackToTop from './common/components/BackToTop';
+import BackToTop from './common/sections/BackToTop';
 import CartSidebar from './Home/components/sections/CartSidebar';
 import ViewCart from './Home/components/sections/ViewCart';
 import CategoryPage from './Product Listing/section/CategoryPage';
 import ProductDetails from './Product Details/sections/ProductDetails';
 import Wishlist from './Product Details/sections/Wishlist';
-import { ToastProvider } from './common/components/Toast';
+import { ToastProvider } from './common/sections/Toast';
 import './App.css';
 
 function App() {

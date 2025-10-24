@@ -9,7 +9,7 @@ import { getShippingCost } from 'shops-query/src/modules/ShippingCost/queries/in
 import { addToCart } from 'shops-query/src/modules/cart/index.js';
 import { fetchWishlist } from 'shops-query/src/modules/wishlist/queries/get';
 import { addToWishlistController, removeFromWishlistController } from 'shops-query/src/modules/wishlist/index.js';
-import { useToast } from '../../common/components/Toast.js';
+import { useToast } from '../../common/sections/Toast.js';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds.js';
 import ProductSupremeQuality from './ProductSupremeQuality.js';
 import YouMightAlsoLike from './YouMightAlsoLike.js';

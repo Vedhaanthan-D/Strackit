@@ -4,7 +4,7 @@ import { FiShoppingBag, FiSearch } from 'react-icons/fi';
 import { getProductsController } from 'shops-query/src/modules/products/index';
 import { fetchCouponCode } from 'shops-query/src/modules/CouponCode/index';
 import { addProductToCart, getProductCartStatus } from '../../../common/utils/cartUtils';
-import { useToast } from '../../../common/components/Toast';
+import { useToast } from '../../../common/sections/Toast';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../../config/appIds';
 import '../styles/NewArrivals.css';
 
@@ -31,6 +31,8 @@ const NewArrivals = ({
   const [error, setError] = useState(null);
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const [featureImages, setFeatureImages] = useState({}); // Cache for feature images
+  const [productImages, setProductImages] = useState({}); // Cache for product images
+  const [currentImageIndex, setCurrentImageIndex] = useState({}); // Track current image index for each product
   const [addingToCart, setAddingToCart] = useState({}); // Track loading state for each product
   const [cartSuccess, setCartSuccess] = useState({}); // Track success state for each product
   const [cartQuantities, setCartQuantities] = useState({}); // Track cart quantities for each product
@@ -90,54 +92,84 @@ const NewArrivals = ({
     e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTI1QzEyMy4xMjUgMTI1IDEwMi4xODggMTQ2LjM3NSAxMDIuMTg4IDE3Mi44MTJDMTA2Ljg3NSAxNjguNTYyIDExMy4xMjUgMTY2LjI1IDEyMCAxNjYuMjVDMTI2Ljg3NSAxNjYuMjUgMTMzLjEyNSAxNjguMTI1IDEzNy44MTIgMTcyLjgxMkMxNDAuNjI1IDE3NS42MjUgMTQ2LjI1IDE3NS42MjUgMTQ5LjA2MiAxNzIuODEyQzE1My43NSAxNjguMTI1IDE2MCAxNjUuODEyIDE2Ni44NzUgMTY1LjgxMkMxNzMuNzUgMTY1LjgxMiAxODAuNjI1IDE2OC41NjIgMTg0Ljg3NSAxNzIuODEyQzE4NC44NzUgMTQ2LjM3NSAxNzEuODc1IDEyNSAxNTAgMTI1WiIgZmlsbD0iI0QxRDFEMSIvPgo8cGF0aCBkPSJNMTk4IDE4Ni4yNUMxOTUuMTg4IDE4Ni4yNSAxOTMuMzEyIDE4NS44MTIgMTkxLjQzOCAxODQuODEyQzE4Ny4xODggMTgzLjM3NSAxODIuNSAxODMuMzc1IDE3OC4yNSAxODQuODEyQzE3Ni4zNzUgMTg1LjM3NSAxNzQuNSAxODYuMjUgMTcyIDE4Ni4yNUMxNjkuNSAxODYuMjUgMTY3LjYyNSAxODUuODEyIDE2NS43NSAxODQuODEyQzE2MS41IDE4My4zNzUgMTU2LjgxMiAxODMuMzc1IDE1Mi41NjIgMTg0LjgxMkMxNTAuNjg4IDE4NS4zNzUgMTQ4LjgxMiAxODYuMjUgMTQ2LjMxMiAxODYuMjVDMTQzLjgxMiAxODYuMjUgMTQxLjkzOCAxODUuODEyIDE0MC4wNjIgMTg0LjgxMkMxMzUuODEyIDE4My4zNzUgMTMxLjEyNSAxODMuMzc1IDEyNi44NzUgMTg0LjgxMkMxMzEuNTYyIDE5NS42MjUgMTQ0IDIwMS42ODggMTU4IDE5OS4zMTJDMTcyIDE5Ni45MzggMTgzLjM3NSAxODcuNTYyIDE4OCAxNzMuMjVDMTkxLjI1IDE3Ny4wNjIgMTk1LjE4OCAxNzkuODc1IDIwMCAxODEuM0MxOTkuNSAxODIuNzUgMTk5IDE4NC42MjUgMTk4IDE4Ni4yNVoiIGZpbGw9IiNEMUQxRDEiLz4KPC9zdmc+Cg==';
   };
 
-  // Handle product hover to load feature image
+  // Handle product hover to cycle through images
   const handleProductHover = async (product) => {
-    if (!product || !product.featureImage || featureImages[product.id]) {
-      setHoveredProductId(product?.id || null);
+    if (!product) {
+      setHoveredProductId(null);
       return;
     }
 
-    setHoveredProductId(product.id);
+    const productId = product.id || product.productId;
+    setHoveredProductId(productId);
     
-    if (product.featureImage && !featureImages[product.id]) {
-      const img = new Image();
-      img.onload = () => {
-        setFeatureImages(prev => ({
-          ...prev,
-          [product.id]: `${IMAGE_PREFIX}${product.featureImage}`
-        }));
-      };
-      img.onerror = () => {
-        setFeatureImages(prev => ({
-          ...prev,
-          [product.id]: null
-        }));
-      };
-      img.src = `${IMAGE_PREFIX}${product.featureImage}`;
+    // If product has multiple images, cycle through them
+    if (product.productImage && product.productImage.length > 0) {
+      const currentIndex = currentImageIndex[productId] || 0;
+      const nextIndex = (currentIndex + 1) % product.productImage.length;
+      
+      setCurrentImageIndex(prev => ({
+        ...prev,
+        [productId]: nextIndex
+      }));
+      
+      // Preload the next image if not already cached
+      const nextImageUrl = `${IMAGE_PREFIX}${product.productImage[nextIndex].image}`;
+      if (!productImages[`${productId}_${nextIndex}`]) {
+        const img = new Image();
+        img.onload = () => {
+          setProductImages(prev => ({
+            ...prev,
+            [`${productId}_${nextIndex}`]: nextImageUrl
+          }));
+        };
+        img.onerror = () => {
+          console.warn(`Failed to load product image ${nextIndex} for product ${productId}`);
+        };
+        img.src = nextImageUrl;
+      }
     }
   };
 
   // Handle product hover out
-  const handleProductHoverOut = () => {
+  const handleProductHoverOut = (product) => {
     setHoveredProductId(null);
+    // Reset image index to show feature/main image
+    if (product) {
+      const productId = product.id || product.productId;
+      setCurrentImageIndex(prev => ({
+        ...prev,
+        [productId]: 0
+      }));
+    }
   };
 
-  // Get the current image to display (default or feature on hover)
+  // Get the current image to display (feature by default, product on hover)
   const getCurrentImage = (product) => {
-    const isHovered = hoveredProductId === product.id;
-    const hasFeatureImage = product.featureImage && featureImages[product.id];
+    const productId = product.id || product.productId;
+    const isHovered = hoveredProductId === productId;
     
-    if (isHovered && hasFeatureImage) {
-      return featureImages[product.id];
+    // If hovered and has product images, show the current cycling image
+    if (isHovered && product.productImage && product.productImage.length > 0) {
+      const imageIndex = currentImageIndex[productId] || 0;
+      const cachedImageKey = `${productId}_${imageIndex}`;
+      
+      // Return cached image if available, otherwise return direct URL
+      if (productImages[cachedImageKey]) {
+        return productImages[cachedImageKey];
+      } else {
+        return `${IMAGE_PREFIX}${product.productImage[imageIndex].image}`;
+      }
     }
     
-    // Default image logic
-    if (product.productImage && product.productImage.length > 0) {
-      return `${IMAGE_PREFIX}${product.productImage[0].image}`;
+    // Default: Always show feature image first, then fallback to first product image
+    if (product.featureImage && featureImages[productId]) {
+      return featureImages[productId];
     } else if (product.featureImage) {
       return `${IMAGE_PREFIX}${product.featureImage}`;
+    } else if (product.productImage && product.productImage.length > 0) {
+      return `${IMAGE_PREFIX}${product.productImage[0].image}`;
     } else {
-      return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTI1QzEyMy4xMjUgMTI1IDEwMi4xODggMTQ2LjM3NSAxMDIuMTg4IDE3Mi44MTJDMTA2Ljg3NSAxNjguNTYyIDExMy4xMjUgMTY2LjI1IDEyMCAxNjYuMjVDMTI2Ljg3NSAxNjYuMjUgMTMzLjEyNSAxNjguMTI1IDEzNy44MTIgMTcyLjgxMkMxNDAuNjI1IDE3NS42MjUgMTQ2LjI1IDE3NS42MjUgMTQ5LjA2MiAxNzIuODEyQzE1My43NSAxNjguMTI1IDE2MCAxNjUuODEyIDE2Ni44NzUgMTY1LjgxMkMxNzMuNzUgMTY1LjgxMiAxODAuNjI1IDE2OC41NjIgMTg0Ljg3NSAxNzIuODEyQzE4NC44NzUgMTQ2LjM3NSAxNjQuMzc1IDEyNSAxMzggMTI1SDE1MFoiIGZpbGw9IiNEMUQxRDEiLz4KPHBhdGggZD0iTTE5OCAxODYuMjVDMTk1LjE4OCAxODYuMjUgMTkzLjMxMiAxODUuODEyIDE5MS40MzggMTg0LjgxMkMxODcuMTg4IDE4My4zNzUgMTgyLjUgMTgzLjM3NSAxNzguMjUgMTg0LjgxMkMxNzYuMzc1IDE4NS4zNzUgMTc0LjUgMTg2LjI1IDE3MiAxODYuMjVDMTY5LjUgMTg2LjI1IDE2Ny42MjUgMTg1LjgxMiAxNjNS43NSAxODQuODEyQzE2MS41IDE4My4zNzUgMTU2LjgxMiAxODMuMzc1IDE1Mi41NjIgMTg0LjgxMkMxNTAuNjg4IDE4NS4zNzUgMTQ4LjgxMiAxODYuMjUgMTQ2LjMxMiAxODYuMjVDMTQzLjgxMiAxODYuMjUgMTQxLjkzOCAxODUuODEyIDE0MC4wNjIgMTg0LjgxMkMxMzUuODEyIDE4My4zNzUgMTMxLjEyNSAxODMuMzc1IDEyNi44NzUgMTg0LjgxMkMxMzEuNTYyIDE5NS42MjUgMTQ0IDIwMS42ODggMTU4IDE5OS4zMTJDMTcyIDE5Ni45MzggMTgzLjM3NSAxODcuNTYyIDE4OCAxNzMuMjVDMTkxLjI1IDE3Ny4wNjIgMTk1LjE4OCAxNzkuODc1IDIwMCAxODEuM0MxOTkuNSAxODIuNzUgMTk5IDE4NC42MjUgMTk4IDE4Ni4yNVoiIGZpbGw9IiNEMUQxRDEiLz4KPC9zdmc+Cg==';
+      return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTI1QzEyMy4xMjUgMTI1IDEwMi4xODggMTQ2LjM3NSAxMDIuMTg4IDE3Mi44MTJDMTA2Ljg3NSAxNjguNTYyIDExMy4xMjUgMTY2LjI1IDEyMCAxNjYuMjVDMTI2Ljg3NSAxNjYuMjUgMTMzLjEyNSAxNjguMTI1IDEzNy44MTIgMTcyLjgxMkMxNDAuNjI1IDE3NS42MjUgMTQ2LjI1IDE3NS42MjUgMTQ5LjA2MiAxNzIuODEyQzE1My43NSAxNjguMTI1IDE2MCAxNjUuODEyIDE2Ni44NzUgMTY1LjgxMkMxNzMuNzUgMTY1LjgxMiAxODAuNjI1IDE2OC41NjIgMTg0Ljg3NSAxNzIuODEyQzE4NC44NzUgMTQ2LjM3NSAxNjQuMzc1IDEyNSAxMzggMTI1SDE1MFoiIGZpbGw9IiNEMUQxRDEiLz4KPHBhdGggZD0iTTE5OCAxODYuMjVDMTk1LjE4OCAxODYuMjUgMTkzLjMxMiAxODUuODEyIDE5MS40MzggMTg0LjgxMkMxODcuMTg4IDE4My4zNzUgMTgyLjUgMTgzLjM3NSAxNzguMjUgMTg0LjgxMkMxNzYuMzc1IDE4NS4zNzUgMTc0LjUgMTg2LjI1IDE3MiAxODYuMjVDMTY5LjUgMTg2LjI1IDE2Ny42MjUgMTg1LjgxMiAxNjNT3NSAxODQuODEyQzE2MS41IDE4My4zNzUgMTU2LjgxMiAxODMuMzc1IDE1Mi41NjIgMTg0LjgxMkMxNTAuNjg4IDE4NS4zNzUgMTQ4LjgxMiAxODYuMjUgMTQ2LjMxMiAxODYuMjVDMTQzLjgxMiAxODYuMjUgMTQxLjkzOCAxODUuODEyIDE0MC4wNjIgMTg0LjgxMkMxMzUuODEyIDE4My4zNzUgMTMxLjEyNSAxODMuMzc1IDEyNi44NzUgMTg0LjgxMkMxMzEuNTYyIDE5NS42MjUgMTQ0IDIwMS42ODggMTU4IDE5OS4zMTJDMTcyIDE5Ni45MzggMTgzLjM3NSAxODcuNTYyIDE4OCAxNzMuMjVDMTkxLjI1IDE3Ny4wNjIgMTk1LjE4OCAxNzkuODc1IDIwMCAxODEuM0MxOTkuNSAxODIuNzUgMTk5IDE4NC42MjUgMTk4IDE4Ni4yNVoiIGZpbGw9IiNEMUQxRDEiLz4KPC9zdmc+Cg==';
     }
   };
 
@@ -290,6 +322,46 @@ const NewArrivals = ({
           
           sortedProducts = sortedProducts.slice(0, limit);
           
+          // Preload feature images and all product images to ensure proper display
+          sortedProducts.forEach(product => {
+            const productId = product.id || product.productId;
+            
+            // Preload feature image
+            if (product.featureImage && !featureImages[productId]) {
+              const img = new Image();
+              img.onload = () => {
+                setFeatureImages(prev => ({
+                  ...prev,
+                  [productId]: `${IMAGE_PREFIX}${product.featureImage}`
+                }));
+              };
+              img.onerror = () => {
+                console.warn(`Failed to load feature image for product ${productId}:`, product.featureImage);
+              };
+              img.src = `${IMAGE_PREFIX}${product.featureImage}`;
+            }
+            
+            // Preload all product images for cycling
+            if (product.productImage && product.productImage.length > 0) {
+              product.productImage.forEach((imageObj, index) => {
+                const cachedImageKey = `${productId}_${index}`;
+                if (!productImages[cachedImageKey]) {
+                  const img = new Image();
+                  img.onload = () => {
+                    setProductImages(prev => ({
+                      ...prev,
+                      [cachedImageKey]: `${IMAGE_PREFIX}${imageObj.image}`
+                    }));
+                  };
+                  img.onerror = () => {
+                    console.warn(`Failed to load product image ${index} for product ${productId}:`, imageObj.image);
+                  };
+                  img.src = `${IMAGE_PREFIX}${imageObj.image}`;
+                }
+              });
+            }
+          });
+          
           setProducts(sortedProducts);
           setError(null);
         } else {
@@ -365,10 +437,12 @@ const NewArrivals = ({
             
             return (
               <div 
-                key={product.id} 
+                key={product.id || product.productId} 
                 className="new-arrivals-product-card"
                 onMouseEnter={() => handleProductHover(product)}
-                onMouseLeave={handleProductHoverOut}
+                onMouseLeave={() => handleProductHoverOut(product)}
+                onTouchStart={() => handleProductHover(product)}
+                onTouchEnd={() => handleProductHoverOut(product)}
                 onClick={(e) => handleProductClick(product, e)}
                 style={{ cursor: 'pointer' }}
               >
@@ -407,7 +481,7 @@ const NewArrivals = ({
                         <FiShoppingBag />
                       )}
                     </button>
-                    <button
+                 <button
                       className="product-action-icon"
                       tabIndex="0"
                       role="button"
