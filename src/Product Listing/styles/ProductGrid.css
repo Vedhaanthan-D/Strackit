@@ -363,14 +363,14 @@
 .product-grid-current-price {
   font-size: 16px;
   font-family: 'Jost', sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   color: #C17C5B;
 }
 
 .product-grid-old-price {
   font-size: 16px;
   font-family: 'Jost', sans-serif;
-  font-weight: 400;
+  font-weight: 500;
   color: #999;
   text-decoration: line-through;
 }
@@ -414,7 +414,7 @@
   font-size: 12px;
   font-weight: 600;
   font-family: 'Jost', sans-serif;
-  text-transform: uppercase;
+
   letter-spacing: 0.5px;
   z-index: 3;
   transform: rotate(45deg);

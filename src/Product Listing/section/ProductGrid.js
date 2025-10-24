@@ -539,7 +539,7 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
     const discount = parseFloat(originalPrice) * (parseFloat(discountPercentage) / 100);
     const discounted = parseFloat(originalPrice) - discount;
     return Math.round(discounted); // Round up to nearest integer
-  };
+  };  
   
   // Handle navigation to product details page
   const handleProductClick = (productId) => {
@@ -739,7 +739,7 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
                 style={{ cursor: 'pointer' }}
               > 
                 <div className="product-grid-image-wrapper">
-                  { <div className="product-grid-sale-badge">sale</div>}
+                  { <div className="product-grid-sale-badge">Sale</div>}
                   
                   
                   {/* Primary Image */}

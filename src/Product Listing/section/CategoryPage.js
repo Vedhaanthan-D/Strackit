@@ -18,6 +18,8 @@ const CategoryPage = () => {
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
   const [maxPrice, setMaxPrice] = useState(5000);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,19 +94,68 @@ const CategoryPage = () => {
     setMaxPrice(newMaxPrice);
   }, []);
 
-  // Scroll functions for the banner thumbnails
-  const scrollLeft = () => {
-    const container = document.querySelector('.bannerThumbnailsRow');
-    if (container) {
-      container.scrollBy({ left: -300, behavior: 'smooth' });
+  // Create looped categories array with clones (like the reference carousel)
+  const getLoopedCategories = () => {
+    if (secondaries.length === 0) return [];
+    // Clone items at beginning and end for seamless infinite loop
+    return [...secondaries, ...secondaries, ...secondaries,...secondaries,...secondaries,...secondaries,...secondaries];
+  };
+
+  // Initialize to middle set for seamless looping (start at beginning of middle set)
+  useEffect(() => {
+    if (secondaries.length > 0) {
+      // Start at the beginning of the middle set (first item of second copy)
+      setCurrentSlide(secondaries.length);
     }
+  }, [secondaries]);
+
+  // Handle arrow navigation with transform-based sliding
+  const scrollLeft = () => {
+    if (secondaries.length === 0 || isTransitioning) return;
+    
+    setIsTransitioning(true);
+    setCurrentSlide(prev => prev - 1);
+    
+    // After transition, check if we need to reset to middle set
+    setTimeout(() => {
+      setCurrentSlide(prev => {
+        if (prev < secondaries.length) {
+          // We're in the first cloned set, jump to equivalent in middle set
+          setIsTransitioning(false); // Disable transition before jumping
+          return prev + secondaries.length;
+        }
+        return prev;
+      });
+      setIsTransitioning(false);
+    }, 200);
   };
 
   const scrollRight = () => {
-    const container = document.querySelector('.bannerThumbnailsRow');
-    if (container) {
-      container.scrollBy({ left: 300, behavior: 'smooth' });
-    }
+    if (secondaries.length === 0 || isTransitioning) return;
+    
+    setIsTransitioning(true);
+    setCurrentSlide(prev => prev + 1);
+    
+    // After transition, check if we need to reset to middle set
+    setTimeout(() => {
+      setCurrentSlide(prev => {
+        if (prev >= secondaries.length * 2) {
+          // We're in the last cloned set, jump to equivalent in middle set
+          setIsTransitioning(false); // Disable transition before jumping
+          return prev - secondaries.length;
+        }
+        return prev;
+      });
+      setIsTransitioning(false);
+    }, 200);
+  };
+
+  // Calculate transform value based on current slide
+  const getTransformValue = () => {
+    const itemWidth = 140; // 120px + 20px gap (matching reference)
+    // Adjust the starting position to show items from the beginning
+    const offset = currentSlide * itemWidth;
+    return `translate3d(-${offset}px, 0px, 0px)`;
   };
 
   if (loading) {
@@ -154,23 +205,35 @@ const CategoryPage = () => {
                 <FiChevronLeft />
               </button>
               
-              <div className="categoryBannerThumbnailsRow">
-                {secondaries.map((s) => (
-                  <div 
-                    key={s.id} 
-                    className={`categoryBannerThumbnail ${selectedSecondary?.id === s.id ? 'selected' : ''}`}
-                    onClick={() => handleSecondaryClick(s)}
-                  >
-                    <div className="categoryThumbnailImage">
-                      <img
-                        src={`${IMAGE_PREFIX}${s.image}`}
-                        alt={s.category}
-                        onError={(e) => { e.target.style.display = 'none'; }}
-                      />
+              <div className="categoryBannerThumbnailsRow" style={{ overflow: 'hidden', width: '100%' }}>
+                <div 
+                  className="categoryBannerThumbnailsList"
+                  style={{  
+                    display: 'flex',
+                    gap: '60px',
+                    transform: getTransformValue(),
+                    transition: isTransitioning ? 'transform 200ms ease' : 'none',
+                    padding: '10px 0px',
+                    width: '100%'
+                  }}
+                >
+                  {getLoopedCategories().map((s, index) => (
+                    <div 
+                      key={`${s.id}-${index}`} 
+                      className={`categoryBannerThumbnail ${selectedSecondary?.id === s.id ? 'selected' : ''}`}
+                      onClick={() => handleSecondaryClick(s)}
+                    >
+                      <div className="categoryThumbnailImage">
+                        <img
+                          src={`${IMAGE_PREFIX}${s.image}`}
+                          alt={s.category}
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                      </div>
+                      <div className="categoryThumbnailName">{s.category}</div>
                     </div>
-                    <div className="categoryThumbnailName">{s.category}</div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
               <button className="categoryThumbnailArrow categoryRightArrow" onClick={scrollRight}>
