@@ -543,7 +543,9 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
   
   // Handle navigation to product details page
   const handleProductClick = (productId) => {
-    navigate(`/product/${productId}`);
+    navigate(`/product/${productId}`); 
+    console.log(productId);
+
   };
 
   const hasDiscount = (product) => {

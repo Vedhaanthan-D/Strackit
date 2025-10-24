@@ -106,7 +106,7 @@
   width: 100%;
   position: relative;
   flex: 1;
-  max-width: 1000px; /* Show exactly 6 items: 6 * (120px + 20px) = 840px */
+  max-width: 340px; /* Show exactly 2 items: 2 * (120px + 60px gap) = 360px, reduced to 340px for better fit */
 }
 
 .categoryBannerThumbnailsList {
