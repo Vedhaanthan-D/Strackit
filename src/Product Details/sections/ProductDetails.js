@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FiHeart } from 'react-icons/fi';
+import { FiHeart, FiX, FiCopy, FiCheck, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { TbRulerMeasure, TbPalette, TbMessageQuestion, TbShare3 } from 'react-icons/tb';
+import { FaFacebookF, FaTwitter, FaPinterestP, FaInstagram } from 'react-icons/fa';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
 import { fetchProducts } from 'shops-query/src/modules/products/queries/get.js';
 import { getOfferProductsController } from 'shops-query/src/modules/offerProducts/index.js';
@@ -42,13 +44,114 @@ const StarRating = ({ product, productDetails }) => {
   );
 };
 
+// Product Action Buttons Component - Dynamic and Data-Driven
+const ProductActionButtons = ({ product, onActionClick }) => {
+  // Dynamic action buttons configuration - can be updated from API or config
+  const actionButtons = [
+    {
+      id: 'size-guide',
+      label: 'Size Guide',
+      icon: TbRulerMeasure,
+      action: 'sizeGuide',
+      enabled: true,
+      ariaLabel: 'Open size guide'
+    },
+    {
+      id: 'compare-color',
+      label: 'Compare Color',
+      icon: TbPalette,
+      action: 'compareColor',
+      enabled: true,
+      ariaLabel: 'Compare product colors'
+    },
+    {
+      id: 'ask-question',
+      label: 'Ask a Question',
+      icon: TbMessageQuestion,
+      action: 'askQuestion',
+      enabled: true,
+      ariaLabel: 'Ask a question about this product'
+    },
+    {
+      id: 'share',
+      label: 'Share',
+      icon: TbShare3,
+      action: 'share',
+      enabled: true,
+      ariaLabel: 'Share this product'
+    }
+  ];
+
+  // Filter only enabled buttons
+  const enabledButtons = actionButtons.filter(btn => btn.enabled);
+
+  const handleButtonClick = (button) => {
+    if (onActionClick) {
+      onActionClick(button.action, button, product);
+    } else {
+      // Default actions
+      switch (button.action) {
+        case 'sizeGuide':
+          console.log('Size Guide clicked for:', product.name);
+          // Can open modal or navigate to size guide
+          break;
+        case 'compareColor':
+          console.log('Compare Color clicked for:', product.name);
+          // Can open color comparison modal
+          break;
+        case 'askQuestion':
+          console.log('Ask Question clicked for:', product.name);
+          // Can open contact form or FAQ
+          break;
+        case 'share':
+          console.log('Share clicked for:', product.name);
+          // Handle share functionality
+          if (navigator.share) {
+            navigator.share({
+              title: product.name,
+              text: product.description,
+              url: window.location.href
+            }).catch(err => console.log('Share failed:', err));
+          } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(window.location.href);
+            console.log('Link copied to clipboard');
+          }
+          break;
+        default:
+          console.log('Action clicked:', button.action);
+      }
+    }
+  };
+
+  return (
+    <div className="product-action-buttons">
+      {enabledButtons.map((button) => {
+        const IconComponent = button.icon;
+        return (
+          <button
+            key={button.id}
+            className="action-button"
+            onClick={() => handleButtonClick(button)}
+            aria-label={button.ariaLabel}
+            title={button.label}
+          >
+            <IconComponent className="action-icon" />
+            <span className="action-label">{button.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
 // Loading skeleton for product details
 const ProductDetailsSkeleton = () => (
   <div className="product-details-skeleton">
     <div className="product-images-skeleton">
       <div className="main-image-skeleton"></div>
       <div className="thumbnail-images-skeleton">
-        {[1, 2, 3, 4].map(i => (
+        {[1, 2, 3].map(i => (
           <div key={i} className="thumbnail-skeleton"></div>
         ))}
       </div>
@@ -70,6 +173,7 @@ const ProductDetailsSkeleton = () => (
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const { showSuccess, showError, showWarning } = useToast();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -97,6 +201,14 @@ const ProductDetails = () => {
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
+  // Modal states
+  const [showSizeGuideModal, setShowSizeGuideModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copyLinkSuccess, setCopyLinkSuccess] = useState(false);
+
+  // Image navigation hover state
+  const [showImageNavigation, setShowImageNavigation] = useState(false);
+
   // Discount and offer state
   const [offerProducts, setOfferProducts] = useState([]);
   const [coupons, setCoupons] = useState([]);
@@ -115,11 +227,11 @@ const ProductDetails = () => {
       // Show floating cart when scrolled more than 300px
       const shouldShow = scrollY > 300 && !addedToCart;
       
-      console.log('Scroll position:', {
-        scrollY,
-        shouldShow,
-        addedToCart
-      });
+      // console.log('Scroll position:', {
+      //   scrollY,
+      //   shouldShow,
+      //   addedToCart
+      // });
       
       setShowFloatingCart(shouldShow);
     };
@@ -184,16 +296,16 @@ const ProductDetails = () => {
   const fetchOfferData = async () => {
     if (!product) return;
 
-    console.log('Product data for pricing:', {
-      id: product.id,
-      name: product.name,
-      originalPrice: product.originalPrice,
-      discountedPrice: product.discountedPrice,
-      prize: product.prize,
-      viewPrice: product.viewPrice,
-      discount: product.discount,
-      fullProduct: product
-    });
+    // console.log('Product data for pricing:', {
+    //   id: product.id,
+    //   name: product.name,
+    //   originalPrice: product.originalPrice,
+    //   discountedPrice: product.discountedPrice,
+    //   prize: product.prize,
+    //   viewPrice: product.viewPrice,
+    //   discount: product.discount,
+    //   fullProduct: product
+    // });
 
     try {
       // Fetch offer products for the current shop
@@ -574,22 +686,80 @@ const ProductDetails = () => {
     return productOriginalPrice;
   };
 
+  // Check if product is WOMENS T-SHIRTS
+  const isWomensTShirts = (product) => {
+    if (!product) return false;
+    const productName = (product.name || product.title || '').toLowerCase();
+    return productName.includes('womens t-shirts') || 
+           productName.includes('women t-shirts') ||
+           productName.includes('womens t-shirt');
+  };
+
   // Get product images
   const getProductImages = (product) => {
     const images = [];
-    
-    // Add product images if they exist
-    if (product.productImage && product.productImage.length > 0) {
-      product.productImage.forEach(img => {
-        if (img.image) {
-          images.push(`${IMAGE_PREFIX}${img.image}`);
-        }
+    console.log(images,product);
+    // Special handling for WOMENS T-SHIRTS - ensure all color variants (white, black, orange) display
+    if (isWomensTShirts(product)) {
+      const uniqueImagePaths = new Set();
+      
+      // First, add all product images to ensure we get all variants (including orange)
+      if (product.productImage && product.productImage.length > 0) {
+        product.productImage.forEach(img => {
+          if (img.image && !uniqueImagePaths.has(img.image)) {
+            uniqueImagePaths.add(img.image);
+          }
+        });
+      }
+      
+      // Add feature image if it's unique
+      if (product.featureImage && !uniqueImagePaths.has(product.featureImage)) {
+        uniqueImagePaths.add(product.featureImage);
+      }
+      
+      // Convert Set to array - feature image should be first for display
+      const allUniqueImages = Array.from(uniqueImagePaths);
+      
+      // Reorder: feature image first, then remaining images
+      if (product.featureImage && uniqueImagePaths.has(product.featureImage)) {
+        // Add feature image first
+        images.push(`${IMAGE_PREFIX}${product.featureImage}`);
+        // Add remaining images (excluding feature image)
+        allUniqueImages.forEach(imagePath => {
+          if (imagePath !== product.featureImage) {
+            images.push(`${IMAGE_PREFIX}${imagePath}`);
+          }
+        });
+      } else {
+        // If no feature image, just add all unique images
+        allUniqueImages.forEach(imagePath => {
+          images.push(`${IMAGE_PREFIX}${imagePath}`);
+        });
+      }
+      
+      console.log('WOMENS T-SHIRTS images loaded:', {
+        totalImages: images.length,
+        featureImage: product.featureImage,
+        productImagesCount: product.productImage?.length,
+        productImages: product.productImage?.map(img => img.image),
+        uniqueImagesCount: uniqueImagePaths.size,
+        finalImages: images
       });
-    }
-    
-    // Add feature image as fallback
-    if (product.featureImage && images.length === 0) {
-      images.push(`${IMAGE_PREFIX}${product.featureImage}`);
+    } else {
+      // Default behavior for other products
+      // Add product images if they exist
+      if (product.productImage && product.productImage.length > 0) {
+        product.productImage.forEach(img => {
+          if (img.image) {
+            images.push(`${IMAGE_PREFIX}${img.image}`);
+          }
+        });
+      }
+      
+      // Add feature image as fallback
+      if (product.featureImage && images.length === 0) {
+        images.push(`${IMAGE_PREFIX}${product.featureImage}`);
+      }
     }
     
     // Default placeholder if no images
@@ -802,6 +972,91 @@ const ProductDetails = () => {
     showToastMessage(`Proceeding to checkout with ${quantity} item(s)!`, 'success');
   };
 
+  // Handle action button clicks
+  const handleActionClick = (action, button, productData) => {
+    switch (action) {
+      case 'sizeGuide':
+        setShowSizeGuideModal(true);
+        break;
+      case 'compareColor':
+        showWarning('Color comparison coming soon!');
+        break;
+      case 'askQuestion':
+        showWarning('Contact form coming soon!');
+        break;
+      case 'share':
+        setShowShareModal(true);
+        break;
+      default:
+        console.log('Action clicked:', action);
+    }
+  };
+
+  // Close modals with ESC key
+  useEffect(() => {
+    const handleEscKey = (e) => {
+      if (e.key === 'Escape') {
+        setShowSizeGuideModal(false);
+        setShowShareModal(false);
+      }
+    };
+
+    if (showSizeGuideModal || showShareModal) {
+      document.addEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showSizeGuideModal, showShareModal]);
+
+  // Handle copy link
+  const handleCopyLink = async () => {
+    const productUrl = `${window.location.origin}/product/${product?.slug || product?.id || id}`;
+    try {
+      await navigator.clipboard.writeText(productUrl);
+      setCopyLinkSuccess(true);
+      showSuccess('Link copied to clipboard!');
+      setTimeout(() => setCopyLinkSuccess(false), 2000);
+    } catch (err) {
+      showError('Failed to copy link');
+    }
+  };
+
+  // Handle social share
+  const handleSocialShare = (platform) => {
+    const productUrl = encodeURIComponent(`${window.location.origin}/product/${product?.slug || product?.id || id}`);
+    const productName = encodeURIComponent(product?.name || 'Check out this product');
+    const productImage = product?.productImage?.[0]?.image 
+      ? encodeURIComponent(`${IMAGE_PREFIX}${product.productImage[0].image}`)
+      : '';
+
+    let shareUrl = '';
+
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${productUrl}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${productUrl}&text=${productName}`;
+        break;
+      case 'pinterest':
+        shareUrl = `https://pinterest.com/pin/create/button/?url=${productUrl}&media=${productImage}&description=${productName}`;
+        break;
+      case 'instagram':
+        showWarning('Please share this product manually on Instagram');
+        return;
+      default:
+        return;
+    }
+
+    window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
+  };
+
   // Zoom functionality handlers
   const handleMouseEnter = () => {
     setIsZooming(true);
@@ -868,6 +1123,33 @@ const ProductDetails = () => {
     setIsZooming(false);
   };
 
+  // Image navigation handlers
+  const handlePreviousImage = (e) => {
+    e.stopPropagation();
+    setSelectedImageIndex((prevIndex) => {
+      const newIndex = prevIndex === 0 ? images.length - 1 : prevIndex - 1;
+      return newIndex;
+    });
+  };
+
+  const handleNextImage = (e) => {
+    e.stopPropagation();
+    setSelectedImageIndex((prevIndex) => {
+      const newIndex = prevIndex === images.length - 1 ? 0 : prevIndex + 1;
+      return newIndex;
+    });
+  };
+
+  const handleImageContainerMouseEnter = () => {
+    setShowImageNavigation(true);
+    setIsZooming(true);
+  };
+
+  const handleImageContainerMouseLeave = () => {
+    setShowImageNavigation(false);
+    setIsZooming(false);
+  };
+
   // Strip HTML tags from description for the summary view
   const getPlainTextDescription = (htmlString) => {
     if (!htmlString) return "";
@@ -885,6 +1167,7 @@ const ProductDetails = () => {
 
   // Loading state
   if (loading) {
+
     return (
       <div className="product-details-container">
         <ProductDetailsSkeleton />
@@ -915,7 +1198,8 @@ const ProductDetails = () => {
   const currentPrice = getCurrentPrice();
   const originalPrice = getOriginalPrice();
   const discountPercentage = getDiscountPercentage();
-
+ 
+   
   return (
     <div className="product-details-container">
       {/* Breadcrumb */}
@@ -930,8 +1214,8 @@ const ProductDetails = () => {
         <div className="product-images-section">
           <div 
             className={`main-image-container ${isZooming ? 'zooming' : ''}`}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={handleImageContainerMouseEnter}
+            onMouseLeave={handleImageContainerMouseLeave}
             onMouseMove={handleMouseMove}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -949,10 +1233,33 @@ const ProductDetails = () => {
                 transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
               }}
             />
+
+            {/* Image Navigation Buttons - Only show if more than one image */}
+            {images.length > 1 && (
+              <>
+                <button
+                  className={`image-nav-button image-nav-prev ${showImageNavigation ? 'visible' : ''}`}
+                  onClick={handlePreviousImage}
+                  aria-label="Previous image"
+                >
+                  <FiChevronLeft />
+                </button>
+                <button
+                  className={`image-nav-button image-nav-next ${showImageNavigation ? 'visible' : ''}`}
+                  onClick={handleNextImage}
+                  aria-label="Next image"
+                >
+                  <FiChevronRight />
+                </button>
+              </>
+            )}
           </div>
           
           {images.length > 1 && (
-            <div className="thumbnail-gallery">
+            <div 
+              className="thumbnail-gallery"
+              data-count={images.length}
+            >
               {images.map((image, index) => (
                 <div
                   key={index}
@@ -1035,6 +1342,9 @@ const ProductDetails = () => {
                "Cheer on your favorite red and white team in eye-popping style with these red & white striped game bib overalls! Each pair is made of 100 percent cotton for a comfortable, breathable fit regardless of the weather and includ..."}
             </p>
           </div>
+
+          {/* Product Action Buttons Row */}
+          <ProductActionButtons product={product} onActionClick={handleActionClick} />
 
           {/* Purchase Buttons */}
           <div className="purchase-buttons">
@@ -1316,6 +1626,189 @@ const ProductDetails = () => {
                 {addToCartLoading ? 'ADDING...' : 'ADD TO CART'}
               </span>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Size Guide Modal */}
+      {showSizeGuideModal && (
+        <div className="modal-overlay" onClick={() => setShowSizeGuideModal(false)}>
+          <div className="modal-content size-guide-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">Size Guide</h2>
+              <button 
+                className="modal-close-btn" 
+                onClick={() => setShowSizeGuideModal(false)}
+                aria-label="Close size guide"
+              >
+                <FiX />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="size-guide-content">
+                <h3>Sizes for this Product.</h3>
+                <p className="size-guide-description">
+                  This is an approximate conversion table to help you find your size. Measure around the fullest part, 
+                  place the tape close under the arms and make sure the tape is flat across the back (Unit: centimeter).
+                </p>
+
+                <div className="size-table-container">
+                  <table className="size-table">
+                    <thead>
+                      <tr>
+                        <th>Size</th>
+                        <th>US</th>
+                        <th>Bust</th>
+                        <th>Body Waist</th>
+                        <th>Fullest Hip</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>XS</td>
+                        <td>2</td>
+                        <td>32</td>
+                        <td>24 - 25</td>
+                        <td>33 - 34</td>
+                      </tr>
+                      <tr>
+                        <td>S</td>
+                        <td>4</td>
+                        <td>34 - 35</td>
+                        <td>26 - 27</td>
+                        <td>35 - 36</td>
+                      </tr>
+                      <tr>
+                        <td>M</td>
+                        <td>6</td>
+                        <td>36 - 37</td>
+                        <td>28 - 29</td>
+                        <td>37 - 38</td>
+                      </tr>
+                      <tr>
+                        <td>L</td>
+                        <td>8</td>
+                        <td>38 - 39</td>
+                        <td>30 - 31</td>
+                        <td>39 - 40</td>
+                      </tr>
+                      <tr>
+                        <td>XL</td>
+                        <td>10</td>
+                        <td>40 - 42</td>
+                        <td>32 - 33</td>
+                        <td>41 - 42</td>
+                      </tr>
+                      <tr>
+                        <td>XXL</td>
+                        <td>12</td>
+                        <td>40 - 41</td>
+                        <td>34 - 3</td>
+                        <td>43 - 44</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="measurement-instructions">
+                  <h3>How to Measure.</h3>
+                  
+                  <div className="measurement-item">
+                    <h4>1. Bust</h4>
+                    <p>Measure at the fullest part of your chest, keeping the tape parallel to the floor.</p>
+                  </div>
+
+                  <div className="measurement-item">
+                    <h4>2. Body Waist</h4>
+                    <p>Measure at the smallest part of your waist. This is usually below the rib cage and above the hip bone.</p>
+                  </div>
+
+                  <div className="measurement-item">
+                    <h4>3. Fullest Hip</h4>
+                    <p>Measure at the fullest part of your seat, keeping the tape parallel to the floor.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
+          <div className="modal-content share-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">Share</h2>
+              <button 
+                className="modal-close-btn" 
+                onClick={() => setShowShareModal(false)}
+                aria-label="Close share modal"
+              >
+                <FiX />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="share-content">
+                <div className="copy-link-section">
+                  <h3>Copy link</h3>
+                  <div className="copy-link-container">
+                    <input 
+                      type="text" 
+                      className="copy-link-input" 
+                      value={`${window.location.origin}/product/${product?.slug || product?.id || id}`}
+                      readOnly
+                      onClick={(e) => e.target.select()}
+                    />
+                    <button 
+                      className={`copy-link-btn ${copyLinkSuccess ? 'success' : ''}`}
+                      onClick={handleCopyLink}
+                      aria-label="Copy link to clipboard"
+                    >
+                      {copyLinkSuccess ? <FiCheck /> : <FiCopy />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="social-share-section">
+                  <h3>Share</h3>
+                  <div className="social-share-buttons">
+                    <button 
+                      className="social-share-btn facebook"
+                      onClick={() => handleSocialShare('facebook')}
+                      aria-label="Share on Facebook"
+                      title="Share on Facebook"
+                    >
+                      <FaFacebookF />
+                    </button>
+                    <button 
+                      className="social-share-btn twitter"
+                      onClick={() => handleSocialShare('twitter')}
+                      aria-label="Share on Twitter"
+                      title="Share on Twitter"
+                    >
+                      <FaTwitter />
+                    </button>
+                    <button 
+                      className="social-share-btn pinterest"
+                      onClick={() => handleSocialShare('pinterest')}
+                      aria-label="Share on Pinterest"
+                      title="Share on Pinterest"
+                    >
+                      <FaPinterestP />
+                    </button>
+                    <button 
+                      className="social-share-btn instagram"
+                      onClick={() => handleSocialShare('instagram')}
+                      aria-label="Share on Instagram"
+                      title="Share on Instagram"
+                    >
+                      <FaInstagram />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

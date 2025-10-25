@@ -190,18 +190,18 @@ const YouMightAlsoLike = ({
     const result = hasOriginalVsDiscounted || hasDiscountField;
     
     // Console log for debugging
-    console.log(`Product ${product.name} discount check:`, {
-      originalPrice,
-      discountedPrice,
-      prize,
-      viewPrice,
-      price,
-      discountField,
-      hasOriginalVsDiscounted,
-      hasDiscountField,
-      hasBothPriceFields,
-      result
-    });
+    // console.log(`Product ${product.name} discount check:`, {
+    //   originalPrice,
+    //   discountedPrice,
+    //   prize,
+    //   viewPrice,
+    //   price,
+    //   discountField,
+    //   hasOriginalVsDiscounted,
+    //   hasDiscountField,
+    //   hasBothPriceFields,
+    //   result
+    // });
     
     return result;
   };
@@ -232,14 +232,8 @@ const YouMightAlsoLike = ({
       return 'Price not available';
     }
     
-    // Check if price looks like Indian Rupees (typically larger numbers)
-    if (numPrice >= 100) {
-      return `₹${numPrice.toFixed(0)}`;
-    } else if (numPrice > 0) {
-      return `$${numPrice.toFixed(2)}`;
-    } else {
-      return 'Contact for price';
-    }
+    // Always use Indian Rupees symbol
+    return `₹${numPrice.toFixed(2)}`;
   };
 
   // Check if product matches current product name
@@ -268,25 +262,25 @@ const YouMightAlsoLike = ({
     const discountPercentage = currentPricing.discountPercentage;
     
     if (!originalPrice || !discountPercentage || discountPercentage <= 0) {
-      console.warn('Missing pricing data for matching product:', {
-        productName: product.name,
-        originalPrice,
-        discountPercentage,
-        currentPricing
-      });
+      //  console.warn('Missing pricing data for matching product:', {
+      //   productName: product.name,
+      //   originalPrice,
+      //   discountPercentage,
+      //   currentPricing
+      // });
       return null;
     }
 
     // Calculate discounted price dynamically: discountedPrice = originalPrice - (originalPrice * (savePercent / 100))
     const calculatedDiscountedPrice = originalPrice - (originalPrice * (discountPercentage / 100));
 
-    console.log('Calculated pricing for matching product:', {
-      productName: product.name,
-      originalPrice,
-      discountPercentage,
-      calculatedDiscountedPrice,
-      formula: `${originalPrice} - (${originalPrice} * (${discountPercentage} / 100)) = ${calculatedDiscountedPrice}`
-    });
+    // console.log('Calculated pricing for matching product:', {
+    //   productName: product.name,
+    //   originalPrice,
+    //   discountPercentage,
+    //   calculatedDiscountedPrice,
+    //   formula: `${originalPrice} - (${originalPrice} * (${discountPercentage} / 100)) = ${calculatedDiscountedPrice}`
+    // });
 
     return {
       originalPrice: originalPrice,
@@ -315,6 +309,11 @@ const YouMightAlsoLike = ({
 
   // Handle product hover to load feature image
   const handleProductHover = async (product) => {
+    // Disable hover image change for WOMENS T-SHIRTS
+    if (isWomensTShirts(product)) {
+      return;
+    }
+
     if (!product || !product.featureImage || featureImages[product.id]) {
       setHoveredProductId(product?.id || null);
       return;
@@ -347,11 +346,28 @@ const YouMightAlsoLike = ({
     setHoveredProductId(null);
   };
 
+  // Check if product is WOMENS T-SHIRTS
+  const isWomensTShirts = (product) => {
+    if (!product) return false;
+    const productName = (product.name || product.title || '').toLowerCase();
+    return productName.includes('womens t-shirts') || 
+           productName.includes('women t-shirts') ||
+           productName.includes('womens t-shirt');
+  };
+
   // Get the current image to display (default or feature on hover)
   const getCurrentImage = (product) => {
     const isHovered = hoveredProductId === product.id;
     const hasFeatureImage = product.featureImage && featureImages[product.id];
     
+    // Special handling for WOMENS T-SHIRTS - always show white t-shirt (featureImage)
+    if (isWomensTShirts(product)) {
+      if (product.featureImage) {
+        return `${IMAGE_PREFIX}${product.featureImage}`;
+      }
+    }
+    
+    // For other products: show feature image on hover
     if (isHovered && hasFeatureImage) {
       return featureImages[product.id];
     }
@@ -371,13 +387,13 @@ const YouMightAlsoLike = ({
     e.stopPropagation();
     
     if (!product) {
-      console.error('Unable to add product to cart: Invalid product data');
+      // console.error('Unable to add product to cart: Invalid product data');
       return;
     }
 
     const stateKey = product.id || product.productId;
     if (!stateKey) {
-      console.error('Unable to add product to cart: Missing product identifier');
+      // console.error('Unable to add product to cart: Missing product identifier');
       return;
     }
 
@@ -411,7 +427,7 @@ const YouMightAlsoLike = ({
       
     } catch (error) {
       const errorMessage = error.message || 'Unknown error occurred';
-      console.error(`Failed to add ${product.name || 'product'} to cart. Error: ${errorMessage}`);
+      // console.error(`Failed to add ${product.name || 'product'} to cart. Error: ${errorMessage}`);
       
     } finally {
       setAddingToCart(prev => ({ ...prev, [stateKey]: false }));
@@ -536,40 +552,44 @@ const YouMightAlsoLike = ({
                   // Use calculated pricing from current product detail page for matching products
                   isDiscounted = matchingPricing.hasDiscount;
                   discountPercentage = matchingPricing.discountPercentage;
-                  currentPrice = matchingPricing.discountedPrice;
                   originalPrice = matchingPricing.originalPrice;
+                  // Calculate final price using discount percentage
+                  currentPrice = originalPrice - (originalPrice * discountPercentage / 100);
                   
-                  console.log(`Applied matching pricing for ${product.name}:`, {
-                    currentPrice,
-                    originalPrice,
-                    discountPercentage,
-                    isDiscounted,
-                    calculation: `${originalPrice} - (${originalPrice} * ${discountPercentage}/100) = ${currentPrice}`
-                  });
+                  // console.log(`Applied matching pricing for ${product.name}:`, {
+                  //   currentPrice,
+                  //   originalPrice,
+                  //   discountPercentage,
+                  //   isDiscounted,
+                  //   calculation: `${originalPrice} - (${originalPrice} * ${discountPercentage}/100) = ${currentPrice}`
+                  // });
                 } else {
                   // Use existing logic for non-matching products or fallback for missing data
                   if (isMatching) {
-                    console.warn(`Matching product "${product.name}" found but pricing data is missing or invalid. Falling back to standard logic.`);
+                    // console.warn(`Matching product "${product.name}" found but pricing data is missing or invalid. Falling back to standard logic.`);
                   }
                   
                   isDiscounted = hasDiscount(product);
                   discountPercentage = getDiscountPercentage(product);
                   
                   if (isDiscounted) {
-                    currentPrice = parseFloat(product.discountedPrice || product.price || product.prize || product.viewPrice || 0);
-                    originalPrice = parseFloat(product.originalPrice || product.prize || product.viewPrice || currentPrice);
+                    // Get original price first
+                    originalPrice = parseFloat(product.originalPrice || product.prize || product.viewPrice || 0);
+                    // Calculate final price using discount percentage
+                    currentPrice = originalPrice - (originalPrice * discountPercentage / 100);
                   } else {
                     currentPrice = parseFloat(product.prize || product.viewPrice || product.price || product.originalPrice || 0);
                     originalPrice = currentPrice;
                   }
                   
-                  console.log(`Standard pricing for ${product.name}:`, {
-                    isDiscounted,
-                    currentPrice,
-                    originalPrice,
-                    discountPercentage,
-                    isMatching: isMatching ? 'YES (fallback due to missing data)' : 'NO'
-                  });
+                  // console.log(`Standard pricing for ${product.name}:`, {
+                  //   isDiscounted,
+                  //   currentPrice,
+                  //   originalPrice,
+                  //   discountPercentage,
+                  //   calculation: isDiscounted ? `${originalPrice} - (${originalPrice} * ${discountPercentage}/100) = ${currentPrice}` : 'No discount',
+                  //   isMatching: isMatching ? 'YES (fallback due to missing data)' : 'NO'
+                  // });
                 }
 
                 return (
