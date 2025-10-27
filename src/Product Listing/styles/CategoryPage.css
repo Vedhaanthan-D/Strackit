@@ -175,10 +175,6 @@
   text-overflow: ellipsis;
 }
 
-.categoryBannerThumbnail:hover .categoryThumbnailName {
-  color: #cccccc; 
-}
-
 .categoryThumbnailArrow {
   position: absolute;
   top: 50%;
