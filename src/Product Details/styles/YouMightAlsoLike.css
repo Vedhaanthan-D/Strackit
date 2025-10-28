@@ -1,13 +1,13 @@
 /* You Might Also Like Section */
 .you-might-also-like {
-  padding: 80px 0;
+  padding: 80px 50px; /* Match parent container padding (50px) */
   background-color: #ffffff;
 }
 
 .you-might-also-like-container {
-  max-width: 1400px;
+  max-width: var(--max-content-width); /* Use dynamic max width */
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0; /* Remove padding - let parent handle spacing */
 }
 
 /* Section Header */
@@ -15,7 +15,7 @@
   font-size: 31.536px;
   font-weight: 500;
   color: #000000BF;
-  text-align: center;
+  text-align: center; /* Align title to left */
   margin: 0 0 60px 0;
   letter-spacing: -0.5px;
   line-height: 1.2;
@@ -36,7 +36,7 @@
   scroll-behavior: smooth;
   scrollbar-width: none; /* Hide scrollbar for Firefox */
   -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-  padding: 0 60px;
+  padding: 0; /* Remove padding to align cards to left */
   scroll-padding: 0 24px; /* Adds padding for better snapping */
 }
 
@@ -234,8 +234,7 @@
 .you-might-also-like-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.5s ease, opacity 0.3s ease; /* Smooth zoom and fade on image change */
 }
 
 /* Keep the image zoom effect on hover */

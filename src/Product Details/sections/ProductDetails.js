@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FiHeart, FiX, FiCopy, FiCheck, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { TbRulerMeasure, TbPalette, TbMessageQuestion, TbShare3 } from 'react-icons/tb';
 import { FaFacebookF, FaTwitter, FaPinterestP, FaInstagram } from 'react-icons/fa';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
 import { fetchProducts } from 'shops-query/src/modules/products/queries/get.js';
@@ -13,6 +12,8 @@ import { fetchWishlist } from 'shops-query/src/modules/wishlist/queries/get';
 import { addToWishlistController, removeFromWishlistController } from 'shops-query/src/modules/wishlist/index.js';
 import { useToast } from '../../common/sections/Toast.js';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds.js';
+import { PRODUCT_LAYOUT_SPACING, BUTTON_TYPOGRAPHY, getSocialMediaUrl, PAGE_LAYOUT_CONFIG, getHorizontalSpacing, getContentGap, getGridRatio } from './productDetailsConfig.js';
+import { getProductActions } from './productActionsConfig.js';
 import ProductSupremeQuality from './ProductSupremeQuality.js';
 import YouMightAlsoLike from './YouMightAlsoLike.js';
 import '../styles/ProductDetails.css';
@@ -46,44 +47,10 @@ const StarRating = ({ product, productDetails }) => {
 
 // Product Action Buttons Component - Dynamic and Data-Driven
 const ProductActionButtons = ({ product, onActionClick }) => {
-  // Dynamic action buttons configuration - can be updated from API or config
-  const actionButtons = [
-    {
-      id: 'size-guide',
-      label: 'Size Guide',
-      icon: TbRulerMeasure,
-      action: 'sizeGuide',
-      enabled: true,
-      ariaLabel: 'Open size guide'
-    },
-    {
-      id: 'compare-color',
-      label: 'Compare Color',
-      icon: TbPalette,
-      action: 'compareColor',
-      enabled: true,
-      ariaLabel: 'Compare product colors'
-    },
-    {
-      id: 'ask-question',
-      label: 'Ask a Question',
-      icon: TbMessageQuestion,
-      action: 'askQuestion',
-      enabled: true,
-      ariaLabel: 'Ask a question about this product'
-    },
-    {
-      id: 'share',
-      label: 'Share',
-      icon: TbShare3,
-      action: 'share',
-      enabled: true,
-      ariaLabel: 'Share this product'
-    }
-  ];
-
-  // Filter only enabled buttons
-  const enabledButtons = actionButtons.filter(btn => btn.enabled);
+  // Fetch action buttons from configuration
+  // Can optionally filter by product category
+  const categorySlug = product?.category?.slug || product?.categorySlug || null;
+  const actionButtons = getProductActions(categorySlug);
 
   const handleButtonClick = (button) => {
     if (onActionClick) {
@@ -126,7 +93,7 @@ const ProductActionButtons = ({ product, onActionClick }) => {
 
   return (
     <div className="product-action-buttons">
-      {enabledButtons.map((button) => {
+      {actionButtons.map((button) => {
         const IconComponent = button.icon;
         return (
           <button
@@ -134,9 +101,9 @@ const ProductActionButtons = ({ product, onActionClick }) => {
             className="action-button"
             onClick={() => handleButtonClick(button)}
             aria-label={button.ariaLabel}
-            title={button.label}
+            title={button.tooltip || button.label}
           >
-            <IconComponent className="action-icon" />
+            <IconComponent className="action-icon" aria-hidden="true" />
             <span className="action-label">{button.label}</span>
           </button>
         );
@@ -247,6 +214,59 @@ const ProductDetails = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [addedToCart]);
+
+  // Dynamic spacing configuration - Set CSS variables from config
+  useEffect(() => {
+    const updateSpacingVariables = () => {
+      const screenWidth = window.innerWidth;
+      const root = document.documentElement;
+      
+      // Get spacing values from configuration
+      let actionMenuGap;
+      if (screenWidth < 768) {
+        actionMenuGap = PRODUCT_LAYOUT_SPACING.actionMenuToPurchaseGap.mobile;
+      } else if (screenWidth < 1024) {
+        actionMenuGap = PRODUCT_LAYOUT_SPACING.actionMenuToPurchaseGap.tablet;
+      } else {
+        actionMenuGap = PRODUCT_LAYOUT_SPACING.actionMenuToPurchaseGap.desktop;
+      }
+      
+      // Set CSS custom properties dynamically for spacing
+      root.style.setProperty('--action-menu-to-purchase-gap', `${actionMenuGap}px`);
+      
+      // Set button typography CSS variables from configuration
+      root.style.setProperty('--button-letter-spacing', BUTTON_TYPOGRAPHY.letterSpacing);
+      root.style.setProperty('--button-font-size', BUTTON_TYPOGRAPHY.fontSize);
+      root.style.setProperty('--button-font-weight', BUTTON_TYPOGRAPHY.fontWeight);
+      root.style.setProperty('--button-font-family', BUTTON_TYPOGRAPHY.fontFamily);
+      root.style.setProperty('--button-text-transform', BUTTON_TYPOGRAPHY.textTransform);
+      
+      // Set page layout CSS variables from configuration (NEW)
+      const horizontalSpacing = getHorizontalSpacing(screenWidth);
+      const contentGap = getContentGap(screenWidth);
+      const gridRatio = getGridRatio(screenWidth);
+      
+      root.style.setProperty('--page-horizontal-spacing', `${horizontalSpacing}px`);
+      root.style.setProperty('--content-gap', `${contentGap}px`);
+      root.style.setProperty('--grid-template-columns', gridRatio);
+      
+      // Set max content width if enabled
+      if (PAGE_LAYOUT_CONFIG.maxContentWidth.enabled) {
+        root.style.setProperty('--max-content-width', `${PAGE_LAYOUT_CONFIG.maxContentWidth.maxWidth}px`);
+      }
+    };
+
+    // Initial setup
+    updateSpacingVariables();
+
+    // Update on window resize
+    window.addEventListener('resize', updateSpacingVariables);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', updateSpacingVariables);
+    };
+  }, []);
 
   // Helper function to check if product has discount (similar to New Arrivals)
   const hasProductDiscount = (product) => {
@@ -1048,7 +1068,14 @@ const ProductDetails = () => {
         shareUrl = `https://pinterest.com/pin/create/button/?url=${productUrl}&media=${productImage}&description=${productName}`;
         break;
       case 'instagram':
-        showWarning('Please share this product manually on Instagram');
+        // Instagram doesn't support URL sharing via web API
+        // Navigate to configured Instagram profile page instead
+        const instagramUrl = getSocialMediaUrl('instagram');
+        if (instagramUrl) {
+          window.open(instagramUrl, '_blank', 'noopener,noreferrer');
+        } else {
+          showWarning('Instagram profile URL is not configured');
+        }
         return;
       default:
         return;
