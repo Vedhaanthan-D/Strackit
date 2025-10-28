@@ -1,0 +1,802 @@
+/* Filter Sidebar Styles */
+.filter-sidebar {
+  width: 280px;
+  background: #fff;
+  border: none;
+  border-radius: 0;
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent content from overflowing */
+}
+
+.filter-sidebar * {
+  box-sizing: border-box;
+}
+
+/* Filter Header */
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.filter-header h3 {
+  font-size: 16px;
+  font-weight: 300;
+  color: #333;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.clear-filters {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 20px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-weight: 500;
+}
+
+.clear-filters:hover {
+  color: black;
+}
+
+/* Active Filters Display */
+.active-filters {
+  margin-bottom: 20px;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.active-filters-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 20px;
+  padding: 0;
+  font-size: 12px;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  background: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  color: #333;
+  cursor: pointer;
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+  padding: 4px 10px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  gap: 6px;
+  width: auto;
+  height: auto;
+}
+
+.filter-chip-remove:hover {
+  background: black;
+  border-color: black;
+  color: white;
+}
+
+.filter-chip-label {
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.clear-all-link {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+  padding: 0;
+  margin-left: 8px;
+}
+
+.clear-all-link:hover {
+  color: black;
+  font-weight: 500;
+}
+
+/* Loading and Error States */
+.filter-loading, .filter-error {
+  padding: 40px 20px;
+  text-align: center;
+  color: #666;
+}
+
+.filter-error {
+  color: #e74c3c;
+}
+
+/* Filter Section */
+.filter-section {
+  margin-bottom: 30px;
+  padding-bottom: 25px;
+  /* border-bottom: 1px solid #f0f0f0; */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* Filter Titles */
+.filter-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+  padding: 0;
+  position: relative;
+}
+
+/* Clean style matching your image - with vertical and horizontal lines */
+.filter-title.clean-style {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: none;
+  padding: 0 0 0 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Vertical line on the left */
+.filter-title.clean-style::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #000;
+  border-radius: 0;
+}
+
+/* Horizontal line extending to the right */
+.filter-title.clean-style::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+  margin-left: 15px;
+}
+
+/* Horizontal Line Style (like your image) */
+.filter-title.horizontal-style {
+  display: flex;
+  align-items: center;
+  margin: 0 0 20px 0;
+}
+
+.filter-title.horizontal-style::before {
+  content: '';
+  /* flex: 1; */
+  height: 1px;
+  background: #ddd;
+  margin-right: 15px;
+}
+
+.filter-title.horizontal-style::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+  margin-left: 15px;
+}
+
+/* Vertical Style (traditional sidebar) */
+.filter-title.vertical-style {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+/* Clean minimal horizontal divider */
+.filter-title.clean-horizontal {
+  position: relative;
+  text-align: center;
+  background: white;
+  margin: 20px 0;
+  padding: 0 15px;
+}
+
+.filter-title.clean-horizontal::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e0e0e0;
+  z-index: 1;
+}
+
+.filter-title.clean-horizontal span {
+  background: white;
+  padding: 0 10px;
+  position: relative;
+  z-index: 2;
+}
+
+/* VERTICAL LINES ONLY for titles - not entire sections */
+.filter-section {
+  position: relative;
+  padding-left: 0;
+  margin-bottom: 30px;
+}
+
+/* Remove the full-height vertical line */
+.filter-section::before {
+  display: none;
+}
+
+/* Remove different colors - keep all sections with black line */
+.filter-section:nth-child(1)::before,
+.filter-section:nth-child(2)::before,
+.filter-section:nth-child(3)::before,
+.filter-section:nth-child(4)::before,
+.filter-section:nth-child(5)::before,
+.filter-section:nth-child(6)::before {
+  display: none;
+}
+
+/* Grid layout with both horizontal and vertical lines */
+.filter-title.grid-style {
+  display: flex;
+  align-items: center;
+  margin: 0 0 10px 0;
+  position: relative;
+  padding: 10px 0;
+}
+
+.filter-title.grid-style::before {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+  margin-right: 15px;
+}
+
+.filter-title.grid-style::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+  margin-left: 15px;
+}
+
+/* Vertical accent line for grid style */
+.filter-section.grid-section {
+  border-left: 3px solid #e0e0e0;
+  padding-left: 20px;
+  margin-left: 5px;
+  position: relative;
+}
+
+
+
+.filter-section.grid-section::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  border-radius: 2px;
+}
+
+/* Simple vertical line style */
+.filter-section.vertical-line {
+  border-left: 1px solid #ddd;
+  padding-left: 15px;
+  margin-left: 10px;
+}
+
+/* Filter Options */
+.filter-options {
+  padding: 0;
+}
+
+/* Link-style Filter Options (Categories, Brands) - Clean style like your image */
+.filter-option-link {
+  display: block;
+  margin-bottom: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: none;
+}
+
+.filter-option-link .hidden-checkbox {
+  display: none;
+}
+
+.filter-text {
+  font-size: 16px;
+  font-weight: 400;
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+.filter-option-link:hover .filter-text,
+.filter-option-link input:checked + .filter-text {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Clean category list styling */
+.filter-option-link span {
+  font-size: 15px;
+  font-weight: 400;
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  line-height: 1.5;
+  display: block;
+}
+
+.filter-option-link:hover span,
+.filter-option-link input:checked + span {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Price inputs styling is now handled above */
+
+/* Color Grid */
+.color-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.color-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #e0e0e0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.color-dot:hover {
+  border-color: #999;
+  transform: scale(1.1);
+}
+
+.color-dot.selected {
+  border-color: #333;
+  border-width: 3px;
+}
+
+.color-check {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 0 0 2px rgba(0,0,0,0.8);
+}
+
+/* Tag Grid */
+.tag-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag-button {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  background: white;
+  color: #666;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 40px;
+  text-align: center;
+}
+
+.tag-button:hover {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.tag-button.selected {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.filter-section-header.has-active-filters {
+  color: #007bff;
+}
+
+.filter-section-header:hover {
+  color: #666;
+}
+
+.arrow {
+  font-size: 10px;
+  transition: transform 0.3s ease;
+  color: #666;
+}
+
+.arrow.expanded {
+  transform: rotate(180deg);
+}
+
+/* Filter Options */
+.filter-options {
+  margin-top: 15px;
+  padding-left: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #555;
+  position: relative;
+}
+
+.filter-option input[type="checkbox"] {
+  opacity: 0;
+  position: absolute;
+  cursor: pointer;
+}
+
+.checkmark {
+  height: 16px;
+  width: 16px;
+  background-color: #fff;
+  border: 1.5px solid #ddd;
+  border-radius: 3px;
+  margin-right: 10px;
+  position: relative;
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+.filter-option input[type="checkbox"]:checked ~ .checkmark {
+  background-color: #333;
+  border-color: #333;
+}
+
+.filter-option input[type="checkbox"]:checked ~ .checkmark:after {
+  content: "";
+  position: absolute;
+  display: block;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.filter-label {
+  flex: 1;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 200px;
+}
+
+.filter-option:hover .checkmark {
+  border-color: #999;
+}
+
+/* Price Range Styles */
+.price-range {
+  padding: 20px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.price-slider-container {
+  position: relative;
+  height: 30px;
+  margin-bottom: 20px;
+  width: 100%;
+  /* padding: 0 10px;  */
+  box-sizing: border-box;
+}
+
+.price-track {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;
+  background: #000  ;
+  border-radius: 1px;
+  z-index: 1;
+}
+
+.price-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background: #000;
+  outline: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.price-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #000;
+  cursor: pointer;
+  border: 2px solid #000;
+  pointer-events: auto;
+  position: relative;
+  z-index: 3;
+}
+
+.price-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #000;
+  cursor: pointer;
+  border: 2px solid #000;
+  pointer-events: auto;
+  position: relative;
+  z-index: 3;
+  box-sizing: border-box;
+}
+
+.min-slider {
+  z-index: 1;
+}
+
+.max-slider {
+  z-index: 2;
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 0.1rem;
+  margin-top: 10px;
+}
+
+.price-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin-right: 5px;
+}
+
+.price-input {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  display: inline-block;
+}
+
+.price-separator {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 5px;
+}
+
+.price-input:focus {
+  outline: none;
+  border-color: #666;
+}
+
+.price-inputs span {
+  color: #666;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Color Options */
+.color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.color-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.color-circle:hover {
+  border-color: #999;
+  transform: scale(1.1);
+}
+
+.color-circle.selected {
+  border-color: #333;
+  border-width: 3px;
+}
+
+.check-mark {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* Size Options */
+.size-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.size-button {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 40px;
+  text-align: center;
+}
+
+.size-button:hover {
+  border-color: #999;
+  background: #f8f8f8;
+}
+
+.size-button.selected {
+  background: #333;
+  color: white;
+  border-color: #333;
+}
+
+/* Shopify Banner Styles */
+.shopify-banner {
+  background: linear-gradient(135deg, #95bf47 0%, #659b41 100%);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 30px;
+  text-align: center;
+  color: white;
+}
+
+.shopify-content h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.shopify-content p {
+  font-size: 13px;
+  margin: 0 0 15px 0;
+  opacity: 0.95;
+  line-height: 1.4;
+}
+
+.shopify-button {
+  background: white;
+  color: #659b41;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.shopify-button:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .filter-sidebar {
+    width: 100%;
+    margin-bottom: 20px;
+    position: static;
+  }
+  
+  .color-options {
+    justify-content: center;
+  }
+  
+  .size-options {
+    justify-content: center;
+  }
+}
+
+/* Animation for expanding sections */
+.filter-options {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+    overflow: visible;
+  }
+}
