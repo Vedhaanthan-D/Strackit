@@ -114,12 +114,16 @@
   color: #888;
   text-decoration: none;
   font-size: 14px;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
   line-height: 1.8;
+  display: inline-block;
+  font-weight: 400;
 }
 
 .footer-links a:hover {
   color: #000;
+  font-weight: 500;
+  transform: translateX(5px) scale(1.05);
 }
 
 /* Newsletter */

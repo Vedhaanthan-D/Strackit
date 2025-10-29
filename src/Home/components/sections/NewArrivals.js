@@ -112,7 +112,6 @@ const NewArrivals = ({
         [productId]: nextIndex
       }));
       
-      // Preload the next image if not already cached
       const nextImageUrl = `${IMAGE_PREFIX}${product.productImage[nextIndex].image}`;
       if (!productImages[`${productId}_${nextIndex}`]) {
         const img = new Image();
@@ -122,9 +121,7 @@ const NewArrivals = ({
             [`${productId}_${nextIndex}`]: nextImageUrl
           }));
         };
-        img.onerror = () => {
-          console.warn(`Failed to load product image ${nextIndex} for product ${productId}`);
-        };
+        img.onerror = () => {};
         img.src = nextImageUrl;
       }
     }
@@ -326,7 +323,6 @@ const NewArrivals = ({
           sortedProducts.forEach(product => {
             const productId = product.id || product.productId;
             
-            // Preload feature image
             if (product.featureImage && !featureImages[productId]) {
               const img = new Image();
               img.onload = () => {
@@ -335,13 +331,10 @@ const NewArrivals = ({
                   [productId]: `${IMAGE_PREFIX}${product.featureImage}`
                 }));
               };
-              img.onerror = () => {
-                console.warn(`Failed to load feature image for product ${productId}:`, product.featureImage);
-              };
+              img.onerror = () => {};
               img.src = `${IMAGE_PREFIX}${product.featureImage}`;
             }
             
-            // Preload all product images for cycling
             if (product.productImage && product.productImage.length > 0) {
               product.productImage.forEach((imageObj, index) => {
                 const cachedImageKey = `${productId}_${index}`;
@@ -353,9 +346,7 @@ const NewArrivals = ({
                       [cachedImageKey]: `${IMAGE_PREFIX}${imageObj.image}`
                     }));
                   };
-                  img.onerror = () => {
-                    console.warn(`Failed to load product image ${index} for product ${productId}:`, imageObj.image);
-                  };
+                  img.onerror = () => {};
                   img.src = `${IMAGE_PREFIX}${imageObj.image}`;
                 }
               });

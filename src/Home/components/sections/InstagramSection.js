@@ -23,7 +23,7 @@ const InstagramSection = () => {
   };
 
   return (
-    <section className="instagram-section">
+    <section id="instagram-section" className="instagram-section">
       <div className="instagram-container">
         {/* Edge-to-edge Image Grid */}
         <div className="instagram-grid">

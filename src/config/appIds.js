@@ -16,5 +16,10 @@ export const HOME_CONFIG = {
   shopId: 512
 };
 
+// Navigation configuration
+export const NAVIGATION_CONFIG = {
+  womensCategoryId: 3 // Update this with the actual women's category ID from your database
+};
+
 // Other configuration constants
 export const FREE_SHIPPING_THRESHOLD = 530;

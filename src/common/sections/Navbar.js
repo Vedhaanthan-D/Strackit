@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   FiSearch, 
   FiUser, 
   FiShoppingBag, 
   FiMenu, 
   FiX,
-  FiChevronDown,
   FiHeart
 } from 'react-icons/fi';
 import '../styles/header.css';
 import aoneLogo from '../../Home/assets/aone-logo.jpg';
+import { HOME_CONFIG } from '../../config/appIds';
+import { fetchMasterCategories } from 'shops-query/src/modules/masterCategories/index';
 
 const Navbar = ({
   navigationLinks = [
@@ -20,80 +21,80 @@ const Navbar = ({
     { name: 'Blog', path: '/blog' },
     { name: 'Pages', path: '/pages' }
   ],
-  languageOptions = ['English', 'French'],
-  currencyOptions = ['INR', 'USD'],
   cartCount = 0,
   onSearchClick = () => {},
   onUserClick = () => {},
-  onCartClick = () => {},
-  onLanguageChange = () => {},
-  onCurrencyChange = () => {}
+  onCartClick = () => {}
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(languageOptions[0]);
-  const [selectedCurrency, setSelectedCurrency] = useState('INR');
-  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
-  
-  // Refs for dropdown containers
-  const languageDropdownRef = useRef(null);
-  const currencyDropdownRef = useRef(null);
-  
-  // Handle click outside to close dropdowns
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Handle scrolling to section when navigating from other pages
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target)) {
-        setIsLanguageDropdownOpen(false);
-      }
-      if (currencyDropdownRef.current && !currencyDropdownRef.current.contains(event.target)) {
-        setIsCurrencyDropdownOpen(false);
-      }
-    };
+    // Check if there's a pending scroll target from navigation
+    const pendingScrollTarget = sessionStorage.getItem('pendingScrollTarget');
     
-    // Add event listener when dropdowns are open
-    if (isLanguageDropdownOpen || isCurrencyDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+    if (pendingScrollTarget && location.pathname === '/') {
+      // Clear the pending target
+      sessionStorage.removeItem('pendingScrollTarget');
+      
+      // Scroll to the target section with retry logic
+      const scrollToSection = (retries = 3) => {
+        setTimeout(() => {
+          const section = document.getElementById(pendingScrollTarget);
+          if (section) {
+            section.scrollIntoView({ 
+              behavior: 'smooth',
+              block: 'start'
+            });
+          } else if (retries > 0) {
+            // Retry if section not found yet (DOM still loading)
+            scrollToSection(retries - 1);
+          }
+        }, 500);
+      };
+      
+      scrollToSection();
     }
     
-    // Cleanup
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isLanguageDropdownOpen, isCurrencyDropdownOpen]);
-  
-  // Handle escape key to close dropdowns
-  useEffect(() => {
-    const handleEscapeKey = (event) => {
-      if (event.key === 'Escape') {
-        setIsLanguageDropdownOpen(false);
-        setIsCurrencyDropdownOpen(false);
-      }
-    };
-    
-    document.addEventListener('keydown', handleEscapeKey);
-    
-    return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
-    };
-  }, []);
+    // Also handle hash in URL (direct navigation)
+    if (location.hash && location.pathname === '/') {
+      const sectionId = location.hash.substring(1);
+      setTimeout(() => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          section.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 500);
+    }
+  }, [location]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    // Close both dropdowns when toggling mobile menu
-    setIsLanguageDropdownOpen(false);
-    setIsCurrencyDropdownOpen(false);
   };
 
-  const handleLanguageSelect = (language) => {
-    setSelectedLanguage(language);
-    setIsLanguageDropdownOpen(false);
-    onLanguageChange(language);
-  };
-
-  const handleCurrencySelect = (currency) => {
-    setSelectedCurrency(currency);
-    setIsCurrencyDropdownOpen(false);
-    onCurrencyChange(currency);
+  // Function to find women's category ID dynamically
+  const findWomensCategoryId = async () => {
+    try {
+      const categoryData = await fetchMasterCategories(HOME_CONFIG.shopId);
+      if (categoryData && categoryData.length > 0) {
+        const womensCategory = categoryData.find(cat => 
+          cat.category && (
+            cat.category.toLowerCase().includes('women') ||
+            cat.category.toLowerCase().includes('woman') ||
+            cat.category.toLowerCase() === 'women'
+          )
+        );
+        return womensCategory ? womensCategory.id : null;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
   };
 
   return (
@@ -107,7 +108,129 @@ const Navbar = ({
                 <Link 
                   to={link.path} 
                   className="navLink"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    setIsMobileMenuOpen(false);
+                    
+                    // If it's the Home link and already on home page, force page reload
+                    if (link.name === 'Home' && window.location.pathname === '/') {
+                      e.preventDefault();
+                      window.location.reload();
+                    }
+                    
+                    // If it's the Shops link, scroll to MasterCategory section
+                    if (link.name === 'Shops') {
+                      e.preventDefault();
+                      
+                      // If not on home page, navigate to home first then scroll
+                      if (window.location.pathname !== '/') {
+                        // Store the target section for after navigation
+                        sessionStorage.setItem('pendingScrollTarget', 'master-category-section');
+                        navigate('/');
+                      } else {
+                        // If on home page, scroll to the section with a small delay
+                        setTimeout(() => {
+                          const masterCategorySection = document.getElementById('master-category-section');
+                          if (masterCategorySection) {
+                            masterCategorySection.scrollIntoView({ 
+                              behavior: 'smooth',
+                              block: 'start'
+                            });
+                          }
+                        }, 100);
+                      }
+                    }
+                    
+                    // If it's the Blog link, scroll to BlogSection
+                    if (link.name === 'Blog') {
+                      e.preventDefault();
+                      
+                      // If not on home page, navigate to home first then scroll
+                      if (window.location.pathname !== '/') {
+                        // Store the target section for after navigation
+                        sessionStorage.setItem('pendingScrollTarget', 'blog-section');
+                        navigate('/');
+                      } else {
+                        // If on home page, scroll to the section with a small delay to ensure DOM is ready
+                        setTimeout(() => {
+                          const blogSection = document.getElementById('blog-section');
+                          if (blogSection) {
+                            blogSection.scrollIntoView({ 
+                              behavior: 'smooth',
+                              block: 'start'
+                            });
+                          } else {
+                            // Fallback: try to find by class name
+                            const blogElement = document.querySelector('.blog-section');
+                            if (blogElement) {
+                              blogElement.scrollIntoView({ 
+                                behavior: 'smooth',
+                                block: 'start'
+                              });
+                            }
+                          }
+                        }, 100);
+                      }
+                    }
+                    
+                    // If it's the Products link, navigate to women's category page or reload if already on category page
+                    if (link.name === 'Products') {
+                      e.preventDefault();
+                      
+                      // Check if already on a category page
+                      const currentPath = window.location.pathname;
+                      const isCategoryPage = currentPath.startsWith('/category/');
+                      
+                      if (isCategoryPage) {
+                        window.location.reload();
+                      } else {
+                        const handleProductsNavigation = async () => {
+                          const womensCategoryId = await findWomensCategoryId();
+                          if (womensCategoryId) {
+                            navigate(`/category/${womensCategoryId}`);
+                          } else {
+                            try {
+                              const categoryData = await fetchMasterCategories(HOME_CONFIG.shopId);
+                              if (categoryData && categoryData.length > 0) {
+                                const firstCategory = categoryData.find(cat => 
+                                  cat.status === 'active' || cat.status === 1 || cat.status === true || 
+                                  (cat.status === undefined || cat.status === null)
+                                );
+                                if (firstCategory) {
+                                  navigate(`/category/${firstCategory.id}`);
+                                }
+                              }
+                            } catch (error) {
+                              // Silently handle error
+                            }
+                          }
+                        };
+                        handleProductsNavigation();
+                      }
+                    }
+                    
+                    // If it's the Pages link, scroll to InstagramSection
+                    if (link.name === 'Pages') {
+                      e.preventDefault();
+                      
+                      // If not on home page, navigate to home first then scroll
+                      if (window.location.pathname !== '/') {
+                        // Store the target section for after navigation
+                        sessionStorage.setItem('pendingScrollTarget', 'instagram-section');
+                        navigate('/');
+                      } else {
+                        // If on home page, scroll to the section with a small delay
+                        setTimeout(() => {
+                          const instagramSection = document.getElementById('instagram-section');
+                          if (instagramSection) {
+                            instagramSection.scrollIntoView({ 
+                              behavior: 'smooth',
+                              block: 'start'
+                            });
+                          }
+                        }, 100);
+                      }
+                    }
+                  }}
                 >
                   {link.name}
                 </Link>
@@ -122,81 +245,28 @@ const Navbar = ({
           onClick={toggleMobileMenu}
           aria-label="Toggle mobile menu"
         >
-          {isMobileMenuOpen ? <FiX /> : <FiMenu />}
+          {isMobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
         </button>
 
         {/* Center Section - Logo */}
         <div className="logoContainer">
-          <Link to="/" className="logoLink">
+          <Link 
+            to="/" 
+            className="logoLink"
+            onClick={(e) => {
+              // If already on home page, force reload
+              if (window.location.pathname === '/') {
+                e.preventDefault();
+                window.location.reload();
+              }
+            }}
+          >
             <img src={aoneLogo} alt="AONE Logo" className="logoImage" />
           </Link>
         </div>
 
-        {/* Right Section - Dropdowns and Action Icons */}
+        {/* Right Section - Action Icons */}
         <div className="rightActions">
-          {/* Language Dropdown */}
-          <div className={`dropdown ${isLanguageDropdownOpen ? 'open' : ''}`} ref={languageDropdownRef}>
-            <button 
-              className="dropdownButton"
-              onClick={() => {
-                const newState = !isLanguageDropdownOpen;
-                setIsLanguageDropdownOpen(newState);
-                // Close currency dropdown when opening language dropdown
-                if (newState) setIsCurrencyDropdownOpen(false);
-              }}
-              aria-label="Select language"
-              aria-expanded={isLanguageDropdownOpen}
-              aria-haspopup="true"
-            >
-              {selectedLanguage}
-              <FiChevronDown className="dropdownIcon" />
-            </button>
-            {isLanguageDropdownOpen && (
-              <div className="dropdownMenu">
-                {languageOptions.map((language, index) => (
-                  <button
-                    key={index}
-                    className={`dropdownItem ${selectedLanguage === language ? 'active' : ''}`}
-                    onClick={() => handleLanguageSelect(language)}
-                  >
-                    {language}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Currency Dropdown */}
-          <div className={`dropdown ${isCurrencyDropdownOpen ? 'open' : ''}`} ref={currencyDropdownRef}>
-            <button 
-              className="dropdownButton"
-              onClick={() => {
-                const newState = !isCurrencyDropdownOpen;
-                setIsCurrencyDropdownOpen(newState);
-                // Close language dropdown when opening currency dropdown
-                if (newState) setIsLanguageDropdownOpen(false);
-              }}
-              aria-label="Select currency"
-              aria-expanded={isCurrencyDropdownOpen}
-              aria-haspopup="true"
-            >
-              {selectedCurrency}
-              <FiChevronDown className="dropdownIcon" />
-            </button>
-            {isCurrencyDropdownOpen && (
-              <div className="dropdownMenu">
-                {currencyOptions.map((currency, index) => (
-                  <button
-                    key={index}
-                    className={`dropdownItem ${selectedCurrency === currency ? 'active' : ''}`}
-                    onClick={() => handleCurrencySelect(currency)}
-                  >
-                    {currency}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
 
           {/* Action Icons */}
           <div className="actionIcons">
@@ -206,7 +276,7 @@ const Navbar = ({
                 onClick={onSearchClick}
                 aria-label="Search"
               >
-                <FiSearch />
+                <FiSearch size={22} />
               </button>
               <div className="tooltip">
                 <span className="tooltipText">Search</span>
@@ -220,7 +290,7 @@ const Navbar = ({
                 className="iconButton"
                 aria-label="Wishlist"
               >
-                <FiHeart />
+                <FiHeart size={22} />
               </Link>
               <div className="tooltip">
                 <span className="tooltipText">Wishlist</span>
@@ -229,13 +299,13 @@ const Navbar = ({
             </div>
 
             <div className="iconWrapper">
-              <button 
+              <Link
+                to="/login-success"
                 className="iconButton"
-                onClick={onUserClick}
                 aria-label="User account"
               >
-                <FiUser />
-              </button>
+                <FiUser size={22} />
+              </Link>
               <div className="tooltip">
                 <span className="tooltipText">Login</span>
                 <div className="tooltipArrow"></div>
@@ -248,7 +318,7 @@ const Navbar = ({
                 onClick={onCartClick}
                 aria-label={`Shopping cart with ${cartCount} items`}
               >
-                <FiShoppingBag />
+                <FiShoppingBag size={22} />
               </button>
               <span className="cartBadge">
                 {cartCount > 99 ? '99+' : cartCount}

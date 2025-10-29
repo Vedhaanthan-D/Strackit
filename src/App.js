@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { 
   Navbar,
@@ -12,18 +12,59 @@ import {
   Footer
 } from './Home/components';
 import BackToTop from './common/sections/BackToTop';
+import SearchBar from './common/sections/SearchBar';
 import CartSidebar from './Home/components/sections/CartSidebar';
 import ViewCart from './Home/components/sections/ViewCart';
 import CategoryPage from './Product Listing/section/CategoryPage';
 import ProductDetails from './Product Details/sections/ProductDetails';
 import Wishlist from './Product Details/sections/Wishlist';
+import LoginSuccess from './common/sections/LoginSuccess';
 import { ToastProvider } from './common/sections/Toast';
+import { fetchCart } from 'shops-query/src/modules/cart/index';
+import { CART_CONFIG } from './config/appIds';
 import './App.css';
 
 function App() {
   // Cart sidebar state
   const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
+  
+  // Search bar state
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchInitialCartCount = async () => {
+      try {
+        const { shopId, userId } = CART_CONFIG;
+        const cartData = await fetchCart(shopId, userId);
+        const totalCount = cartData?.reduce((total, item) => total + item.quantity, 0) || 0;
+        setCartItemCount(totalCount);
+      } catch (error) {
+        setCartItemCount(0);
+      }
+    };
+
+    fetchInitialCartCount();
+  }, []);
+
+  useEffect(() => {
+    const handleCartUpdate = async (event) => {
+      try {
+        const { shopId, userId } = CART_CONFIG;
+        const cartData = await fetchCart(shopId, userId);
+        const totalCount = cartData?.reduce((total, item) => total + item.quantity, 0) || 0;
+        setCartItemCount(totalCount);
+      } catch (error) {
+        // Silently handle error
+      }
+    };
+
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+    };
+  }, []);
 
   // Cart handlers
   const handleCartClick = () => {
@@ -34,6 +75,20 @@ function App() {
     setIsCartSidebarOpen(false);
   };
 
+  // Search handlers
+  const handleSearchClick = () => {
+    setIsSearchOpen(true);
+  };
+
+  const handleSearchClose = () => {
+    setIsSearchOpen(false);
+  };
+
+  // User account handler
+  const handleUserClick = () => {
+    // Handle user account click - can navigate to account page
+  };
+
   return (
     <ToastProvider>
       <Router>
@@ -41,6 +96,17 @@ function App() {
           <Navbar 
             cartCount={cartItemCount}
             onCartClick={handleCartClick}
+            onSearchClick={handleSearchClick}
+            onUserClick={handleUserClick}
+          />
+          
+          {/* Search Bar */}
+          <SearchBar 
+            isSearchOpen={isSearchOpen}
+            onClose={handleSearchClose}
+            onUserClick={handleUserClick}
+            onCartClick={handleCartClick}
+            cartCount={cartItemCount}
           />
           
           <Routes>
@@ -100,6 +166,14 @@ function App() {
             <Route path="/wishlist" element={
               <>
                 <Wishlist />
+                <Footer />
+              </>
+            } />
+            
+            {/* Login Success Page Route */}
+            <Route path="/login-success" element={
+              <>
+                <LoginSuccess />
                 <Footer />
               </>
             } />

@@ -111,71 +111,47 @@ const ToastProvider = ({ children }) => {
         let logoTop = 0;
         let headerHeight = 0;
 
-        // Check logo elements with detailed logging
         for (const selector of logoSelectors) {
           const el = document.querySelector(selector);
           if (el) {
             const rect = el.getBoundingClientRect();
             logoTop = rect.top;
-            console.log('Found logo element:', selector, 'at position:', {
-              top: rect.top,
-              bottom: rect.bottom,
-              left: rect.left,
-              right: rect.right,
-              width: rect.width,
-              height: rect.height
-            });
-            break; // Use first found logo element
+            break;
           }
         }
         
         if (logoTop === 0) {
-          console.log('No logo element found, trying alternative detection methods');
-          // Try to find any image in the header/nav area
           const navImages = document.querySelectorAll('nav img, header img, .header img, .navbar img');
           if (navImages.length > 0) {
             const rect = navImages[0].getBoundingClientRect();
             logoTop = rect.top;
-            console.log('Found header image as logo alternative:', rect);
           }
         }
 
-        // Check header elements  
         for (const selector of headerSelectors) {
           const el = document.querySelector(selector);
           if (el) {
             const rect = el.getBoundingClientRect();
             headerHeight = Math.max(headerHeight, rect.bottom);
-            break; // Use first found header element
+            break;
           }
         }
 
         let computed;
         
         if (isProductDetailPage) {
-          // For product detail page: position directly on top of logo area
           if (logoTop > 0) {
-            // Position toast at the logo's vertical center
             computed = Math.max(10, Math.round(logoTop) + 5);
           } else {
-            // Fallback: position at very top if logo not found
             computed = 10;
           }
-          console.log('Product detail page detected - positioning toast over logo at:', computed, 'logoTop:', logoTop);
         } else {
-          // For other pages: position below header/logo to avoid overlap
           computed = Math.max(80, Math.round(headerHeight) + 16);
         }
 
         setTopOffset(computed);
-        
-        // Also set CSS variable as backup
         document.documentElement.style.setProperty('--toast-top', `${computed}px`);
-        
-        console.log('Toast offset computed:', computed, 'logoTop:', logoTop, 'headerHeight:', headerHeight, 'isProductPage:', isProductDetailPage);
       } catch (err) {
-        console.warn('Toast offset computation failed:', err);
-        // Fallback to safe distance from top
         setTopOffset(80);
         document.documentElement.style.setProperty('--toast-top', '80px');
       }

@@ -96,7 +96,7 @@ const BlogSection = () => {
   }
 
   return (
-    <section className="blog-section">
+    <section id="blog-section" className="blog-section">
       <div className="blog-container">
         <div className="blog-header">
           <h2 className="blog-title">OUR BLOG</h2>
