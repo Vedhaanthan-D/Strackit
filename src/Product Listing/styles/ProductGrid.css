@@ -798,6 +798,7 @@
   align-items: center;
   margin-top: 40px;
   padding: 20px 0;
+  /* padding:14px */
 }
 
 .pagination-controls {
