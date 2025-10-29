@@ -51,16 +51,14 @@
   border: none;
   border-radius: 0;
   background: transparent;
-  font-size: 14px;
-  color: #666;
+  font-size: 15px;
+  color: black;
   min-width: 120px;
   justify-content: space-between;
   cursor: pointer;
+  font-weight: 500;
 }
 
-.sort-selected:hover {
-  color: #333;
-}
 
 .sort-selected span:first-child {
   font-weight: 400;
@@ -68,40 +66,60 @@
 
 .sort-icon {
   font-size: 16px;
-  color: #666;
+  color: black;
 }
 
 .arrow {
   font-size: 10px;
   transition: transform 0.2s ease;
-  color: #666;
+  color: black;
 }
 
 .arrow.up {
   transform: rotate(180deg);
 }
 
+/* New arrow icon styles (caret up/down) */
+.arrow-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  color: #666;
+}
+
+.sort-selected:hover .arrow-icon {
+  color: #333;
+}
+
+.arrow-icon svg {
+  display: block;
+  width: 12px;
+  height: 8px;
+}
+
 .sort-options {
   position: absolute;
   top: 100%;
-  left: 0;
+  left: auto;
   right: 0;
   background: white;
   border: 1px solid #e5e5e5;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  margin-top: 4px;
-  min-width: 200px;
+  margin-top: 14px;
+  min-width: 175px;
 }
 
 .sort-option {
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 4px 16px;
+  font-size: 15px;
   color: #999;
   cursor: pointer;
   transition: all 0.2s ease;
   border-bottom: none;
+  font-weight: 500;
 }
 
 
@@ -702,6 +720,8 @@
 
 .grid-icon-btn svg {
   stroke-width: 1.5;
+  color: black;
+  fill: black; /* ensure shapes inside the SVG render filled black */
 }
 
 /* Hover Options */
@@ -712,9 +732,9 @@
   display: flex;
   align-items: center;
   background: white;
-  padding: 4px 8px;
+  padding: 2px 4px;
   border-radius: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
   border: none;
   opacity: 0;
   visibility: hidden;
@@ -919,4 +939,55 @@
 
 .product-grid-item:active {
   transform: translateY(-2px);
+}
+
+/* Featured Dropdown */
+.featured-dropdown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.featured-dropdown:hover {
+    background-color: #f9f9f9;
+}
+
+.featured-dropdown-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #000; /* fill fully black */
+  position: relative;
+  flex: 0 0 28px;
+}
+
+.featured-dropdown-icon::before {
+  /* draw a centered 2x2 white grid inside the black circle */
+  content: "";
+  display: block;
+  width: 12px;
+  height: 12px;
+  background-image: linear-gradient(#fff,#fff), linear-gradient(#fff,#fff), linear-gradient(#fff,#fff), linear-gradient(#fff,#fff);
+  background-size: 50% 50%;
+  background-position: 0 0, 100% 0, 0 100%, 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 1px;
+}
+
+.featured-dropdown-arrow {
+    font-size: 12px;
+    color: #333;
 }

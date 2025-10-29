@@ -105,11 +105,16 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
           secondaryCategoryIdentifier
         );
 
-        setProducts(fetchedProducts || []);
+        // Filter products to only include those matching the current shop ID
+        const filteredByShop = (fetchedProducts || []).filter(product => 
+          product && product.shopId && String(product.shopId) === String(currentShopId)
+        );
+
+        setProducts(filteredByShop);
 
         // Calculate maximum price from products
-        if (fetchedProducts && fetchedProducts.length > 0 && onMaxPriceUpdate) {
-          const validProducts = fetchedProducts.filter(product => product && product.id);
+        if (filteredByShop && filteredByShop.length > 0 && onMaxPriceUpdate) {
+          const validProducts = filteredByShop.filter(product => product && product.id);
           if (validProducts.length > 0) {
             const maxPrice = Math.max(...validProducts.map(product => {
               const price = parseFloat(
@@ -667,7 +672,19 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
                 }}
               >
                 <span>{getCurrentSortLabel()}</span>
-                <span className={`arrow ${showSortDropdown ? 'up' : 'down'}`}>▼</span>
+                  <span className="arrow-icon" aria-hidden="true">
+                    {showSortDropdown ? (
+                      /* caret-up */
+                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 6L6 1L11 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    ) : (
+                      /* caret-down */
+                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 2L6 7L11 2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </span>
               </div>
               
               {showSortDropdown && (
@@ -705,7 +722,7 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
             // Use the S3 image prefix
             const imagePrefix = "https://s3.ap-south-1.amazonaws.com/business.strackit.com/";
             
-            // Primary image logic
+            // Primary image logic - use featureImage
             const primaryImageUrl = product.featureImage ? 
               `${imagePrefix}${product.featureImage}` : 
               (product.image ? `${imagePrefix}${product.image}` : 
@@ -713,13 +730,15 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
                 `${imagePrefix}${product.images[0]}` : 
                 'https://via.placeholder.com/300x300?text=No+Image'));
             
-            // Hover image logic - try multiple sources
+            // Hover image logic - use second image from productImage array
             let hoverImageUrl = null;
             
-            if (product.hoverImage) {
+            if (product.productImage && Array.isArray(product.productImage) && product.productImage.length > 0) {
+              // Use the second image if available, otherwise use the first
+              const hoverIndex = product.productImage.length > 1 ? 1 : 0;
+              hoverImageUrl = `${imagePrefix}${product.productImage[hoverIndex].image}`;
+            } else if (product.hoverImage) {
               hoverImageUrl = `${imagePrefix}${product.hoverImage}`;
-            } else if (product.productImage && product.productImage.length > 1) {
-              hoverImageUrl = `${imagePrefix}${product.productImage[1].image}`;
             } else if (product.images && product.images.length > 1) {
               hoverImageUrl = `${imagePrefix}${product.images[1]}`;
             } else if (product.secondaryImage) {
@@ -741,7 +760,7 @@ const ProductGrid = ({ masterCategory, secondaryCategory, filters = {}, shopId, 
                 style={{ cursor: 'pointer' }}
               > 
                 <div className="product-grid-image-wrapper">
-                  { <div className="product-grid-sale-badge">Sale</div>}
+                  {<div className="product-grid-sale-badge">Sale</div>}
                   
                   
                   {/* Primary Image */}
