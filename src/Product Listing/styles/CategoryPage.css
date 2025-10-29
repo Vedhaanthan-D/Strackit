@@ -1,0 +1,468 @@
+.categoryPageContainer {
+  /* width: 100%; */
+  background: #fff;
+}
+
+/* Hero Banner Styles */
+.categoryHeroBanner {
+  /* width: 100%; */
+  height: 500px;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-height: 500px;
+}
+
+.categoryBannerOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  /* display: flex; */
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px 20px;
+  backdrop-filter: blur(0.5px);
+}
+
+.categoryBannerContent {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 60px 20px 20px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.categoryBreadcrumb {
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  opacity: 0.9;
+  width: 100%;
+  text-align: center;
+  color: white;
+}
+
+.categoryBreadcrumbLink {
+  cursor: pointer;
+  text-decoration: underline;
+  color: white;
+}
+
+.categoryBreadcrumbSeparator {
+  margin: 0 8px;
+  color: white;
+}
+
+.categoryBreadcrumbCurrent {
+  opacity: 0.7;
+  color: white;
+}
+
+.categoryBannerTitle {
+  font-size: 3.5rem;
+  font-weight: 500;
+  margin: 20px 0;
+  letter-spacing: 1px;
+  text-align: center;
+  width: 100%;
+  color: white;
+}
+
+/* Banner Thumbnails Section */
+.categoryBannerThumbnailsSection {
+  position: relative;
+  width: 100%;
+  max-width: 2000px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  padding-bottom: 20px;
+  gap: 15px;
+}
+
+.categoryBannerThumbnailsRow {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  flex: 1;
+  max-width: 340px; /* Show exactly 2 items: 2 * (120px + 60px gap) = 360px, reduced to 340px for better fit */
+}
+
+.categoryBannerThumbnailsList {
+  display: flex;
+  gap: 20px;
+  padding: 10px 0px;
+  align-items: center;
+  will-change: transform;
+  justify-content: flex-start;
+}
+
+.categoryBannerThumbnail {
+  /* min-width: 120px;
+  max-width: 120px; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.categoryBannerThumbnail:hover .categoryThumbnailImage img {
+  transform: scale(1.15);
+}
+
+.categoryThumbnailImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  /* background: rgba(255, 255, 255, 0.95); */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); */
+  overflow: hidden;
+  /* border: 3px solid rgba(255, 255, 255, 0.9); */
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.categoryThumbnailImage img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.categoryThumbnailName {
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  color: white; 
+  /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); */
+  line-height: 1.2;
+  /* background: rgba(0, 0, 0, 0.4); */
+  padding: 6px 10px;
+  border-radius: 15px;
+  /* backdrop-filter: blur(5px); */
+  min-width: 80px;
+  transition: color 0.3s ease;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.categoryThumbnailArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height:30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: auto;
+}
+.categoryBannerThumbnailsSection:hover .categoryThumbnailArrow {
+  opacity: 1;
+  visibility: visible;
+}
+
+.categoryThumbnailArrow svg {
+  font-size: 1.2rem;
+  color: black;
+}
+
+.categoryLeftArrow {
+  left: -50px;
+}
+
+.categoryRightArrow {
+  right: -50px;
+}
+
+/* Category Cards Grid (Below Banner) */
+.categoryCards {
+  width: 100%;
+  max-width: fit-content;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 60px 20px;
+  margin: 0 auto;
+}
+
+.categoryCard {
+  /* background: #fff; */
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.categoryCard:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.12);
+}
+
+.categoryCardImageWrap{
+  width: 100%;
+  padding-top: 66%; /* 3:2 ratio */
+  position: relative;
+  /* background: #f6f6f6; */
+}
+
+.categoryCardImageWrap img{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  max-width: 70%;
+  max-height: 70%;
+  /* object-fit: contain; */
+  border-radius: 50%;
+  /* background: #fff; */
+  padding: 12px;
+}
+
+.categoryCardTitle{
+  padding: 20px;
+  font-weight: 700;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+@media (max-width: 768px){
+  .categoryCards{ 
+    grid-template-columns: repeat(2, 1fr);
+    padding: 40px 15px;
+  }
+  
+  .categoryHeroBanner {
+    height: 400px;
+  }
+  
+  .categoryPageBannerTitle {
+    font-size: 2.2rem;
+  }
+  
+  .categoryPageBannerContent {
+    margin-bottom: 40px;
+  }
+  
+  .categoryBannerThumbnailsRow {
+    padding: 0 40px;
+    gap: 15px;
+  }
+  
+  .categoryBannerThumbnail {
+    min-width: 110px;
+  }
+  
+  .categoryThumbnailImage {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .categoryThumbnailName {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px){
+  .categoryCards{ 
+    grid-template-columns: 1fr;
+    padding: 30px 10px;
+  }
+  
+  .categoryHeroBanner {
+    height: 350px;
+  }
+  
+  .categoryPageBannerTitle {
+    font-size: 1.8rem;
+  }
+  
+  .categoryBannerThumbnailsRow {
+    padding: 0 35px;
+    gap: 12px;
+  }
+  
+  .categoryBannerThumbnail {
+    min-width: 90px;
+  }
+  
+  .categoryThumbnailImage {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .categoryThumbnailName {
+    font-size: 0.75rem;
+  }
+  
+  .categoryThumbnailArrow {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .categoryPageLeftArrow {
+    left: 5px;
+  }
+  
+  .categoryPageRightArrow {
+    right: 5px;
+  }
+}
+
+/* Selected secondary category styles */
+/* .categoryBannerThumbnail.selected {
+  /* transform: scale(1.15); */
+  /* transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); */
+  /* animation: selectedPulse 2s ease-in-out; */
+/* } */
+
+/* .categoryBannerThumbnail.selected .categoryThumbnailImage { */
+  /* border: 5px solid #fff; */
+  /* box-shadow: 0 8px 30px rgba(255, 255, 255, 0.6), 0 0 0 2px #333; */
+  /* background: rgba(255, 255, 255, 1); */
+  /* transition: all 0.3s ease; */
+/* } */
+
+/* .categoryBannerThumbnail.selected .categoryThumbnailName { */
+  /* font-weight: 800; */
+  /* background: #333; */
+  /* color: white; */
+  /* text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8); */
+  /* transform: scale(1.05); */
+  /* transition: all 0.3s ease; */
+/* } */
+
+/* Animation for newly selected subcategory */
+@keyframes selectedPulse {
+  0% {
+    transform: scale(1.0);
+    /* box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); */
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+  100% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+/* Products Section */
+.categoryProductsSection {
+  padding: 60px 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Products with Filters Layout */
+.categoryProducts-with-filters {
+  display: flex;
+  gap: 30px;
+  margin-top: 30px;
+  align-items: flex-start;
+}
+
+.categoryInfo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.categoryInfo h2 {
+  font-size: 2rem;
+  /* color: #333; */
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.categoryDescription {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .categoryProducts-with-filters {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .categoryProductsSection {
+    padding: 40px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .categoryHeroBanner {
+    height: 350px;
+    min-height: 350px;
+  }
+  
+  .categoryBannerContent {
+    padding: 40px 20px 20px 20px;
+    margin-right: 0;
+  }
+  
+  .categoryBannerTitle {
+    font-size: 2.5rem;
+  }
+  
+  .categoryBannerThumbnailsSection {
+    padding: 0 20px 20px;
+  }
+  
+  .categoryProductsSection {
+    padding: 30px 15px;
+  }
+  
+  .categoryInfo h2 {
+    font-size: 1.5rem;
+  }
+  
+  .categoryDescription {
+    font-size: 1rem;
+  }
+}
