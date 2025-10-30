@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiX, FiPlus, FiMinus, FiChevronLeft, FiChevronRight, FiShoppingCart } from 'react-icons/fi';
+import { FiX, FiPlus, FiMinus, FiChevronLeft, FiChevronRight, FiShoppingCart, FiStar } from 'react-icons/fi';
 import { MdNote, MdLocalOffer, MdLocalShipping } from 'react-icons/md';
 import { CART_CONFIG, IMAGE_PREFIX } from '../../../config/appIds';
 import { fetchCart, removeFromCart, updateCartQuantity } from 'shops-query/src/modules/cart/index';
@@ -346,27 +346,33 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
         {subtotal > 0 && (
           <div className="free-shipping-section">
             <div className="free-shipping-progress">
+              {/* Congratulations message displayed above progress bar when threshold is reached */}
+              {freeShippingInfo.qualifies && (
+                <p className="shipping-text congratulations-message">
+                  <strong>Buy ₹540 USD more to enjoy FREE shipping</strong>
+                  {freeShippingInfo.couponBased && (
+                    <span className="coupon-indicator"> (Coupon applied)</span>
+                  )}
+                </p>
+              )}
+              
               <div className="progress-bar">
                 <div 
                   className="progress-fill" 
-                  style={{ width: `${freeShippingProgress}%` }}
+                  style={{ width: `${freeShippingProgress}%` , backgroundColor:"black" }}
                 ></div>
-                <div className="progress-icon">
-                  {freeShippingProgress >= 100 ? '✓' : '📦'}
+                <div className="progress-icon"
+                style={{backgroundColor:"black" }}>
+                  {freeShippingProgress >= 100 ? <FiStar className="star-icon" /> : '📦'}
                 </div>
               </div>
-              {!freeShippingInfo.qualifies ? (
+              
+              {/* Message below progress bar when threshold is NOT reached */}
+              {!freeShippingInfo.qualifies && (
                 <p className="shipping-text">
                   Buy <strong>₹{amountForFreeShipping.toFixed(2)}</strong> more to enjoy <strong>FREE shipping</strong>
                   {freeShippingInfo.couponBased && (
                     <span className="coupon-indicator"> (Coupon eligible)</span>
-                  )}
-                </p>
-              ) : (
-                <p className="shipping-text congratulations">
-                  <strong>Congratulations! You qualify for FREE shipping</strong>
-                  {freeShippingInfo.couponBased && (
-                    <span className="coupon-indicator"> (Coupon applied)</span>
                   )}
                 </p>
               )}
@@ -481,50 +487,155 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                   </button>
                 </div>
               </div>
-              
-              <div className="recommendations-container" ref={recommendedScrollRef}>
-                {recommendedLoading ? (
-                  <>
-                    {[1, 2, 3, 4].map(i => <RecommendedProductSkeleton key={i} />)}
-                  </>
-                ) : (
-                  recommendedProducts.map((product) => {
-                    const price = parseFloat(product.prize);
-                    const discount = parseFloat(product.Discount);
-                    const finalPrice = price - discount;
-                    
-                    return (
-                      <div key={product.id} className="recommended-product">
-                        <div className="recommended-product-image">
-                          <img 
-                            src={product.featureImage ? `${imagePrefix}${product.featureImage}` : ''} 
-                            alt={product.name}
-                            onError={handleImageError}
-                          />
-                        </div>
-                        <h4 className="recommended-product-name">{product.name}</h4>
-                        <div className="recommended-product-price">
-                          {discount > 0 ? (
-                            <>
-                              <span className="cs-discounted-price">₹{finalPrice.toFixed(2)}</span>
-                              <span className="cs-original-price">₹{price.toFixed(2)}</span>
-                            </>
-                          ) : (
-                            <span className="cs-current-price">₹{price.toFixed(2)}</span>
-                          )}
-                        </div>
-                        <button 
-                          className={`cs-add-to-cart-btn ${addingToCart[product.id || product.productId] ? 'loading' : ''}`}
-                          onClick={() => addToCartFunc(product)}
-                          disabled={addingToCart[product.id || product.productId]}
-                        >
-                          {addingToCart[product.id || product.productId] ? '...' : '+ Add to Cart'}
-                        </button>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
+              <div
+  className="recommendations-container"
+  ref={recommendedScrollRef}
+  style={{
+    display: "flex",
+    overflowX: "auto",
+    gap: "16px",
+    padding: "10px 0",
+    scrollBehavior: "smooth",
+    scrollbarWidth: "none", // Firefox
+    msOverflowStyle: "none", // Internet Explorer / Edge
+  }}
+  onScroll={(e) => {
+    // optional: can track scroll position if needed
+  }}
+>
+  <style>
+    {`
+      .recommendations-container::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Edge */
+      }
+    `}
+  </style>
+
+  {recommendedLoading ? (
+    <>
+      {[1, 2, 3, 4].map(i => <RecommendedProductSkeleton key={i} />)}
+    </>
+  ) : (
+    recommendedProducts.map((product) => {
+      const price = parseFloat(product.prize);
+      const discount = parseFloat(product.Discount);
+      const finalPrice = price - discount;
+
+      return (
+        <div
+          key={product.id}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            border: "1px solid #eee",
+            borderRadius: "10px",
+            padding: "12px",
+            backgroundColor: "#fff",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+            minWidth: "260px",
+            flexShrink: 0,
+          }}
+        >
+          {/* Left: Product Image */}
+          <div
+            style={{
+              width: "90px",
+              height: "90px",
+              flexShrink: 0,
+              overflow: "hidden",
+              borderRadius: "8px",
+              backgroundColor: "#fafafa",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: "16px",
+            }}
+          >
+            <img
+              src={product.featureImage ? `${imagePrefix}${product.featureImage}` : ""}
+              alt={product.name}
+              onError={handleImageError}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          </div>
+
+          {/* Right: Product Details */}
+          <div style={{ flex: 1 }}>
+            <h4
+              style={{
+                fontSize: "16px",
+                fontWeight: "600",
+                margin: "0 0 6px 0",
+                color: "#222",
+              }}
+            >
+              {product.name}
+            </h4>
+
+            <div style={{ marginBottom: "6px" }}>
+              {discount > 0 ? (
+                <>
+                  <span
+                    style={{
+                      color: "#d32f2f",
+                      fontWeight: "600",
+                      fontSize: "15px",
+                      marginRight: "8px",
+                    }}
+                  >
+                    ₹{finalPrice.toFixed(2)}
+                  </span>
+                  <span
+                    style={{
+                      textDecoration: "line-through",
+                      color: "#888",
+                      fontSize: "14px",
+                    }}
+                  >
+                    ₹{price.toFixed(2)}
+                  </span>
+                </>
+              ) : (
+                <span
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "600",
+                    fontSize: "15px",
+                  }}
+                >
+                  ₹{price.toFixed(2)}
+                </span>
+              )}
+            </div>
+
+            <button
+              onClick={() => addToCartFunc(product)}
+              disabled={addingToCart[product.id || product.productId]}
+              style={{
+                background: "none",
+                border: "none",
+                color: addingToCart[product.id || product.productId] ? "#aaa" : "#0070f3",
+                fontSize: "14px",
+                cursor: addingToCart[product.id || product.productId]
+                  ? "not-allowed"
+                  : "pointer",
+                textDecoration: "underline",
+                padding: 0,
+              }}
+            >
+              {addingToCart[product.id || product.productId] ? "..." : "+ Add to Cart"}
+            </button>
+          </div>
+        </div>
+      );
+    })
+  )}
+</div>
+
             </div>
           )}
         </div>

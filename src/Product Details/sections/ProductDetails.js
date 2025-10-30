@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FiHeart } from 'react-icons/fi';
+import { FiHeart, FiX, FiCopy, FiCheck, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FaFacebookF, FaTwitter, FaPinterestP, FaInstagram } from 'react-icons/fa';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
 import { fetchProducts } from 'shops-query/src/modules/products/queries/get.js';
 import { getOfferProductsController } from 'shops-query/src/modules/offerProducts/index.js';
@@ -9,8 +10,10 @@ import { getShippingCost } from 'shops-query/src/modules/ShippingCost/queries/in
 import { addToCart } from 'shops-query/src/modules/cart/index.js';
 import { fetchWishlist } from 'shops-query/src/modules/wishlist/queries/get';
 import { addToWishlistController, removeFromWishlistController } from 'shops-query/src/modules/wishlist/index.js';
-import { useToast } from '../../common/components/Toast.js';
+import { useToast } from '../../common/sections/Toast.js';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds.js';
+import { PRODUCT_LAYOUT_SPACING, BUTTON_TYPOGRAPHY, getSocialMediaUrl, PAGE_LAYOUT_CONFIG, getHorizontalSpacing, getContentGap, getGridRatio } from './productDetailsConfig.js';
+import { getProductActions } from './productActionsConfig.js';
 import ProductSupremeQuality from './ProductSupremeQuality.js';
 import YouMightAlsoLike from './YouMightAlsoLike.js';
 import '../styles/ProductDetails.css';
@@ -42,13 +45,80 @@ const StarRating = ({ product, productDetails }) => {
   );
 };
 
+// Product Action Buttons Component - Dynamic and Data-Driven
+const ProductActionButtons = ({ product, onActionClick }) => {
+  // Fetch action buttons from configuration
+  // Can optionally filter by product category
+  const categorySlug = product?.category?.slug || product?.categorySlug || null;
+  const actionButtons = getProductActions(categorySlug);
+
+  const handleButtonClick = (button) => {
+    if (onActionClick) {
+      onActionClick(button.action, button, product);
+    } else {
+      // Default actions
+      switch (button.action) {
+        case 'sizeGuide':
+          console.log('Size Guide clicked for:', product.name);
+          // Can open modal or navigate to size guide
+          break;
+        case 'compareColor':
+          console.log('Compare Color clicked for:', product.name);
+          // Can open color comparison modal
+          break;
+        case 'askQuestion':
+          console.log('Ask Question clicked for:', product.name);
+          // Can open contact form or FAQ
+          break;
+        case 'share':
+          console.log('Share clicked for:', product.name);
+          // Handle share functionality
+          if (navigator.share) {
+            navigator.share({
+              title: product.name,
+              text: product.description,
+              url: window.location.href
+            }).catch(err => console.log('Share failed:', err));
+          } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(window.location.href);
+            console.log('Link copied to clipboard');
+          }
+          break;
+        default:
+          console.log('Action clicked:', button.action);
+      }
+    }
+  };
+
+  return (
+    <div className="product-action-buttons">
+      {actionButtons.map((button) => {
+        const IconComponent = button.icon;
+        return (
+          <button
+            key={button.id}
+            className="action-button"
+            onClick={() => handleButtonClick(button)}
+            aria-label={button.ariaLabel}
+            title={button.tooltip || button.label}
+          >
+            <IconComponent className="action-icon" aria-hidden="true" />
+            <span className="action-label">{button.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
 // Loading skeleton for product details
 const ProductDetailsSkeleton = () => (
   <div className="product-details-skeleton">
     <div className="product-images-skeleton">
       <div className="main-image-skeleton"></div>
       <div className="thumbnail-images-skeleton">
-        {[1, 2, 3, 4].map(i => (
+        {[1, 2, 3].map(i => (
           <div key={i} className="thumbnail-skeleton"></div>
         ))}
       </div>
@@ -70,7 +140,8 @@ const ProductDetailsSkeleton = () => (
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { showSuccess, showError } = useToast();
+
+  const { showSuccess, showError, showWarning } = useToast();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -97,6 +168,14 @@ const ProductDetails = () => {
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
+  // Modal states
+  const [showSizeGuideModal, setShowSizeGuideModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copyLinkSuccess, setCopyLinkSuccess] = useState(false);
+
+  // Image navigation hover state
+  const [showImageNavigation, setShowImageNavigation] = useState(false);
+
   // Discount and offer state
   const [offerProducts, setOfferProducts] = useState([]);
   const [coupons, setCoupons] = useState([]);
@@ -115,11 +194,11 @@ const ProductDetails = () => {
       // Show floating cart when scrolled more than 300px
       const shouldShow = scrollY > 300 && !addedToCart;
       
-      console.log('Scroll position:', {
-        scrollY,
-        shouldShow,
-        addedToCart
-      });
+      // console.log('Scroll position:', {
+      //   scrollY,
+      //   shouldShow,
+      //   addedToCart
+      // });
       
       setShowFloatingCart(shouldShow);
     };
@@ -135,6 +214,59 @@ const ProductDetails = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [addedToCart]);
+
+  // Dynamic spacing configuration - Set CSS variables from config
+  useEffect(() => {
+    const updateSpacingVariables = () => {
+      const screenWidth = window.innerWidth;
+      const root = document.documentElement;
+      
+      // Get spacing values from configuration
+      let actionMenuGap;
+      if (screenWidth < 768) {
+        actionMenuGap = PRODUCT_LAYOUT_SPACING.actionMenuToPurchaseGap.mobile;
+      } else if (screenWidth < 1024) {
+        actionMenuGap = PRODUCT_LAYOUT_SPACING.actionMenuToPurchaseGap.tablet;
+      } else {
+        actionMenuGap = PRODUCT_LAYOUT_SPACING.actionMenuToPurchaseGap.desktop;
+      }
+      
+      // Set CSS custom properties dynamically for spacing
+      root.style.setProperty('--action-menu-to-purchase-gap', `${actionMenuGap}px`);
+      
+      // Set button typography CSS variables from configuration
+      root.style.setProperty('--button-letter-spacing', BUTTON_TYPOGRAPHY.letterSpacing);
+      root.style.setProperty('--button-font-size', BUTTON_TYPOGRAPHY.fontSize);
+      root.style.setProperty('--button-font-weight', BUTTON_TYPOGRAPHY.fontWeight);
+      root.style.setProperty('--button-font-family', BUTTON_TYPOGRAPHY.fontFamily);
+      root.style.setProperty('--button-text-transform', BUTTON_TYPOGRAPHY.textTransform);
+      
+      // Set page layout CSS variables from configuration (NEW)
+      const horizontalSpacing = getHorizontalSpacing(screenWidth);
+      const contentGap = getContentGap(screenWidth);
+      const gridRatio = getGridRatio(screenWidth);
+      
+      root.style.setProperty('--page-horizontal-spacing', `${horizontalSpacing}px`);
+      root.style.setProperty('--content-gap', `${contentGap}px`);
+      root.style.setProperty('--grid-template-columns', gridRatio);
+      
+      // Set max content width if enabled
+      if (PAGE_LAYOUT_CONFIG.maxContentWidth.enabled) {
+        root.style.setProperty('--max-content-width', `${PAGE_LAYOUT_CONFIG.maxContentWidth.maxWidth}px`);
+      }
+    };
+
+    // Initial setup
+    updateSpacingVariables();
+
+    // Update on window resize
+    window.addEventListener('resize', updateSpacingVariables);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', updateSpacingVariables);
+    };
+  }, []);
 
   // Helper function to check if product has discount (similar to New Arrivals)
   const hasProductDiscount = (product) => {
@@ -184,16 +316,16 @@ const ProductDetails = () => {
   const fetchOfferData = async () => {
     if (!product) return;
 
-    console.log('Product data for pricing:', {
-      id: product.id,
-      name: product.name,
-      originalPrice: product.originalPrice,
-      discountedPrice: product.discountedPrice,
-      prize: product.prize,
-      viewPrice: product.viewPrice,
-      discount: product.discount,
-      fullProduct: product
-    });
+    // console.log('Product data for pricing:', {
+    //   id: product.id,
+    //   name: product.name,
+    //   originalPrice: product.originalPrice,
+    //   discountedPrice: product.discountedPrice,
+    //   prize: product.prize,
+    //   viewPrice: product.viewPrice,
+    //   discount: product.discount,
+    //   fullProduct: product
+    // });
 
     try {
       // Fetch offer products for the current shop
@@ -574,22 +706,80 @@ const ProductDetails = () => {
     return productOriginalPrice;
   };
 
+  // Check if product is WOMENS T-SHIRTS
+  const isWomensTShirts = (product) => {
+    if (!product) return false;
+    const productName = (product.name || product.title || '').toLowerCase();
+    return productName.includes('womens t-shirts') || 
+           productName.includes('women t-shirts') ||
+           productName.includes('womens t-shirt');
+  };
+
   // Get product images
   const getProductImages = (product) => {
     const images = [];
-    
-    // Add product images if they exist
-    if (product.productImage && product.productImage.length > 0) {
-      product.productImage.forEach(img => {
-        if (img.image) {
-          images.push(`${IMAGE_PREFIX}${img.image}`);
-        }
+    console.log(images,product);
+    // Special handling for WOMENS T-SHIRTS - ensure all color variants (white, black, orange) display
+    if (isWomensTShirts(product)) {
+      const uniqueImagePaths = new Set();
+      
+      // First, add all product images to ensure we get all variants (including orange)
+      if (product.productImage && product.productImage.length > 0) {
+        product.productImage.forEach(img => {
+          if (img.image && !uniqueImagePaths.has(img.image)) {
+            uniqueImagePaths.add(img.image);
+          }
+        });
+      }
+      
+      // Add feature image if it's unique
+      if (product.featureImage && !uniqueImagePaths.has(product.featureImage)) {
+        uniqueImagePaths.add(product.featureImage);
+      }
+      
+      // Convert Set to array - feature image should be first for display
+      const allUniqueImages = Array.from(uniqueImagePaths);
+      
+      // Reorder: feature image first, then remaining images
+      if (product.featureImage && uniqueImagePaths.has(product.featureImage)) {
+        // Add feature image first
+        images.push(`${IMAGE_PREFIX}${product.featureImage}`);
+        // Add remaining images (excluding feature image)
+        allUniqueImages.forEach(imagePath => {
+          if (imagePath !== product.featureImage) {
+            images.push(`${IMAGE_PREFIX}${imagePath}`);
+          }
+        });
+      } else {
+        // If no feature image, just add all unique images
+        allUniqueImages.forEach(imagePath => {
+          images.push(`${IMAGE_PREFIX}${imagePath}`);
+        });
+      }
+      
+      console.log('WOMENS T-SHIRTS images loaded:', {
+        totalImages: images.length,
+        featureImage: product.featureImage,
+        productImagesCount: product.productImage?.length,
+        productImages: product.productImage?.map(img => img.image),
+        uniqueImagesCount: uniqueImagePaths.size,
+        finalImages: images
       });
-    }
-    
-    // Add feature image as fallback
-    if (product.featureImage && images.length === 0) {
-      images.push(`${IMAGE_PREFIX}${product.featureImage}`);
+    } else {
+      // Default behavior for other products
+      // Add product images if they exist
+      if (product.productImage && product.productImage.length > 0) {
+        product.productImage.forEach(img => {
+          if (img.image) {
+            images.push(`${IMAGE_PREFIX}${img.image}`);
+          }
+        });
+      }
+      
+      // Add feature image as fallback
+      if (product.featureImage && images.length === 0) {
+        images.push(`${IMAGE_PREFIX}${product.featureImage}`);
+      }
     }
     
     // Default placeholder if no images
@@ -602,19 +792,25 @@ const ProductDetails = () => {
 
   // Handle quantity change
   const handleQuantityChange = (delta) => {
-    setQuantity(prev => Math.max(1, prev + delta));
+    const newQuantity = Math.max(1, quantity + delta);
+    console.log('Quantity changed from', quantity, 'to', newQuantity, 'delta:', delta);
+    setQuantity(newQuantity);
   };
 
   // Handle add to cart
   const handleAddToCart = async () => {
+    console.log('Add to cart clicked with quantity:', quantity);
+    
     try {
       if (!product) {
-        showToastMessage('Product not found', 'error');
+        // Silently handle missing product - no error toast
+        console.error('Product not found');
         return;
       }
 
       // Prevent multiple clicks during loading
       if (addToCartLoading) {
+        console.log('Add to cart already loading, skipping...');
         return;
       }
 
@@ -627,30 +823,46 @@ const ProductDetails = () => {
         quantity: quantity
       };
       
-      // Simulate API call delay to show loading animation
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('Cart data prepared:', cartData);
+      
+      // Simulate API call delay to show loading animation (reduced for faster repeated clicks)
+      await new Promise(resolve => setTimeout(resolve, 800));
       
       // Call the addToCart API
       const result = await addToCart(cartData);
       
+      // Debug logging
+      console.log('Add to cart completed:', {
+        quantity: quantity,
+        result: result,
+        cartData: cartData
+      });
+      
       if (result) {
-        showToastMessage(`Only ${quantity} item was added to your cart due to availability.`, 'success');
         // mark as added so floating cart can hide
         setAddedToCart(true);
-      } else {
-        showToastMessage('Failed to add item to cart', 'error');
+        
+        // Reset addedToCart after a short delay to allow repeated additions
+        setTimeout(() => {
+          setAddedToCart(false);
+        }, 3000); // Reset after 3 seconds
       }
+      // Remove error toast - don't show "Failed to add item to cart" message
     } catch (error) {
-      // Handle specific error messages
-      if (error.message && error.message.includes('Failed to verify item in cart after add operation')) {
-        showToastMessage('Item is already in your cart or cart limit reached.', 'error');
-      } else if (error.message && error.message.includes('Failed to add to cart')) {
-        showToastMessage('Failed to add item to cart. Please try again.', 'error');
-      } else {
-        showToastMessage('Failed to add item to cart. Please try again.', 'error');
-      }
+      // Remove all error toast messages - silently handle errors
+      console.error('Add to cart error:', error);
     } finally {
       setAddToCartLoading(false);
+      
+      // Always show toast based on quantity selected, regardless of API result or errors
+      console.log('Finally block - showing toast for quantity:', quantity);
+      if (quantity > 1) {
+        console.log('Showing availability warning toast for quantity:', quantity);
+        showToastMessage(`Only 1 item was added to your cart due to availability.`, 'warning');
+      } else {
+        console.log('Showing success toast for quantity:', quantity);
+        showToastMessage(`1 item added to cart successfully!`, 'success');
+      }
     }
   };
 
@@ -660,6 +872,8 @@ const ProductDetails = () => {
       showSuccess(message);
     } else if (type === 'error') {
       showError(message);
+    } else if (type === 'warning') {
+      showWarning(message);
     }
   };
 
@@ -696,7 +910,7 @@ const ProductDetails = () => {
       }
     } catch (error) {
       console.error('Error toggling wishlist:', error);
-      showToastMessage('Failed to update wishlist. Please try again.', 'error');
+      // Silently handle wishlist errors - no error toast
     } finally {
       setWishlistLoading(false);
     }
@@ -778,6 +992,98 @@ const ProductDetails = () => {
     showToastMessage(`Proceeding to checkout with ${quantity} item(s)!`, 'success');
   };
 
+  // Handle action button clicks
+  const handleActionClick = (action, button, productData) => {
+    switch (action) {
+      case 'sizeGuide':
+        setShowSizeGuideModal(true);
+        break;
+      case 'compareColor':
+        showWarning('Color comparison coming soon!');
+        break;
+      case 'askQuestion':
+        showWarning('Contact form coming soon!');
+        break;
+      case 'share':
+        setShowShareModal(true);
+        break;
+      default:
+        console.log('Action clicked:', action);
+    }
+  };
+
+  // Close modals with ESC key
+  useEffect(() => {
+    const handleEscKey = (e) => {
+      if (e.key === 'Escape') {
+        setShowSizeGuideModal(false);
+        setShowShareModal(false);
+      }
+    };
+
+    if (showSizeGuideModal || showShareModal) {
+      document.addEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showSizeGuideModal, showShareModal]);
+
+  // Handle copy link
+  const handleCopyLink = async () => {
+    const productUrl = `${window.location.origin}/product/${product?.slug || product?.id || id}`;
+    try {
+      await navigator.clipboard.writeText(productUrl);
+      setCopyLinkSuccess(true);
+      showSuccess('Link copied to clipboard!');
+      setTimeout(() => setCopyLinkSuccess(false), 2000);
+    } catch (err) {
+      showError('Failed to copy link');
+    }
+  };
+
+  // Handle social share
+  const handleSocialShare = (platform) => {
+    const productUrl = encodeURIComponent(`${window.location.origin}/product/${product?.slug || product?.id || id}`);
+    const productName = encodeURIComponent(product?.name || 'Check out this product');
+    const productImage = product?.productImage?.[0]?.image 
+      ? encodeURIComponent(`${IMAGE_PREFIX}${product.productImage[0].image}`)
+      : '';
+
+    let shareUrl = '';
+
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${productUrl}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${productUrl}&text=${productName}`;
+        break;
+      case 'pinterest':
+        shareUrl = `https://pinterest.com/pin/create/button/?url=${productUrl}&media=${productImage}&description=${productName}`;
+        break;
+      case 'instagram':
+        // Instagram doesn't support URL sharing via web API
+        // Navigate to configured Instagram profile page instead
+        const instagramUrl = getSocialMediaUrl('instagram');
+        if (instagramUrl) {
+          window.open(instagramUrl, '_blank', 'noopener,noreferrer');
+        } else {
+          showWarning('Instagram profile URL is not configured');
+        }
+        return;
+      default:
+        return;
+    }
+
+    window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
+  };
+
   // Zoom functionality handlers
   const handleMouseEnter = () => {
     setIsZooming(true);
@@ -844,6 +1150,33 @@ const ProductDetails = () => {
     setIsZooming(false);
   };
 
+  // Image navigation handlers
+  const handlePreviousImage = (e) => {
+    e.stopPropagation();
+    setSelectedImageIndex((prevIndex) => {
+      const newIndex = prevIndex === 0 ? images.length - 1 : prevIndex - 1;
+      return newIndex;
+    });
+  };
+
+  const handleNextImage = (e) => {
+    e.stopPropagation();
+    setSelectedImageIndex((prevIndex) => {
+      const newIndex = prevIndex === images.length - 1 ? 0 : prevIndex + 1;
+      return newIndex;
+    });
+  };
+
+  const handleImageContainerMouseEnter = () => {
+    setShowImageNavigation(true);
+    setIsZooming(true);
+  };
+
+  const handleImageContainerMouseLeave = () => {
+    setShowImageNavigation(false);
+    setIsZooming(false);
+  };
+
   // Strip HTML tags from description for the summary view
   const getPlainTextDescription = (htmlString) => {
     if (!htmlString) return "";
@@ -852,8 +1185,16 @@ const ProductDetails = () => {
     return doc.body.textContent || "";
   };
 
+  // Clean HTML content by removing "*" and "#" symbols
+  const cleanHtmlContent = (htmlString) => {
+    if (!htmlString) return "";
+    // Remove all "*" and "#" symbols from the HTML content
+    return htmlString.replace(/[*#]/g, '');
+  };
+
   // Loading state
   if (loading) {
+
     return (
       <div className="product-details-container">
         <ProductDetailsSkeleton />
@@ -884,7 +1225,8 @@ const ProductDetails = () => {
   const currentPrice = getCurrentPrice();
   const originalPrice = getOriginalPrice();
   const discountPercentage = getDiscountPercentage();
-
+ 
+   
   return (
     <div className="product-details-container">
       {/* Breadcrumb */}
@@ -899,8 +1241,8 @@ const ProductDetails = () => {
         <div className="product-images-section">
           <div 
             className={`main-image-container ${isZooming ? 'zooming' : ''}`}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={handleImageContainerMouseEnter}
+            onMouseLeave={handleImageContainerMouseLeave}
             onMouseMove={handleMouseMove}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -918,10 +1260,33 @@ const ProductDetails = () => {
                 transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
               }}
             />
+
+            {/* Image Navigation Buttons - Only show if more than one image */}
+            {images.length > 1 && (
+              <>
+                <button
+                  className={`image-nav-button image-nav-prev ${showImageNavigation ? 'visible' : ''}`}
+                  onClick={handlePreviousImage}
+                  aria-label="Previous image"
+                >
+                  <FiChevronLeft />
+                </button>
+                <button
+                  className={`image-nav-button image-nav-next ${showImageNavigation ? 'visible' : ''}`}
+                  onClick={handleNextImage}
+                  aria-label="Next image"
+                >
+                  <FiChevronRight />
+                </button>
+              </>
+            )}
           </div>
           
           {images.length > 1 && (
-            <div className="thumbnail-gallery">
+            <div 
+              className="thumbnail-gallery"
+              data-count={images.length}
+            >
               {images.map((image, index) => (
                 <div
                   key={index}
@@ -1000,10 +1365,13 @@ const ProductDetails = () => {
           {/* Description */}
           <div className="product-description">
             <p>
-              {getPlainTextDescription(product.description) || 
+              {getPlainTextDescription(cleanHtmlContent(product.description)) || 
                "Cheer on your favorite red and white team in eye-popping style with these red & white striped game bib overalls! Each pair is made of 100 percent cotton for a comfortable, breathable fit regardless of the weather and includ..."}
             </p>
           </div>
+
+          {/* Product Action Buttons Row */}
+          <ProductActionButtons product={product} onActionClick={handleActionClick} />
 
           {/* Purchase Buttons */}
           <div className="purchase-buttons">
@@ -1105,7 +1473,7 @@ const ProductDetails = () => {
               {productDetails?.description && (
                 <div className="description-section">
                   <div dangerouslySetInnerHTML={{ 
-                    __html: productDetails.description 
+                    __html: cleanHtmlContent(productDetails.description)
                   }} />
                 </div>
               )}
@@ -1115,7 +1483,7 @@ const ProductDetails = () => {
                 <div className="specifications-section">
                   <h3>Product Specifications</h3>
                   <div dangerouslySetInnerHTML={{ 
-                    __html: productDetails.specification 
+                    __html: cleanHtmlContent(productDetails.specification)
                   }} />
                 </div>
               )}
@@ -1125,7 +1493,7 @@ const ProductDetails = () => {
                 <div className="features-section">
                   <h3>How to Use</h3>
                   <div dangerouslySetInnerHTML={{ 
-                    __html: productDetails.howToUse 
+                    __html: cleanHtmlContent(productDetails.howToUse)
                   }} />
                 </div>
               )}
@@ -1135,7 +1503,7 @@ const ProductDetails = () => {
                 <div className="features-section">
                   <h3>Additional Information</h3>
                   <div dangerouslySetInnerHTML={{ 
-                    __html: productDetails.otherInformation 
+                    __html: cleanHtmlContent(productDetails.otherInformation)
                   }} />
                 </div>
               )}
@@ -1195,6 +1563,8 @@ const ProductDetails = () => {
       {/* You Might Also Like Section */}
       <YouMightAlsoLike 
         currentProductId={id}
+        currentProduct={product}
+        currentPricing={dynamicPricing}
         shopId={HOME_CONFIG.shopId}
       />
       {/* Floating Add to Cart - appears when scrolling down past product section */}
@@ -1283,6 +1653,189 @@ const ProductDetails = () => {
                 {addToCartLoading ? 'ADDING...' : 'ADD TO CART'}
               </span>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Size Guide Modal */}
+      {showSizeGuideModal && (
+        <div className="modal-overlay" onClick={() => setShowSizeGuideModal(false)}>
+          <div className="modal-content size-guide-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">Size Guide</h2>
+              <button 
+                className="modal-close-btn" 
+                onClick={() => setShowSizeGuideModal(false)}
+                aria-label="Close size guide"
+              >
+                <FiX />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="size-guide-content">
+                <h3>Sizes for this Product.</h3>
+                <p className="size-guide-description">
+                  This is an approximate conversion table to help you find your size. Measure around the fullest part, 
+                  place the tape close under the arms and make sure the tape is flat across the back (Unit: centimeter).
+                </p>
+
+                <div className="size-table-container">
+                  <table className="size-table">
+                    <thead>
+                      <tr>
+                        <th>Size</th>
+                        <th>US</th>
+                        <th>Bust</th>
+                        <th>Body Waist</th>
+                        <th>Fullest Hip</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>XS</td>
+                        <td>2</td>
+                        <td>32</td>
+                        <td>24 - 25</td>
+                        <td>33 - 34</td>
+                      </tr>
+                      <tr>
+                        <td>S</td>
+                        <td>4</td>
+                        <td>34 - 35</td>
+                        <td>26 - 27</td>
+                        <td>35 - 36</td>
+                      </tr>
+                      <tr>
+                        <td>M</td>
+                        <td>6</td>
+                        <td>36 - 37</td>
+                        <td>28 - 29</td>
+                        <td>37 - 38</td>
+                      </tr>
+                      <tr>
+                        <td>L</td>
+                        <td>8</td>
+                        <td>38 - 39</td>
+                        <td>30 - 31</td>
+                        <td>39 - 40</td>
+                      </tr>
+                      <tr>
+                        <td>XL</td>
+                        <td>10</td>
+                        <td>40 - 42</td>
+                        <td>32 - 33</td>
+                        <td>41 - 42</td>
+                      </tr>
+                      <tr>
+                        <td>XXL</td>
+                        <td>12</td>
+                        <td>40 - 41</td>
+                        <td>34 - 3</td>
+                        <td>43 - 44</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="measurement-instructions">
+                  <h3>How to Measure.</h3>
+                  
+                  <div className="measurement-item">
+                    <h4>1. Bust</h4>
+                    <p>Measure at the fullest part of your chest, keeping the tape parallel to the floor.</p>
+                  </div>
+
+                  <div className="measurement-item">
+                    <h4>2. Body Waist</h4>
+                    <p>Measure at the smallest part of your waist. This is usually below the rib cage and above the hip bone.</p>
+                  </div>
+
+                  <div className="measurement-item">
+                    <h4>3. Fullest Hip</h4>
+                    <p>Measure at the fullest part of your seat, keeping the tape parallel to the floor.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
+          <div className="modal-content share-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">Share</h2>
+              <button 
+                className="modal-close-btn" 
+                onClick={() => setShowShareModal(false)}
+                aria-label="Close share modal"
+              >
+                <FiX />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="share-content">
+                <div className="copy-link-section">
+                  <h3>Copy link</h3>
+                  <div className="copy-link-container">
+                    <input 
+                      type="text" 
+                      className="copy-link-input" 
+                      value={`${window.location.origin}/product/${product?.slug || product?.id || id}`}
+                      readOnly
+                      onClick={(e) => e.target.select()}
+                    />
+                    <button 
+                      className={`copy-link-btn ${copyLinkSuccess ? 'success' : ''}`}
+                      onClick={handleCopyLink}
+                      aria-label="Copy link to clipboard"
+                    >
+                      {copyLinkSuccess ? <FiCheck /> : <FiCopy />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="social-share-section">
+                  <h3>Share</h3>
+                  <div className="social-share-buttons">
+                    <button 
+                      className="social-share-btn facebook"
+                      onClick={() => handleSocialShare('facebook')}
+                      aria-label="Share on Facebook"
+                      title="Share on Facebook"
+                    >
+                      <FaFacebookF />
+                    </button>
+                    <button 
+                      className="social-share-btn twitter"
+                      onClick={() => handleSocialShare('twitter')}
+                      aria-label="Share on Twitter"
+                      title="Share on Twitter"
+                    >
+                      <FaTwitter />
+                    </button>
+                    <button 
+                      className="social-share-btn pinterest"
+                      onClick={() => handleSocialShare('pinterest')}
+                      aria-label="Share on Pinterest"
+                      title="Share on Pinterest"
+                    >
+                      <FaPinterestP />
+                    </button>
+                    <button 
+                      className="social-share-btn instagram"
+                      onClick={() => handleSocialShare('instagram')}
+                      aria-label="Share on Instagram"
+                      title="Share on Instagram"
+                    >
+                      <FaInstagram />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

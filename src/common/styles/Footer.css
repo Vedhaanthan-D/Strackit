@@ -75,8 +75,8 @@
 /* Column Headings */
 .column-heading {
   color: #000;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 500;
   margin-bottom: 20px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -113,7 +113,7 @@
 .footer-links a {
   color: #888;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 14px;
   transition: color 0.3s;
   line-height: 1.8;
 }
@@ -184,8 +184,8 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  border: 1px solid #ddd;
-  color: #666;
+  border: 1px solid #000000;
+  color: #000000;
   transition: all 0.3s;
   font-size: 18px;
 }

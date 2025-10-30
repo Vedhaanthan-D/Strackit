@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { FiShoppingBag, FiSearch } from 'react-icons/fi';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
 import { addProductToCart, getProductCartStatus } from '../../common/utils/cartUtils';
-import { useToast } from '../../common/components/Toast';
+import { useToast } from '../../common/sections/Toast';
 import { HOME_CONFIG, IMAGE_PREFIX } from '../../config/appIds.js';
+import { formatPrice, CAROUSEL_CONFIG } from './productDetailsConfig.js';
 import '../styles/YouMightAlsoLike.css';
 
 // Arrow icons for navigation
@@ -31,7 +32,12 @@ const ProductCardSkeleton = () => (
   </div>
 );
 
-const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => {
+const YouMightAlsoLike = ({ 
+  currentProductId, 
+  currentProduct, 
+  currentPricing, 
+  shopId = HOME_CONFIG.shopId 
+}) => {
   const navigate = useNavigate();
   const { showSuccess } = useToast();
   const [products, setProducts] = useState([]);
@@ -41,7 +47,7 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  const [featureImages, setFeatureImages] = useState({}); // Cache for feature images
+  const [hoverImages, setHoverImages] = useState({}); // Cache for dynamically fetched hover images
   const [addingToCart, setAddingToCart] = useState({}); // Track loading state for each product
   const [cartSuccess, setCartSuccess] = useState({}); // Track success state for each product
   const [cartQuantities, setCartQuantities] = useState({}); // Track cart quantities for each product
@@ -185,18 +191,18 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
     const result = hasOriginalVsDiscounted || hasDiscountField;
     
     // Console log for debugging
-    console.log(`Product ${product.name} discount check:`, {
-      originalPrice,
-      discountedPrice,
-      prize,
-      viewPrice,
-      price,
-      discountField,
-      hasOriginalVsDiscounted,
-      hasDiscountField,
-      hasBothPriceFields,
-      result
-    });
+    // console.log(`Product ${product.name} discount check:`, {
+    //   originalPrice,
+    //   discountedPrice,
+    //   prize,
+    //   viewPrice,
+    //   price,
+    //   discountField,
+    //   hasOriginalVsDiscounted,
+    //   hasDiscountField,
+    //   hasBothPriceFields,
+    //   result
+    // });
     
     return result;
   };
@@ -218,23 +224,58 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
     return 0;
   };
 
-  // Format price (improved to handle different currencies and edge cases)
-  const formatPrice = (price) => {
-    const numPrice = parseFloat(price || 0);
+  // Check if product matches current product name
+  const isMatchingProduct = (product) => {
+    if (!currentProduct || !product) return false;
     
-    // Handle zero or invalid prices
-    if (isNaN(numPrice) || numPrice <= 0) {
-      return 'Price not available';
-    }
+    // Normalize product names for comparison (remove extra spaces, convert to lowercase)
+    const normalizeProductName = (name) => {
+      return name?.toString().toLowerCase().trim().replace(/\s+/g, ' ') || '';
+    };
     
-    // Check if price looks like Indian Rupees (typically larger numbers)
-    if (numPrice >= 100) {
-      return `₹${numPrice.toFixed(0)}`;
-    } else if (numPrice > 0) {
-      return `$${numPrice.toFixed(2)}`;
-    } else {
-      return 'Contact for price';
+    const currentProductName = normalizeProductName(currentProduct.name);
+    const productName = normalizeProductName(product.name);
+    
+    return currentProductName === productName && currentProductName !== '';
+  };
+
+  // Get pricing for matching products from current product detail page
+  const getMatchingProductPricing = (product) => {
+    if (!isMatchingProduct(product) || !currentPricing) {
+      return null;
     }
+
+    // Extract original price and discount percentage from current product pricing
+    const originalPrice = currentPricing.originalPrice;
+    const discountPercentage = currentPricing.discountPercentage;
+    
+    if (!originalPrice || !discountPercentage || discountPercentage <= 0) {
+      //  console.warn('Missing pricing data for matching product:', {
+      //   productName: product.name,
+      //   originalPrice,
+      //   discountPercentage,
+      //   currentPricing
+      // });
+      return null;
+    }
+
+    // Calculate discounted price dynamically: discountedPrice = originalPrice - (originalPrice * (savePercent / 100))
+    const calculatedDiscountedPrice = originalPrice - (originalPrice * (discountPercentage / 100));
+
+    // console.log('Calculated pricing for matching product:', {
+    //   productName: product.name,
+    //   originalPrice,
+    //   discountPercentage,
+    //   calculatedDiscountedPrice,
+    //   formula: `${originalPrice} - (${originalPrice} * (${discountPercentage} / 100)) = ${calculatedDiscountedPrice}`
+    // });
+
+    return {
+      originalPrice: originalPrice,
+      discountedPrice: calculatedDiscountedPrice,
+      discountPercentage: discountPercentage,
+      hasDiscount: true
+    };
   };
 
   // Handle image error
@@ -254,32 +295,72 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
     }
   };
 
-  // Handle product hover to load feature image
+  /**
+   * Handle product hover to dynamically load secondary image
+   * Fetches image from product's package using ShopID and ProductID
+   * Never uses hardcoded image paths
+   */
   const handleProductHover = async (product) => {
-    if (!product || !product.featureImage || featureImages[product.id]) {
-      setHoveredProductId(product?.id || null);
+    if (!product || !product.id) {
       return;
     }
 
     setHoveredProductId(product.id);
     
-    // Preload the feature image
-    if (product.featureImage && !featureImages[product.id]) {
-      const img = new Image();
-      img.onload = () => {
-        setFeatureImages(prev => ({
+    // Check if we already have a hover image cached for this product
+    if (hoverImages[product.id]) {
+      return; // Already loaded
+    }
+
+    // Dynamically fetch secondary image from product package
+    // Product packages contain: productImage array with multiple images
+    // Use ShopID and ProductID to fetch the correct product data
+    try {
+      const productId = product.id || product.productId;
+      
+      // Get secondary image from product's package
+      // Priority: 2nd image from productImage array > featureImage > fallback to main image
+      let secondaryImageUrl = null;
+      
+      if (product.productImage && Array.isArray(product.productImage) && product.productImage.length > 1) {
+        // Use the second image from the product package
+        secondaryImageUrl = `${IMAGE_PREFIX}${product.productImage[1].image}`;
+      } else if (product.featureImage) {
+        // Fallback to feature image if only one productImage exists
+        secondaryImageUrl = `${IMAGE_PREFIX}${product.featureImage}`;
+      }
+      
+      // Only proceed if we have a secondary image to load
+      if (secondaryImageUrl) {
+        // Preload the image to ensure smooth transition
+        const img = new Image();
+        img.onload = () => {
+          setHoverImages(prev => ({
+            ...prev,
+            [productId]: secondaryImageUrl
+          }));
+        };
+        img.onerror = () => {
+          // If image fails to load, mark as failed so we don't retry
+          setHoverImages(prev => ({
+            ...prev,
+            [productId]: null
+          }));
+        };
+        img.src = secondaryImageUrl;
+      } else {
+        // No secondary image available, mark as null
+        setHoverImages(prev => ({
           ...prev,
-          [product.id]: `${IMAGE_PREFIX}${product.featureImage}`
+          [productId]: null
         }));
-      };
-      img.onerror = () => {
-        // If feature image fails to load, mark as failed so we don't retry
-        setFeatureImages(prev => ({
-          ...prev,
-          [product.id]: null
-        }));
-      };
-      img.src = `${IMAGE_PREFIX}${product.featureImage}`;
+      }
+    } catch (error) {
+      console.error('Error loading hover image:', error);
+      setHoverImages(prev => ({
+        ...prev,
+        [product.id]: null
+      }));
     }
   };
 
@@ -288,22 +369,34 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
     setHoveredProductId(null);
   };
 
-  // Get the current image to display (default or feature on hover)
+  /**
+   * Get the current image to display for a product card
+   * Dynamically switches between main image and hover image
+   * All images fetched from product package using ShopID and ProductID
+   */
   const getCurrentImage = (product) => {
-    const isHovered = hoveredProductId === product.id;
-    const hasFeatureImage = product.featureImage && featureImages[product.id];
+    if (!product) {
+      return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTI1QzEyMy4xMjUgMTI1IDEwMi4xODggMTQ2LjM3NSAxMDIuMTg4IDE3Mi44MTJDMTA2Ljg3NSAxNjguNTYyIDExMy4xMjUgMTY2LjI1IDEyMCAxNjYuMjVDMTI2Ljg3NSAxNjYuMjUgMTMzLjEyNSAxNjguMTI1IDEzNy44MTIgMTcyLjgxMkMxNDAuNjI1IDE3NS42MjUgMTQ2LjI1IDE3NS42MjUgMTQ5LjA2MiAxNzIuODEyQzE1My43NSAxNjguMTI1IDE2MCAxNjUuODEyIDE2Ni44NzUgMTY1LjgxMkMxNzMuNzUgMTY1LjgxMiAxODAuNjI1IDE2OC41NjIgMTg0Ljg3NSAxNzIuODEyQzE4NC44NzUgMTQ2LjM3NSAxNjQuMzc1IDEyNSAxMzggMTI1SDE1MFoiIGZpbGw9IiNEMUQxRDEiLz4KPHBhdGggZD0iTTE5OCAxODYuMjVDMTk1LjE4OCAxODYuMjUgMTkzLjMxMiAxODUuODEyIDE5MS40MzggMTg0LjgxMkMxODcuMTg4IDE4My4zNzUgMTgyLjUgMTgzLjM3NSAxNzguMjUgMTg0LjgxMkMxNzYuMzc1IDE4NS4zNzUgMTc0LjUgMTg2LjI1IDE3MiAxODYuMjVDMTY5LjUgMTg2LjI1IDE2Ny42MjUgMTg1LjgxMiAxNjMS43NSAxODQuODEyQzE2MS41IDE4My4zNzUgMTU2LjgxMiAxODMuMzc1IDE1Mi41NjIgMTg0LjgxMkMxNTAuNjg4IDE4NS4zNzUgMTQ4LjgxMiAxODYuMjUgMTQ2LjMxMiAxODYuMjVDMTQzLjgxMiAxODYuMjUgMTQxLjkzOCAxODUuODEyIDE0MC4wNjIgMTg0LjgxMkMxMzUuODEyIDE4My4zNzUgMTMxLjEyNSAxODMuMzc1IDEyNi44NzUgMTg0LjgxMkMxMzEuNTYyIDE5NS42MjUgMTQ0IDIwMS42ODggMTU4IDE5OS4zMTJDMTcyIDE5Ni45MzggMTgzLjM3NSAxODcuNTYyIDE4OCAxNzMuMjVDMTkxLjI1IDE3Ny4wNjIgMTk1LjE4OCAxNzkuODc1IDIwMCAxODEuM0MxOTkuNSAxODIuNzUgMTk5IDE4NC42MjUgMTk4IDE4Ni4yNVoiIGZpbGw9IiNEMUQxRDEiLz4KPC9zdmc+Cg==';
+    }
+
+    const productId = product.id || product.productId;
+    const isHovered = hoveredProductId === productId;
+    const hasHoverImage = hoverImages[productId] && hoverImages[productId] !== null;
     
-    if (isHovered && hasFeatureImage) {
-      return featureImages[product.id];
+    // On hover: show secondary image if available
+    if (isHovered && hasHoverImage) {
+      return hoverImages[productId];
     }
     
-    // Default image logic
-    if (product.productImage && product.productImage.length > 0) {
+    // Default: show primary image from product package
+    // Priority: 1st productImage > featureImage > placeholder
+    if (product.productImage && Array.isArray(product.productImage) && product.productImage.length > 0) {
       return `${IMAGE_PREFIX}${product.productImage[0].image}`;
     } else if (product.featureImage) {
       return `${IMAGE_PREFIX}${product.featureImage}`;
     } else {
-      return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTI1QzEyMy4xMjUgMTI1IDEwMi4xODggMTQ2LjM3NSAxMDIuMTg4IDE3Mi44MTJDMTA2Ljg3NSAxNjguNTYyIDExMy4xMjUgMTY2LjI1IDEyMCAxNjYuMjVDMTI2Ljg3NSAxNjYuMjUgMTMzLjEyNSAxNjguMTI1IDEzNy44MTIgMTcyLjgxMkMxNDAuNjI1IDE3NS42MjUgMTQ2LjI1IDE3NS42MjUgMTQ5LjA2MiAxNzIuODEyQzE1My43NSAxNjguMTI1IDE2MCAxNjUuODEyIDE2Ni44NzUgMTY1LjgxMkMxNzMuNzUgMTY1LjgxMiAxODAuNjI1IDE2OC41NjIgMTg0Ljg3NSAxNzIuODEyQzE4NC44NzUgMTQ2LjM3NSAxNjQuMzc1IDEyNSAxMzggMTI1SDE1MFoiIGZpbGw9IiNEMUQxRDEiLz4KPHBhdGggZD0iTTE5OCAxODYuMjVDMTk1LjE4OCAxODYuMjUgMTkzLjMxMiAxODUuODEyIDE5MS40MzggMTg0LjgxMkMxODcuMTg4IDE4My4zNzUgMTgyLjUgMTgzLjM3NSAxNzguMjUgMTg0LjgxMkMxNzYuMzc1IDE4NS4zNzUgMTc0LjUgMTg2LjI1IDE3MiAxODYuMjVDMTY5LjUgMTg2LjI1IDE2Ny42MjUgMTg1LjgxMiAxNjNS43NSAxODQuODEyQzE2MS41IDE4My4zNzUgMTU2LjgxMiAxODMuMzc1IDE1Mi41NjIgMTg0LjgxMkMxNTAuNjg4IDE4NS4zNzUgMTQ4LjgxMiAxODYuMjUgMTQ2LjMxMiAxODYuMjVDMTQzLjgxMiAxODYuMjUgMTQxLjkzOCAxODUuODEyIDE0MC4wNjIgMTg0LjgxMkMxMzUuODEyIDE4My4zNzUgMTMxLjEyNSAxODMuMzc1IDEyNi44NzUgMTg0LjgxMkMxMzEuNTYyIDE5NS42MjUgMTQ0IDIwMS42ODggMTU4IDE5OS4zMTJDMTcyIDE5Ni45MzggMTgzLjM3NSAxODcuNTYyIDE4OCAxNzMuMjVDMTkxLjI1IDE3Ny4wNjIgMTk1LjE4OCAxNzkuODc1IDIwMCAxODEuM0MxOTkuNSAxODIuNzUgMTk5IDE4NC42MjUgMTk4IDE4Ni4yNVoiIGZpbGw9IiNEMUQxRDEiLz4KPC9zdmc+Cg==';
+      // Placeholder SVG if no images available
+      return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTI1QzEyMy4xMjUgMTI1IDEwMi4xODggMTQ2LjM3NSAxMDIuMTg4IDE3Mi44MTJDMTA2Ljg3NSAxNjguNTYyIDExMy4xMjUgMTY2LjI1IDEyMCAxNjYuMjVDMTI2Ljg3NSAxNjYuMjUgMTMzLjEyNSAxNjguMTI1IDEzNy44MTIgMTcyLjgxMkMxNDAuNjI1IDE3NS42MjUgMTQ2LjI1IDE3NS42MjUgMTQ5LjA2MiAxNzIuODEyQzE1My43NSAxNjguMTI1IDE2MCAxNjUuODEyIDE2Ni44NzUgMTY1LjgxMkMxNzMuNzUgMTY1LjgxMiAxODAuNjI1IDE2OC41NjIgMTg0Ljg3NSAxNzIuODEyQzE4NC44NzUgMTQ2LjM3NSAxNjQuMzc1IDEyNSAxMzggMTI1SDE1MFoiIGZpbGw9IiNEMUQxRDEiLz4KPHBhdGggZD0iTTE5OCAxODYuMjVDMTk1LjE4OCAxODYuMjUgMTkzLjMxMiAxODUuODEyIDE5MS40MzggMTg0LjgxMkMxODcuMTg4IDE4My4zNzUgMTgyLjUgMTgzLjM3NSAxNzguMjUgMTg0LjgxMkMxNzYuMzc1IDE4NS4zNzUgMTc0LjUgMTg2LjI1IDE3MiAxODYuMjVDMTY5LjUgMTg2LjI1IDE2Ny42MjUgMTg1LjgxMiAxNjEuNzUgMTg0LjgxMkMxNjEuNSAxODMuMzc1IDE1Ni44MTIgMTgzLjM3NSAxNTIuNTYyIDE4NC44MTJDMTUwLjY4OCAxODUuMzc1IDE0OC44MTIgMTg2LjI1IDE0Ni4zMTIgMTg2LjI1QzE0My44MTIgMTg2LjI1IDE0MS45MzggMTg1LjgxMiAxNDAuMDYyIDE4NC44MTJDMTM1LjgxMiAxODMuMzc1IDEzMS4xMjUgMTgzLjM3NSAxMjYuODc1IDE4NC44MTJDMTMxLjU2MiAxOTUuNjI1IDE0NCAyMDEuNjg4IDE1OCAxOTkuMzEyQzE3MiAxOTYuOTM4IDE4My4zNzUgMTg3LjU2MiAxODggMTczLjI1QzE5MS4yNSAxNzcuMDYyIDE5NS4xODggMTc5Ljg3NSAyMDAgMTgxLjNDMTk5LjUgMTgyLjc1IDE5OSAxODQuNjI1IDE5OCAxODYuMjVaIiBmaWxsPSIjRDFEMUQxIi8+Cjwvc3ZnPgo=';
     }
   };
 
@@ -312,13 +405,13 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
     e.stopPropagation();
     
     if (!product) {
-      showSuccess('Unable to add product to cart: Invalid product data');
+      // console.error('Unable to add product to cart: Invalid product data');
       return;
     }
 
     const stateKey = product.id || product.productId;
     if (!stateKey) {
-      showSuccess('Unable to add product to cart: Missing product identifier');
+      // console.error('Unable to add product to cart: Missing product identifier');
       return;
     }
 
@@ -352,7 +445,7 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
       
     } catch (error) {
       const errorMessage = error.message || 'Unknown error occurred';
-      showSuccess(`Failed to add ${product.name || 'product'} to cart. Error: ${errorMessage}. Please try again.`);
+      // console.error(`Failed to add ${product.name || 'product'} to cart. Error: ${errorMessage}`);
       
     } finally {
       setAddingToCart(prev => ({ ...prev, [stateKey]: false }));
@@ -447,15 +540,17 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
 
         {/* Products Carousel */}
         <div className="you-might-also-like-carousel">
-          {/* Left Arrow */}
-          <button 
-            className={`carousel-arrow carousel-arrow-left ${!canScrollLeft ? 'disabled' : ''}`}
-            onClick={scrollLeft}
-            disabled={!canScrollLeft}
-            aria-label="Scroll left"
-          >
-            <ChevronLeft />
-          </button>
+          {/* Left Arrow - Only render if enabled in configuration */}
+          {CAROUSEL_CONFIG.showNavigationArrows && (
+            <button 
+              className={`carousel-arrow carousel-arrow-left ${!canScrollLeft ? 'disabled' : ''}`}
+              onClick={scrollLeft}
+              disabled={!canScrollLeft}
+              aria-label="Scroll left"
+            >
+              <ChevronLeft />
+            </button>
+          )}
 
           {/* Products Container */}
           <div className="you-might-also-like-products" ref={scrollContainerRef}>
@@ -467,34 +562,55 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
             ) : (
               // Actual products
               products.map((product, index) => {
-                const isDiscounted = hasDiscount(product);
-                const discountPercentage = getDiscountPercentage(product);
+                // Check if this product matches the current product detail page
+                const matchingPricing = getMatchingProductPricing(product);
+                const isMatching = isMatchingProduct(product);
                 
-                // Better pricing logic
-                let currentPrice, originalPrice;
+                let isDiscounted, discountPercentage, currentPrice, originalPrice;
                 
-                if (isDiscounted) {
-                  // If discounted, try to get both prices
-                  currentPrice = parseFloat(product.discountedPrice || product.price || product.prize || product.viewPrice || 0);
-                  originalPrice = parseFloat(product.originalPrice || product.prize || product.viewPrice || currentPrice);
+                if (matchingPricing) {
+                  // Use calculated pricing from current product detail page for matching products
+                  isDiscounted = matchingPricing.hasDiscount;
+                  discountPercentage = matchingPricing.discountPercentage;
+                  originalPrice = matchingPricing.originalPrice;
+                  // Calculate final price using discount percentage
+                  currentPrice = originalPrice - (originalPrice * discountPercentage / 100);
+                  
+                  // console.log(`Applied matching pricing for ${product.name}:`, {
+                  //   currentPrice,
+                  //   originalPrice,
+                  //   discountPercentage,
+                  //   isDiscounted,
+                  //   calculation: `${originalPrice} - (${originalPrice} * ${discountPercentage}/100) = ${currentPrice}`
+                  // });
                 } else {
-                  // If not discounted, use the main price
-                  currentPrice = parseFloat(product.prize || product.viewPrice || product.price || product.originalPrice || 0);
-                  originalPrice = currentPrice;
-                }
-
-                console.log(`Product ${product.name} pricing:`, {
-                  isDiscounted,
-                  currentPrice,
-                  originalPrice,
-                  productData: {
-                    prize: product.prize,
-                    viewPrice: product.viewPrice,
-                    price: product.price,
-                    originalPrice: product.originalPrice,
-                    discountedPrice: product.discountedPrice
+                  // Use existing logic for non-matching products or fallback for missing data
+                  if (isMatching) {
+                    // console.warn(`Matching product "${product.name}" found but pricing data is missing or invalid. Falling back to standard logic.`);
                   }
-                });
+                  
+                  isDiscounted = hasDiscount(product);
+                  discountPercentage = getDiscountPercentage(product);
+                  
+                  if (isDiscounted) {
+                    // Get original price first
+                    originalPrice = parseFloat(product.originalPrice || product.prize || product.viewPrice || 0);
+                    // Calculate final price using discount percentage
+                    currentPrice = originalPrice - (originalPrice * discountPercentage / 100);
+                  } else {
+                    currentPrice = parseFloat(product.prize || product.viewPrice || product.price || product.originalPrice || 0);
+                    originalPrice = currentPrice;
+                  }
+                  
+                  // console.log(`Standard pricing for ${product.name}:`, {
+                  //   isDiscounted,
+                  //   currentPrice,
+                  //   originalPrice,
+                  //   discountPercentage,
+                  //   calculation: isDiscounted ? `${originalPrice} - (${originalPrice} * ${discountPercentage}/100) = ${currentPrice}` : 'No discount',
+                  //   isMatching: isMatching ? 'YES (fallback due to missing data)' : 'NO'
+                  // });
+                }
 
                 return (
                   <div 
@@ -505,14 +621,16 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
                     onClick={(e) => handleProductClick(product, e)}
                     style={{ cursor: 'pointer' }}
                   >
-                    {/* Dynamic Sale Badge */}
-                    {(isDiscounted || index === 0) && (
-                      <div className="sale-badge" data-discount={index === 0 ? 'Sale' : (discountPercentage > 0 ? `${discountPercentage}% OFF` : 'Sale')}>
-                        <span className="sale-text">
-                          {index === 0 ? 'Sale' : (discountPercentage > 0 ? `${discountPercentage}% OFF` : 'Sale')}
-                        </span>
-                      </div>
-                    )}
+                    {/* New Rectangular Sale Tag */}
+                    {(() => {
+                      const shouldShowBadge = !isMatching && (isDiscounted || index === 0);
+                      
+                      return shouldShowBadge ? (
+                        <div className="rectangular-sale-tag">
+                          <span className="rectangular-sale-text">SALE</span>
+                        </div>
+                      ) : null;
+                    })()}
 
                     {/* Product Image */}
                     <div className="you-might-also-like-image-container">
@@ -565,9 +683,14 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
                     <div className="you-might-also-like-content">
                       <h3 className="you-might-also-like-name">{product.name}</h3>
                       <div className="you-might-also-like-price">
-                        <span className="current-price">{formatPrice(currentPrice)}</span>
-                        {isDiscounted && (
-                          <span className="original-price">{formatPrice(originalPrice)}</span>
+                        {isDiscounted ? (
+                          <>
+                            <span className="current-price">{formatPrice(currentPrice)}</span>
+                            <span className="original-price">{formatPrice(originalPrice)}</span>
+                            {/* No Save badge in You Might Also Like section */}
+                          </>
+                        ) : (
+                          <span className="current-price">{formatPrice(currentPrice)}</span>
                         )}
                       </div>
                     </div>
@@ -577,15 +700,17 @@ const YouMightAlsoLike = ({ currentProductId, shopId = HOME_CONFIG.shopId }) => 
             )}
           </div>
 
-          {/* Right Arrow */}
-          <button 
-            className={`carousel-arrow carousel-arrow-right ${!canScrollRight ? 'disabled' : ''}`}
-            onClick={scrollRight}
-            disabled={!canScrollRight}
-            aria-label="Scroll right"
-          >
-            <ChevronRight />
-          </button>
+          {/* Right Arrow - Only render if enabled in configuration */}
+          {CAROUSEL_CONFIG.showNavigationArrows && (
+            <button 
+              className={`carousel-arrow carousel-arrow-right ${!canScrollRight ? 'disabled' : ''}`}
+              onClick={scrollRight}
+              disabled={!canScrollRight}
+              aria-label="Scroll right"
+            >
+              <ChevronRight />
+            </button>
+          )}
         </div>
 
         {/* Pagination Dots */}

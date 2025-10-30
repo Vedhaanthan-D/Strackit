@@ -239,9 +239,10 @@ const ViewCart = () => {
                 <div className="progress-bar">
                   <div 
                     className="progress-fill" 
-                    style={{ width: `${freeShippingProgress}%` }}
+                    style={{ width: `${freeShippingProgress}%`  , backgroundColor:"black"}}
                   ></div>
-                  <div className="progress-icon">
+                  <div className="progress-icon"
+                style={{backgroundColor:"black" }}>
                     ★
                   </div>
                 </div>

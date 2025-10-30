@@ -79,9 +79,8 @@
 
 .categoryBannerTitle {
   font-size: 3.5rem;
-  font-weight: 700;
+  font-weight: 500;
   margin: 20px 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
   letter-spacing: 1px;
   text-align: center;
   width: 100%;
@@ -92,54 +91,45 @@
 .categoryBannerThumbnailsSection {
   position: relative;
   width: 100%;
-  max-width: 1200px;
+  max-width: 2000px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
   padding-bottom: 20px;
+  gap: 15px;
 }
 
 .categoryBannerThumbnailsRow {
-  display: flex;
-  gap: 25px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: 10px 60px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  justify-content: flex-start;
-  align-items: center;
-  min-width: fit-content;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  flex: 1;
+  max-width: 340px; /* Show exactly 2 items: 2 * (120px + 60px gap) = 360px, reduced to 340px for better fit */
 }
 
-.categoryBannerThumbnailsRow::-webkit-scrollbar {
-  display: none;
+.categoryBannerThumbnailsList {
+  display: flex;
+  gap: 20px;
+  padding: 10px 0px;
+  align-items: center;
+  will-change: transform;
+  justify-content: flex-start;
 }
 
 .categoryBannerThumbnail {
-  min-width: 120px;
+  /* min-width: 120px;
+  max-width: 120px; */
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin: 0 5px;
   flex-shrink: 0;
 }
 
-.categoryBannerThumbnail:hover {
-  transform: translateY(-8px);
-}
-
-.categoryBannerThumbnail:hover .categoryThumbnailImage {
-  /* box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); */
-  transform: scale(1.05);
-}
-
-.categoryBannerThumbnail:hover .categoryThumbnailName {
-  /* background: rgba(0, 0, 0, 0.5); */
-  transform: scale(1.02);
+.categoryBannerThumbnail:hover .categoryThumbnailImage img {
+  transform: scale(1.15);
 }
 
 .categoryThumbnailImage {
@@ -167,9 +157,9 @@
 
 .categoryThumbnailName {
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 500;
   text-align: center;
-  color: white;
+  color: white; 
   /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); */
   line-height: 1.2;
   /* background: rgba(0, 0, 0, 0.4); */
@@ -177,7 +167,7 @@
   border-radius: 15px;
   /* backdrop-filter: blur(5px); */
   min-width: 80px;
-  /* transition: all 0.3s ease; */
+  transition: color 0.3s ease;
   max-width: 100px;
   white-space: nowrap;
   overflow: hidden;
@@ -199,18 +189,14 @@
   cursor: pointer;
   z-index: 10;
   transition: all 0.3s ease;
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */
-  visibility: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   opacity: 0;
-
+  visibility: hidden;
+  pointer-events: auto;
 }
 .categoryBannerThumbnailsSection:hover .categoryThumbnailArrow {
   opacity: 1;
   visibility: visible;
-}
-.categoryThumbnailArrow:hover {
-  background: white;
-  transform: translateY(-50%) scale(1.1);
 }
 
 .categoryThumbnailArrow svg {
@@ -219,11 +205,11 @@
 }
 
 .categoryLeftArrow {
-  left: 10px;
+  left: -50px;
 }
 
 .categoryRightArrow {
-  right: 10px;
+  right: -50px;
 }
 
 /* Category Cards Grid (Below Banner) */
@@ -366,27 +352,27 @@
 }
 
 /* Selected secondary category styles */
-.categoryBannerThumbnail.selected {
-  transform: scale(1.15);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: selectedPulse 2s ease-in-out;
-}
+/* .categoryBannerThumbnail.selected {
+  /* transform: scale(1.15); */
+  /* transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); */
+  /* animation: selectedPulse 2s ease-in-out; */
+/* } */
 
-.categoryBannerThumbnail.selected .categoryThumbnailImage {
+/* .categoryBannerThumbnail.selected .categoryThumbnailImage { */
   /* border: 5px solid #fff; */
   /* box-shadow: 0 8px 30px rgba(255, 255, 255, 0.6), 0 0 0 2px #333; */
   /* background: rgba(255, 255, 255, 1); */
-  transition: all 0.3s ease;
-}
+  /* transition: all 0.3s ease; */
+/* } */
 
-.categoryBannerThumbnail.selected .categoryThumbnailName {
-  font-weight: 800;
+/* .categoryBannerThumbnail.selected .categoryThumbnailName { */
+  /* font-weight: 800; */
   /* background: #333; */
   /* color: white; */
   /* text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8); */
-  transform: scale(1.05);
+  /* transform: scale(1.05); */
   /* transition: all 0.3s ease; */
-}
+/* } */
 
 /* Animation for newly selected subcategory */
 @keyframes selectedPulse {
