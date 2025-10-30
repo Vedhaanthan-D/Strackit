@@ -1,0 +1,278 @@
+/* YouMayAlsoLike.css - Exact styling matching the cart sidebar layout */
+
+/* Import Jost font */
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
+
+.you-may-also-like-container {
+  width: 100%;
+  padding: 20px 28px;
+  background: #ffffff;
+  font-family: 'Jost', sans-serif;
+}
+
+/* Header Section */
+.ymal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ymal-title {
+  font-family: 'Jost', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.ymal-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.ymal-nav-btn {
+  width: 28px;
+  height: 28px;
+  background: #ffffff;
+  border: 1px solid #D1D5DB;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #6B7280;
+}
+
+.ymal-nav-btn:hover {
+  background-color: #F9FAFB;
+  border-color: #9CA3AF;
+  color: #374151;
+}
+
+/* Carousel Section */
+.ymal-carousel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  margin-bottom: 20px;
+  padding-bottom: 4px;
+}
+
+.ymal-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.ymal-item {
+  min-width: 140px;
+  flex-shrink: 0;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.ymal-image {
+  width: 100%;
+  height: 100px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  background: #F9FAFB;
+  border: 1px solid #F3F4F6;
+}
+
+.ymal-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ymal-details {
+  text-align: left;
+  flex: 1;
+}
+
+.ymal-name {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+
+.ymal-price {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ymal-current-price {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #DC2626;
+}
+
+.ymal-original-price {
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: #9CA3AF;
+  text-decoration: line-through;
+}
+
+.ymal-add-btn {
+  background: none;
+  border: none;
+  color: #6B7280;
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.ymal-add-btn:hover {
+  color: #374151;
+}
+
+/* Action Buttons Section */
+.ymal-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.ymal-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 6px;
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #6B7280;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.ymal-action-btn:hover {
+  background-color: #F9FAFB;
+  border-color: #D1D5DB;
+  color: #374151;
+}
+
+.ymal-action-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Total Section */
+.ymal-total {
+  margin-top: 12px;
+}
+
+.ymal-total-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.ymal-total-label {
+  font-family: 'Jost', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.ymal-total-amount {
+  font-family: 'Jost', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.ymal-tax-note {
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  color: #6B7280;
+  margin: 0;
+  text-align: left;
+  line-height: 1.4;
+}
+
+.ymal-shipping-link {
+  color: #3B82F6;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.ymal-shipping-link:hover {
+  color: #2563EB;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .you-may-also-like-container {
+    padding: 16px 20px;
+  }
+
+  .ymal-item {
+    min-width: 120px;
+  }
+
+  .ymal-image {
+    height: 90px;
+  }
+
+  .ymal-actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ymal-action-btn {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .ymal-total-amount {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .ymal-item {
+    min-width: 110px;
+  }
+
+  .ymal-image {
+    height: 80px;
+  }
+
+  .ymal-nav {
+    gap: 2px;
+  }
+
+  .ymal-nav-btn {
+    width: 24px;
+    height: 24px;
+  }
+}

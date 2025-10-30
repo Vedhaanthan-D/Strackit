@@ -1,0 +1,215 @@
+/* Toast Component Styles */
+
+.toast-container {
+  position: fixed !important;
+  /* default top fallback; overridden by inline style from provider when available */
+  top: var(--toast-top, 80px) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 99999 !important; /* Very high z-index to appear above logo and all elements */
+  transition: all 0.3s ease-in-out;
+  width: auto !important;
+  max-width: 90vw !important;
+}
+
+.toast-show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast-hide {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-20px);
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: 'Jost', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  min-width: 350px;
+  max-width: 550px;
+  position: relative;
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Larger toast for product detail pages to cover logo completely */
+.product-detail-toast .toast {
+  min-width: 400px;
+  max-width: 500px;
+  padding: 20px 30px;
+  font-size: 16px;
+  height: auto;
+  min-height: 60px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast-success {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.toast-warning {
+  background-color: #dc3545;
+  color: #ffffff;
+  border: 1px solid #dc3545;
+  font-weight: 500;
+}
+
+.toast-warning .toast-close {
+  color: #ffffff;
+  opacity: 0.8;
+}
+
+.toast-warning .toast-close:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.toast-error {
+  background-color: #dc3545;
+  color: #ffffff;
+  border: 1px solid #dc3545;
+}
+
+.toast-info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.toast-message {
+  flex: 1;
+  line-height: 1.4;
+}
+
+/* Enhanced message styling for product detail page */
+.product-detail-toast .toast-message {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.3;
+  padding: 4px 0;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  min-width: 24px;
+  min-height: 24px;
+}
+
+/* Enhanced close button for product detail page */
+.product-detail-toast .toast-close {
+  min-width: 26px;
+  min-height: 26px;
+  padding: 5px;
+  font-size: 16px;
+}
+
+.toast-close:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Product Detail Page Toast - Position over logo */
+.product-detail-toast {
+  top: 5px !important; /* Fixed position over logo area */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  position: fixed !important;
+  z-index: 99999 !important;
+  width: auto !important;
+  max-width: 500px !important; /* Limit width to avoid header buttons */
+}
+
+.product-detail-toast.toast-show {
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(0) !important;
+}
+
+.product-detail-toast.toast-hide {
+  opacity: 0 !important;
+  transform: translateX(-50%) translateY(-20px) !important;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .toast-container {
+    left: 10px !important;
+    right: 10px !important;
+    transform: none !important;
+    /* make sure top offset is respected on narrow screens as well */
+    top: var(--toast-top, 80px) !important;
+  }
+  
+  .product-detail-toast {
+    left: 10px !important;
+    right: 10px !important;
+    transform: none !important;
+    top: 5px !important; /* Close to top on mobile for product detail pages */
+    max-width: none !important; /* Allow full width on mobile */
+  }
+  
+  .product-detail-toast .toast {
+    min-width: auto !important;
+    width: 100% !important;
+    padding: 16px 20px !important;
+    font-size: 15px !important;
+    min-height: 50px !important;
+  }
+  
+  .toast-show {
+    transform: translateY(0);
+  }
+  
+  .toast-hide {
+    transform: translateY(-20px);
+  }
+  
+  .product-detail-toast.toast-show {
+    transform: translateY(0) !important;
+  }
+  
+  .product-detail-toast.toast-hide {
+    transform: translateY(-20px) !important;
+  }
+  
+  .toast {
+    min-width: auto;
+    width: 100%;
+  }
+}
