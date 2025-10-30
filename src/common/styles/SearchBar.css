@@ -47,6 +47,7 @@
   height: 40px;
   width: auto;
   object-fit: contain;
+  margin-left: 100px;
 }
 
 /* Search Input Section */
@@ -68,28 +69,21 @@
   align-items: center;
 }
 
-.search-input-icon {
-  position: absolute;
-  left: 20px;
-  color: #999;
-  z-index: 1;
-  pointer-events: none;
-}
-
 .search-input {
-  width: 100%;
-  height: 56px;
-  padding: 0 60px 0 60px;
-  border: 2px solid #f0f0f0;
-  border-radius: 28px;
+  width: 665px;
+  height: 40px;
+  padding: 0 20px;
+  border: 1.5px solid #c1c1c1;
+  /* border-radius: 28px; */
   font-family: 'Jost', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #000;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
   outline: none;
   transition: all 0.3s ease;
   letter-spacing: 0.3px;
+  border-radius: 8px;
 }
 
 .search-input::placeholder {
@@ -98,9 +92,9 @@
 }
 
 .search-input:focus {
-  border-color: #b17653;
+  border-color: #f0f0f0;
   background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(177, 118, 83, 0.1);
+  box-shadow: none;
 }
 
 .search-loading {
@@ -155,7 +149,7 @@
 }
 
 .search-bar__icon-button:hover {
-  background-color: #f8f8f8;
+  background-color: transparent;
   transform: scale(1.05);
 }
 
@@ -163,28 +157,32 @@
   background: none;
   border: none;
   font-size: 20px;
-  color: #000;
+  color: #4b4b4b;
   cursor: pointer;
   border-radius: 50%;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  margin-left: 8px;
+  width: 30px;
+  height: 30px;
+  margin-left: 80px;
+  margin-top: -38px;
+  margin-right: -65px;
+
 }
 
 .search-bar__close-button:hover {
-  background-color: #f8f8f8;
-  transform: scale(1.05);
+  background-color: #000;
+  color: #fff;
+  transform: rotate(90deg) scale(1.05);
 }
 
 /* Cart Badge */
 .search-bar__cart-badge {
   position: absolute;
   bottom: -1px;
-  right: 10px;
+  right: 2px;
   background-color: #b17653;
   color: #fff;
   font-size: 11px;
@@ -198,6 +196,60 @@
   justify-content: center;
   line-height: 1;
   z-index: 1;
+}
+
+/* Tooltip Styles for Search Bar */
+.search-bar__icon-wrapper .tooltip {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #000;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Jost', sans-serif;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  transform: translateX(-50%) translateY(5px);
+  z-index: 1000;
+}
+
+.search-bar__icon-wrapper .tooltip::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #000;
+}
+
+.search-bar__icon-wrapper:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltipText {
+  display: block;
+}
+
+.tooltipArrow {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #000;
 }
 
 /* Search Results Dropdown */
@@ -410,8 +462,8 @@
   }
   
   .search-input {
-    font-size: 18px;
-    height: 60px;
+    font-size: 14px;
+    height: 40px;
   }
   
   .search-results__container {
@@ -428,7 +480,7 @@
   }
   
   .search-input {
-    font-size: 16px;
+    font-size: 13px;
     height: 54px;
   }
   
@@ -450,13 +502,9 @@
   }
   
   .search-input {
-    font-size: 15px;
+    font-size: 13px;
     height: 50px;
-    padding: 0 55px 0 55px;
-  }
-  
-  .search-input-icon {
-    left: 18px;
+    padding: 0 20px;
   }
   
   .search-results__container {
@@ -487,13 +535,9 @@
   }
   
   .search-input {
-    font-size: 15px;
+    font-size: 12px;
     height: 48px;
-    padding: 0 50px 0 50px;
-  }
-  
-  .search-input-icon {
-    left: 16px;
+    padding: 0 20px;
   }
   
   .search-loading {
@@ -542,13 +586,9 @@
   }
   
   .search-input {
-    font-size: 14px;
+    font-size: 12px;
     height: 44px;
-    padding: 0 45px 0 45px;
-  }
-  
-  .search-input-icon {
-    left: 14px;
+    padding: 0 20px;
   }
   
   .search-loading {

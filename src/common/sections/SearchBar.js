@@ -39,25 +39,9 @@ const SearchBar = ({
   }, [isSearchOpen]);
 
   // Handle search input changes
-  const handleSearchChange = async (e) => {
+  const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-
-    if (query.trim()) {
-      setIsSearching(true);
-      try {
-        const results = await searchProducts(query, 6); // Limit to 6 results for dropdown
-        setSearchResults(results);
-      } catch (error) {
-        console.warn('Search failed:', error);
-        setSearchResults([]);
-      } finally {
-        setIsSearching(false);
-      }
-    } else {
-      setSearchResults([]);
-      setIsSearching(false);
-    }
   };
 
   // Handle search form submission
@@ -120,11 +104,10 @@ const SearchBar = ({
             <div className="search-bar__input-container">
               <form onSubmit={handleSearchSubmit} className="search-form">
                 <div className="search-input-wrapper">
-                  <FiSearch className="search-input-icon" size={24} />
                   <input
                     ref={searchInputRef}
                     type="text"
-                    placeholder="Search for products..."
+                    placeholder="Search..."
                     value={searchQuery}
                     onChange={handleSearchChange}
                     className="search-input"
@@ -150,6 +133,10 @@ const SearchBar = ({
                 >
                   <FiUser size={22} />
                 </Link>
+                <div className="tooltip">
+                  <span className="tooltipText">Login</span>
+                  <div className="tooltipArrow"></div>
+                </div>
               </div>
 
               <div className="search-bar__icon-wrapper">
@@ -168,6 +155,10 @@ const SearchBar = ({
                     </span>
                   )}
                 </button>
+                <div className="tooltip">
+                  <span className="tooltipText">Cart</span>
+                  <div className="tooltipArrow"></div>
+                </div>
               </div>
 
               <div className="search-bar__icon-wrapper">
@@ -182,69 +173,7 @@ const SearchBar = ({
             </div>
           </div>
 
-          {/* Search Results Dropdown */}
-          {(searchQuery.trim() && (searchResults.length > 0 || isSearching)) && (
-            <div className="search-results">
-              <div className="search-results__container">
-                {isSearching ? (
-                  <div className="search-results__loading">
-                    <div className="search-spinner"></div>
-                    <span>Searching...</span>
-                  </div>
-                ) : (
-                  <>
-                    {searchResults.length > 0 ? (
-                      <>
-                        <div className="search-results__header">
-                          <span>Search Results ({searchResults.length})</span>
-                        </div>
-                        <div className="search-results__list">
-                          {searchResults.map((result) => (
-                            <Link 
-                              key={result.id} 
-                              to={`/product/${result.id}`}
-                              className="search-result-item"
-                              onClick={handleClose}
-                            >
-                              <div className="search-result-item__image">
-                                {result.image ? (
-                                  <img src={result.image} alt={result.title} />
-                                ) : (
-                                  <div className="search-result-item__placeholder">
-                                    <FiSearch size={20} />
-                                  </div>
-                                )}
-                              </div>
-                              <div className="search-result-item__content">
-                                <h4 className="search-result-item__title">{result.title}</h4>
-                                <span className="search-result-item__category">{result.category}</span>
-                                {result.price && (
-                                  <span className="search-result-item__price">${result.price}</span>
-                                )}
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                        <div className="search-results__footer">
-                          <button 
-                            className="search-results__view-all"
-                            onClick={handleSearchSubmit}
-                          >
-                            View all results for "{searchQuery}"
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="search-results__no-results">
-                        <span>No results found for "{searchQuery}"</span>
-                        <p>Try searching with different keywords</p>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-          )}
+
         </div>
       </div>
 
