@@ -1,3 +1,5 @@
+// CartSidebar Component - Version 31-10-25
+// Enhanced with YouMayAlsoLike component and progress bar improvements
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiX, FiPlus, FiMinus, FiChevronLeft, FiChevronRight, FiShoppingCart, FiStar } from 'react-icons/fi';
