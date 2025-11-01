@@ -390,12 +390,16 @@
   font-size: 16px;
   font-weight: 600;
   color: #000;
-  margin: 0 0 15px 0;
+  margin: 0 0 8px 0;
   font-family: 'Jost', sans-serif;
   text-align: center;
   line-height: 1.4;
   letter-spacing: 0.02em;
   text-transform: capitalize;
+  min-height: 44px; /* Fixed height for 2 lines (16px * 1.4 line-height * 2 lines) */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .new-arrivals-product-price {

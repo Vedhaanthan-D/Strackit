@@ -1,3 +1,5 @@
+// CartSidebar Component - Version 31-10-25
+// Enhanced with YouMayAlsoLike component and progress bar improvements
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiX, FiPlus, FiMinus, FiChevronLeft, FiChevronRight, FiShoppingCart, FiStar } from 'react-icons/fi';
@@ -8,6 +10,8 @@ import { addProductToCart } from '../../../common/utils/cartUtils';
 import { getProductsController } from 'shops-query/src/modules/products/index';
 import { fetchCouponCode } from 'shops-query/src/modules/CouponCode/Controller/index';
 import { fetchShippingCost } from 'shops-query/src/modules/ShippingCost/Controller/index';
+import { LuCalendarDays } from "react-icons/lu";
+
 import '../styles/CartSidebar.css';
 
 const EmptyCartIcon = () => (
@@ -343,42 +347,84 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
         </div>
 
         {/* Free Shipping Progress */}
-        {subtotal > 0 && (
-          <div className="free-shipping-section">
-            <div className="free-shipping-progress">
-              {/* Congratulations message displayed above progress bar when threshold is reached */}
-              {freeShippingInfo.qualifies && (
-                <p className="shipping-text congratulations-message">
-                  <strong>Buy ₹540 USD more to enjoy FREE shipping</strong>
-                  {freeShippingInfo.couponBased && (
-                    <span className="coupon-indicator"> (Coupon applied)</span>
-                  )}
-                </p>
-              )}
-              
-              <div className="progress-bar">
-                <div 
-                  className="progress-fill" 
-                  style={{ width: `${freeShippingProgress}%` , backgroundColor:"black" }}
-                ></div>
-                <div className="progress-icon"
-                style={{backgroundColor:"black" }}>
-                  {freeShippingProgress >= 100 ? <FiStar className="star-icon" /> : '📦'}
-                </div>
-              </div>
-              
-              {/* Message below progress bar when threshold is NOT reached */}
-              {!freeShippingInfo.qualifies && (
-                <p className="shipping-text">
-                  Buy <strong>₹{amountForFreeShipping.toFixed(2)}</strong> more to enjoy <strong>FREE shipping</strong>
-                  {freeShippingInfo.couponBased && (
-                    <span className="coupon-indicator"> (Coupon eligible)</span>
-                  )}
-                </p>
-              )}
-            </div>
-          </div>
-        )}
+        
+        {/* Free Shipping Progress */}
+{subtotal > 0 && (
+  <div className="free-shipping-section">
+
+    {!freeShippingInfo.qualifies && (
+        <p className="shipping-text">
+          Buy ₹{amountForFreeShipping.toFixed(2)} INR more to enjoy{" "}
+          FREE shipping
+          {freeShippingInfo.couponBased && (
+            <span className="coupon-indicator"> (Coupon eligible)</span>
+          )}
+        </p>
+      )}
+
+
+    <div className="free-shipping-progress">
+      {/* Congratulations message displayed above progress bar when threshold is reached */}
+      {freeShippingInfo.qualifies && (
+        <p className="shipping-text congratulations-message">
+          <strong>Congrats! You’ve unlocked FREE shipping 🎉</strong>
+          {freeShippingInfo.couponBased && (
+            <span className="coupon-indicator"> (Coupon applied)</span>
+          )}
+        </p>
+      )}
+
+      {/* ✅ Fixed dynamic progress bar */}
+      <div style={{ position: "relative", width: "100%", marginTop: "8px" }}>
+  {/* Background track */}
+  <div
+    style={{
+      height: "6px",
+      backgroundColor: "#e9ecef",
+      borderRadius: "20px",
+      overflow: "hidden",
+    }}
+  >
+    {/* Progress fill */}
+    <div
+      style={{
+        width: `${Math.min((subtotal / freeShippingInfo.threshold) * 100, 100)}%`,
+        height: "100%",
+        background: "repeating-linear-gradient(45deg, #000 0, #000 8px, #222 8px, #222 16px)",
+        transition: "width 0.4s ease-in-out",
+      }}
+    ></div>
+  </div>
+
+  {/* Star icon */}
+  <div
+    style={{
+      position: "absolute",
+      top: "-9px",
+      left: `calc(${Math.min((subtotal / freeShippingInfo.threshold) * 100, 100)}% - 12px)`,
+      width: "22px",
+      height: "22px",
+      borderRadius: "50%",
+      backgroundColor: "#000",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      color: "#fff",
+      fontSize: "12px",
+      transition: "left 0.4s ease-in-out",
+    }}
+  >
+    <FiStar style={{ color: "white" }} />
+  </div>
+</div>
+
+
+      {/* Message below progress bar when threshold is NOT reached */}
+      
+    </div>
+  </div>
+)}
+
 
         {/* Cart Content */}
         <div className="cart-content">
@@ -581,7 +627,7 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
                 <>
                   <span
                     style={{
-                      color: "#d32f2f",
+                      color: "#030303ff",
                       fontWeight: "600",
                       fontSize: "15px",
                       marginRight: "8px",
@@ -618,7 +664,7 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
               style={{
                 background: "none",
                 border: "none",
-                color: addingToCart[product.id || product.productId] ? "#aaa" : "#0070f3",
+                color: "#565656ff",
                 fontSize: "14px",
                 cursor: addingToCart[product.id || product.productId]
                   ? "not-allowed"
@@ -644,19 +690,22 @@ const CartSidebar = ({ isOpen, onClose, cartItemCount, setCartItemCount }) => {
         {cartItems.length > 0 && (
           <div className="cart-footer">
             <div className="cart-actions">
-              <button className="action-btn">
-                <MdNote className="action-icon" />
-                Order Note
-              </button>
-              <button className="action-btn">
-                <MdLocalOffer className="action-icon" />
-                Coupon
-              </button>
-              <button className="action-btn">
-                <MdLocalShipping className="action-icon" />
-                Shipping
-              </button>
-            </div>
+  <button className="action-btn">
+    <LuCalendarDays className="action-icon" /> {/* Replaces MdNote */}
+    Order Note
+  </button>
+  <div className="divider" />
+  <button className="action-btn">
+    <MdLocalOffer className="action-icon" />
+    Coupon
+  </button>
+  <div className="divider" />
+  <button className="action-btn">
+    <MdLocalShipping className="action-icon" />
+    Shipping
+  </button>
+</div>
+
             
             <div className="cart-total">
               <div className="total-line">

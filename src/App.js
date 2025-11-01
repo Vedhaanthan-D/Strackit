@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { 
   Navbar,
@@ -17,13 +17,20 @@ import ViewCart from './Home/components/sections/ViewCart';
 import CategoryPage from './Product Listing/section/CategoryPage';
 import ProductDetails from './Product Details/sections/ProductDetails';
 import Wishlist from './Product Details/sections/Wishlist';
+import SearchBar from './common/sections/SearchBar';
+import LoginSuccess from './common/sections/LoginSuccess';
 import { ToastProvider } from './common/sections/Toast';
+import { fetchCart } from 'shops-query/src/modules/cart/index';
+import { CART_CONFIG } from './config/appIds';
 import './App.css';
 
 function App() {
   // Cart sidebar state
   const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
+  
+  // Search bar state
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Cart handlers
   const handleCartClick = () => {
@@ -33,6 +40,32 @@ function App() {
   const handleCartClose = () => {
     setIsCartSidebarOpen(false);
   };
+  
+  // Search handlers
+  const handleSearchClick = () => {
+    setIsSearchOpen(true);
+  };
+  
+  const handleSearchClose = () => {
+    setIsSearchOpen(false);
+  };
+
+  // Load cart count on initial mount
+  useEffect(() => {
+    const loadCartCount = async () => {
+      try {
+        const { shopId, userId } = CART_CONFIG;
+        const cartData = await fetchCart(shopId, userId);
+        const totalItems = cartData?.reduce((total, item) => total + item.quantity, 0) || 0;
+        setCartItemCount(totalItems);
+      } catch (error) {
+        console.error('Failed to load cart count:', error);
+        setCartItemCount(0);
+      }
+    };
+
+    loadCartCount();
+  }, []);
 
   return (
     <ToastProvider>
@@ -41,6 +74,7 @@ function App() {
           <Navbar 
             cartCount={cartItemCount}
             onCartClick={handleCartClick}
+            onSearchClick={handleSearchClick}
           />
           
           <Routes>
@@ -103,7 +137,23 @@ function App() {
                 <Footer />
               </>
             } />
+            
+            {/* Login Success Page Route */}
+            <Route path="/login-success" element={
+              <>
+                <LoginSuccess />
+                <Footer />
+              </>
+            } />
           </Routes>
+          
+          {/* Search Bar Overlay */}
+          <SearchBar 
+            isSearchOpen={isSearchOpen}
+            onClose={handleSearchClose}
+            onCartClick={handleCartClick}
+            cartCount={cartItemCount}
+          />
           
           {/* Cart Sidebar */}
           <CartSidebar 

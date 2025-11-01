@@ -97,11 +97,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.categoryBox:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
 .categoryImage {
   width: 100%;
   height: 100%;
@@ -168,16 +163,13 @@
   font-family: 'Poppins', sans-serif;
   letter-spacing: 1px;
   margin-top: 8px;
-  opacity: 0;
-  transform: translateY(10px);
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.3s ease;
   pointer-events: none;
 }
 
-.categoryBox:hover .categorySubtext {
-  opacity: 1;
-  transform: translateY(0);
-}
+/* Text is now always visible - no hover animation needed */
 
 .categorySubtext.empty {
   color: rgba(204, 204, 204, 0.8);

@@ -62,7 +62,7 @@
 
 .cart-title {
   font-family: 'Jost', sans-serif;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
   color: #111827;
   margin: 0;
@@ -323,7 +323,6 @@
   align-items: center;
   gap: 16px;
   padding: 20px 0;
-  border-bottom: 1px solid #F3F4F6;
 }
 
 .cart-item:last-child {
@@ -584,7 +583,7 @@
   font-family: 'Jost', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #EF4444;
+  color: #010101;
 }
 
 .cs-original-price {
@@ -712,54 +711,38 @@
 
 .cart-actions {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  padding: 16px 0;
-  gap: 20px;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #fff;
 }
 
 .action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: none;
   border: none;
-  display: flex;
-  flex-direction: row; /* Changed from column to row for horizontal layout */
-  align-items: center;
-  gap: 8px; /* Gap between icon and text */
-  font-family: 'Jost', sans-serif;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: #333;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  flex: 1;
-  justify-content: center; /* Center the icon-text pair within the button */
-}
-
-.action-btn:hover {
-  color: #111827;
-  background: #F9FAFB;
+  padding: 4px 12px;
 }
 
 .action-icon {
-  margin-bottom: 0; /* Removed margin-bottom since icon is now beside text */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px; /* Slightly smaller for horizontal layout */
-  height: 24px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  flex-shrink: 0; /* Prevent icon from shrinking */
+  font-size: 18px;
+  color: #333;
 }
 
-/* React Icon styling for action buttons */
-.action-btn .action-icon {
-  font-size: 16px;
-  margin-right: 8px;
+.divider {
+  height: 20px;
+  width: 1px;
+  background-color: #e0e0e0;
 }
+
 
 .cart-total {
   margin-bottom: 20px;
@@ -796,8 +779,7 @@
 }
 
 .shipping-link {
-  color: #374151;
-  text-decoration: underline;
+  color: #014eca;
   cursor: pointer;
 }
 

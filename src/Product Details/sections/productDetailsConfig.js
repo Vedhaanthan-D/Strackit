@@ -262,6 +262,58 @@ export const getResponsiveSpacing = (spacingKey, screenWidth) => {
   }
 };
 
+// Thumbnail Image Configuration
+// Controls the size of product thumbnail images
+export const THUMBNAIL_CONFIG = {
+  // Thumbnail dimensions (width x height in pixels)
+  dimensions: {
+    width: 100,   // Width in pixels
+    height: 90    // Height in pixels
+  }
+};
+
+/**
+ * Get thumbnail dimensions
+ * @returns {object} - Object with width and height properties
+ */
+export const getThumbnailDimensions = () => {
+  return {
+    width: THUMBNAIL_CONFIG.dimensions.width,
+    height: THUMBNAIL_CONFIG.dimensions.height
+  };
+};
+
+// Product Supreme Quality Image Configuration
+// Controls the size and display of images in the Supreme Quality section
+export const SUPREME_QUALITY_IMAGE_CONFIG = {
+  // Image dimensions (width x height in pixels)
+  dimensions: {
+    width: 433.34,    // Width in pixels (exact dimension)
+    height: 285.21    // Height in pixels (exact dimension)
+  },
+  // Object-fit property to prevent stretching
+  // Options: 'contain' (shows full image with padding), 'cover' (fills container, may crop)
+  objectFit: 'contain',  // Use 'contain' to show full image without stretching
+  // Background color for padding areas when using 'contain'
+  backgroundColor: '#f5f5f5',
+  // Show dimensions label on images
+  showDimensions: false
+};
+
+/**
+ * Get Supreme Quality image dimensions
+ * @returns {object} - Object with width, height, objectFit, backgroundColor, and showDimensions properties
+ */
+export const getSupremeQualityImageConfig = () => {
+  return {
+    width: SUPREME_QUALITY_IMAGE_CONFIG.dimensions.width,
+    height: SUPREME_QUALITY_IMAGE_CONFIG.dimensions.height,
+    objectFit: SUPREME_QUALITY_IMAGE_CONFIG.objectFit,
+    backgroundColor: SUPREME_QUALITY_IMAGE_CONFIG.backgroundColor,
+    showDimensions: SUPREME_QUALITY_IMAGE_CONFIG.showDimensions
+  };
+};
+
 // Carousel Navigation Configuration
 // Controls the visibility and behavior of carousel navigation buttons
 export const CAROUSEL_CONFIG = {

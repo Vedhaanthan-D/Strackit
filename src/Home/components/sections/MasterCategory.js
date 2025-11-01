@@ -127,7 +127,7 @@ const MasterCategory = () => {
   const shouldCenter = masterCategories.length <= 3;
 
   return (
-    <div className="masterCategoryContainer">
+    <div id="master-category-section" className="masterCategoryContainer">
       {/* Horizontal border line below the container top */}
       <div className="masterCategoryBorder"></div>
       

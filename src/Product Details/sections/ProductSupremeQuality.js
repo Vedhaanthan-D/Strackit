@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchProducts } from 'shops-query/src/modules/products/queries/get.js';
 import { getProductsController } from 'shops-query/src/modules/products/index.js';
 import { IMAGE_PREFIX, HOME_CONFIG } from '../../config/appIds.js';
+import { getSupremeQualityImageConfig } from './productDetailsConfig.js';
 import '../styles/ProductSupremeQuality.css';
 
 const ProductSupremeQuality = ({ product, productId }) => {
@@ -9,7 +10,19 @@ const ProductSupremeQuality = ({ product, productId }) => {
   const [thirdProductImage, setThirdProductImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imageConfig, setImageConfig] = useState(null);
  
+  // Set CSS variables for Supreme Quality images dynamically
+  useEffect(() => {
+    const config = getSupremeQualityImageConfig();
+    setImageConfig(config);
+    const root = document.documentElement;
+    
+    root.style.setProperty('--supreme-quality-image-width', `${config.width}px`);
+    root.style.setProperty('--supreme-quality-image-height', `${config.height}px`);
+    root.style.setProperty('--supreme-quality-image-object-fit', config.objectFit);
+    root.style.setProperty('--supreme-quality-image-bg-color', config.backgroundColor);
+  }, []);
 
   useEffect(() => {
     const fetchProductFeatures = async () => {
@@ -333,6 +346,11 @@ const ProductSupremeQuality = ({ product, productId }) => {
                   className="feature-image"
                   onError={handleImageError}
                 />
+                {imageConfig?.showDimensions && (
+                  <div className="image-dimensions-label">
+                    {imageConfig.width} × {imageConfig.height}
+                  </div>
+                )}
               </div>
             </div>
           ))}
